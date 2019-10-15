@@ -81,7 +81,8 @@
          //发送请求
 
         const TIME_COUNT = 60;
-        this.$ajax('sendsms','POST',{"phoneNumber":"15652729797", "type":"login"}).then(res=>{
+
+        this.$ajax('sendsms','POST',{"phoneNumber":this.mobile, "type":"login"}).then(res=>{
            res=res.data;
           if(res.code==='001'){
                this.$message.success('发送成功')

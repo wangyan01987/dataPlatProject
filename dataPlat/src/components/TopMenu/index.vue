@@ -1,11 +1,11 @@
 <template>
   <a-dropdown>
-    <a class="ant-dropdown-link" href="#">
+    <a class="ant-dropdown-link" href="javascript:void(0)">
      {{projectName}}  <a-icon type="down" />
     </a>
   <a-menu slot="overlay" >
     <a-menu-item v-for="item in menuList" :key="item.id">
-      <a  :href="'#/projectDetail/'+item.id">{{item.name}}</a>
+      <router-link :to='"/projectDetail/"+item.id'>{{item.name}}</router-link>
     </a-menu-item>
   </a-menu>
   </a-dropdown>

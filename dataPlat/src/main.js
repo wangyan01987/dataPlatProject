@@ -9,9 +9,6 @@ import 'babel-polyfill';
 import  store from './store'
 import './assets/modify.css'
 import  $ajax from './ajax/ajax.js'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-Vue.use(VueAxios, axios)
 Vue.prototype.$ajax=$ajax;
 Vue.config.productionTip = false;
 Vue.use(ant);

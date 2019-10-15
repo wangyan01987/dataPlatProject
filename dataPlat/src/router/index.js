@@ -88,6 +88,7 @@ const router= new Router({
 });
 import  store from '../store'
 router.beforeEach((to,from,next)=>{
+  console.log(store.state.isLogin)
      if(!store.state.isLogin&&to.path!=='/login'){
            next('/login')
      }else{

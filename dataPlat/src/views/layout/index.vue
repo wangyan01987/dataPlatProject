@@ -26,7 +26,7 @@
           <router-link to="/personSet">账户设置</router-link>
         </a-menu-item>
         <a-menu-item>
-          <router-link to="/login">退出登录</router-link>
+          <span  @click="logout">退出登录</span>
         </a-menu-item>
       </a-menu>
 
@@ -81,13 +81,12 @@
             }
             else{
                return  require('../../assets/images/zhuye@2x.png');
-              //return require('../../assets/images/zhuye-hui@2x.png');
             }
         }
       },
       watch:{
           '$router':function(to,from){
-            console.log(to)
+           // console.log(to)
           }
 
       },
@@ -95,6 +94,19 @@
           onSearch(){
 
           },
+        logout(){
+            this.$ajax('logout','POST').then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                 this.$store.commit('setLogin',false);
+                this.$router.push('/login')
+                this.$message.success('退出登录');
+                 }
+              else{
+                this.$message.error(res.msg);
+              }
+            });
+        }
       },
       mounted(){
         let a=this.$route.name;

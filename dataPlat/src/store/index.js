@@ -7,12 +7,16 @@ const store=new Vuex.Store({
     storage: window.sessionStorage
   })],
   state:{
-      isLogin:false
+      isLogin:false,
+       projectName:''
   },
   mutations:{
        setLogin(state,val){
          state.isLogin=val;
-       }
+       },
+    setProjectName(state,val){
+         state.projectName=val;
+    }
   }
 
 });

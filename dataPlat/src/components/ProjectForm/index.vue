@@ -1,41 +1,32 @@
 <template>
   <div class="form-container">
     <!--查看-->
-    <a-modal
-      :destroyOnClose=true
-      :title='title'
-      v-model="visible"
-      @cancel="cancel"
-      okText="确定"
-      cancelText="取消"
-      :footer="null"
-     >
+    <a-modal :destroyOnClose=true :title='title' v-model="visible" @cancel="cancel" :footer="null">
       <span class="blue" @click="currentDataflag=1" v-if="currentDataflag===0">编辑信息</span>
-     <projectinfo ref="projectInfo" :dataflag="currentDataflag"  @cancel="cancel" @save="save"></projectinfo>
+     <projectinfo ref="projectInfo" v-bind="propMsg"  @cancel="cancel" @save="save"></projectinfo>
     </a-modal>
     <br />
-
   </div>
 </template>
 <script>
   import projectinfo from './projectinfo.vue'
   export default {
-    props:['dataflag'],
+    props:['propMsg'],
     components:{projectinfo},
     data() {
       return {
         visible: false,
         footer:null,
         currentDataflag:this.dataflag
-
-
       }
     },
     methods: {
 
       save() {
         this.visible = false;
-
+        setTimeout(()=>{
+          this.$parent.getItem(1);
+        },5);
       },
       cancel(){
             this.visible=false;
@@ -62,13 +53,11 @@
 
     },
     watch:{
-         dataflag(val){
+         'propMsg.dataflag'(val){
              this.currentDataflag=val;
          }
     },
     mounted(){
-       console.log('form')
-      console.log(this.dataflag)
     }
   }
 </script>

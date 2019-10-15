@@ -54,7 +54,6 @@
 </template>
 
 <script>
-  import $ from "jquery"
   import SIdentify from '@/components/identify'
   import {isOnlyMobile} from '@/utils/common.js'
   export default {
@@ -125,34 +124,25 @@
       },
       submit(){
         this.formData.validateFields((err, fieldsValue) => {
-          // if (err) {
-          //   return;
-          // };
+          if (err) {
+            return;
+          };
+
           //提交表单
           let obj=fieldsValue;
            delete obj.assignCode;
-          let form=new FormData();
-          form.append('username', obj['username']);
-          form.append('password', obj['password']);
-          $.ajax({
-            type: 'POST',
-            url: "http://pstbj.com:6041/loginbypwd",
-            data: form,
-            processData: false,
-            success: function(res){
-                     res=res.data;
-                    if(res.code==='001'){
-                         this.$message.success('登录成功',5);
-                    }
-                    else{
-                      this.$message.error(res.msg,5);
-                      document.getElementsByClassName('test')[0].style.cssText='borderColor:red'
-                    }
-            },
-            failure:function(){
-              this.$message.error('系统错误',5);
-            }
-          });
+          this.$ajax('loginbypwd','POST',obj,true).then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  this.$message.success('登录成功！');
+                  this.$store.commit('setLogin',true);
+                   //跳转到主页
+                    this.$router.push('/home');
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+          })
         })
       },
       handleChange(val){

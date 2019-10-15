@@ -58,8 +58,8 @@
             }
       },
       mounted(){
-         this.$store.commit('setLogin',true);
-          console.log(this.$store.state.isLogin)
+         // this.$store.commit('setLogin',true);
+         //  console.log(this.$store.state.isLogin)
       },
       methods:{
           callback(val){

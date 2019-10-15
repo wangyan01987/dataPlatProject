@@ -44,7 +44,6 @@
     mounted(){
       let that=this;
       window.addEventListener("popstate", function(e) {
-        console.log('--')
        that.$router.push({path:'/home'})
       }, false);
     }

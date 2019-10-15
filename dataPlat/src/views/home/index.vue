@@ -2,15 +2,15 @@
   <div class="container">
    <p class="changeItem"><img src="../../assets/images/zhanshi@2x.png" alt=""><img src="../../assets/images/suolue@2x.png" alt=""></p>
     <div class="box">
-         <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.id)">
+         <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId)">
            <div class="box-item">
              <div class="item-img" >
                <img :src="item.img" style="width:100%;height:100%;"/>
-               <p class="item-title" :title="item.title">{{item.title}}</p>
+               <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
              </div>
              <p class="editor" >
-               <img src="../../assets/images/bianji@2x.png" alt="编辑" @click="editItem(item.id,$event)">
-               <img src="../../assets/images/shanchu@2x.png" alt="删除" @click="deleteItem(item.id,$event)" v-show="item.isEdit">
+               <img src="../../assets/images/bianji@2x.png" alt="编辑" @click="editItem(item.projectId,$event)">
+               <img src="../../assets/images/shanchu@2x.png" alt="删除" @click="deleteItem(item.projectId,$event)" v-show="item.isDelete">
              </p>
            </div>
          </div>
@@ -29,7 +29,7 @@
       <p>滑动加载更多</p>
       <p><a-icon type="down" /></p>
     </div>
-    <projectform ref="projectform" :dataflag="dataflag"></projectform>
+    <projectform ref="projectform" :propMsg="propMsg"></projectform>
   </div>
 </template>
 
@@ -40,108 +40,45 @@
       components:{projectform},
       data: function () {
         return {
-          dataflag:0,
-          itemList: [{
-            id:'001',
-            title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-            img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-            isEdit: true
+          propMsg:{
+            dataflag:0,
+            projectId:''
+          },
+          imgList:[{
+            src:require('../../assets/projectImg/001.jpg')
+          },{
+            src:require('../../assets/projectImg/002.jpg')
           },
             {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: false
+              src:require('../../assets/projectImg/003.jpg')
+            },{
+              src:require('../../assets/projectImg/004.jpg')
             },
             {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: false
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: true
-            }],
-          addItemList: [{
-            title: '111111111111111',
-            img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-            isEdit: false
-          },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: false
-            },
-            {
-              title: '一号建筑设施一号建筑设施一号建筑设施一号建筑设施一号建筑设施',
-              img: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1569918794415&di=73899c57a4a3a6b222ca52bad317026e&imgtype=0&src=http%3A%2F%2Fpic16.nipic.com%2F20111006%2F6239936_092702973000_2.jpg',
-              isEdit: false
-            }]
+              src:require('../../assets/projectImg/005.jpg')
+            }
+            ],
+          itemList: [],
+          addItemList: []
         }
       },
       methods: {
         goToDetail(id){
-
           this.$router.push({name:'projectDetail',params:{projectId:id}});
+           this.$store.commit('setProjectName','工程项目');
         },
         loadItem() {
           //获取新的数据
+          this.addItemList=this.addItemList.map(this.randomImg);
           this.itemList=this.itemList.concat(this.addItemList);
         },
         editItem(id,e){
           //编辑信息 flag=1
           e.stopPropagation();
-          this.dataflag=1;
+          this.propMsg={
+            dataflag:1,
+            projectId:id
+          };
 
          this.$refs.projectform.visible=true;
 
@@ -160,7 +97,20 @@
             },
             onOk(){
                   //删除信息操作
-              self.$message.success('操作成功', 10)
+              self.$ajax('bomextract/project/deleteproject','POST',{'projectId':id}).then(res=>{
+                res=res.data;
+                 if(res.code==='001'){
+
+                    //itemList里删除
+                  self.itemList= self.itemList.filter((item,index)=>{
+                        return item.projectId!==id;
+                   });
+                   self.$message.success('删除成功', 5);
+                 }else{
+                   self.$message.success(res.msg)
+                 }
+              });
+
             },
             onCancel(){
 
@@ -168,20 +118,43 @@
           });
 
         },
+        getItem(num,page){
+          page=19;
+          this.$ajax('bomextract/project/getprojectsbypage','POST',{"pageNum":num, "pageSize":page}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              this.itemList=res.data;
+              this.itemList= this.itemList.map(this.randomImg);
+            }
+
+          });
+        },
         addItem(){
           //添加信息 flag=2
-          this.dataflag=2;
+          this.propMsg.dataflag=2;
           this.$refs.projectform.visible=true;
-          console.log(this.dataflag)
+
+
+        },
+        randomImg(item){
+            //产生随机数
+            let key= Math.floor(Math.random()*5);
+            item.img=this.imgList[key].src;
+            return item;
 
         }
       },
       mounted() {
+        //项目名称清零
+        this.$store.commit('setProjectName',null);
+        //获取项目列表
+        this.getItem(1);
+        //项目复制图片
 
+        //滑动加载
         var that = this;
         window.addEventListener("scroll", function () {
           if (document.body.scrollHeight <= window.screen.height + document.body.scrollTop) {
-
           //  that.loadItem();
           }
           else{
@@ -271,6 +244,8 @@
     font-size:0.32rem;
   }
   .slide-item{
+    position:fixed;
+    bottom: 0;
     color:dodgerblue;
     cursor:pointer;
     width:100%;

@@ -137,11 +137,14 @@
           if (err) {
             return;
           };
+          let obj=fieldsValue;
+           delete obj.repassword;
           //提交表单
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
-                this.$message.success('登录成功',5)
+                this.$message.success('修改成功',5);
+                this.visible=false;
             }
             else{
               this.$message.error(res.msg);
