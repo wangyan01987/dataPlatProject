@@ -1,8 +1,9 @@
 <template>
   <div class="container">
    <p class="changeItem"><img src="../../assets/images/zhanshi@2x.png" alt=""><img src="../../assets/images/suolue@2x.png" alt=""></p>
+    <a-spin size="large"  v-if="loaded"/>
     <div class="box">
-         <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId)">
+          <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
            <div class="box-item">
              <div class="item-img" >
                <img :src="item.img" style="width:100%;height:100%;"/>
@@ -14,16 +15,15 @@
              </p>
            </div>
          </div>
-       <div class="box-wrapper">
+          <div class="box-wrapper">
          <div class="box-item ">
-           <div class="add-item">
-             <a-icon type="plus"  @click="addItem" class="icon"/>
+           <div class="add-item"  @click="addItem" >
+             <a-icon type="plus" class="icon"/>
              <p>创建新项目</p>
            </div>
            <p class="editor"></p>
          </div>
        </div>
-
     </div>
     <div class="slide-item" @click='loadItem'>
       <p>滑动加载更多</p>
@@ -44,6 +44,7 @@
             dataflag:0,
             projectId:''
           },
+          loaded:false,
           imgList:[{
             src:require('../../assets/projectImg/001.jpg')
           },{
@@ -63,9 +64,9 @@
         }
       },
       methods: {
-        goToDetail(id){
+        goToDetail(id,name){
           this.$router.push({name:'projectDetail',params:{projectId:id}});
-           this.$store.commit('setProjectName','工程项目');
+           this.$store.commit('setProjectName',name);
         },
         loadItem() {
           //获取新的数据
@@ -120,9 +121,11 @@
         },
         getItem(num,page){
           page=19;
+          this.loaded=true;
           this.$ajax('bomextract/project/getprojectsbypage','POST',{"pageNum":num, "pageSize":page}).then(res=>{
             res=res.data;
             if(res.code==='001'){
+              this.loaded=false;
               this.itemList=res.data;
               this.itemList= this.itemList.map(this.randomImg);
             }

@@ -95,6 +95,8 @@
 
           },
         logout(){
+          this.$router.push('/login')
+          this.$message.success('退出登录');
             this.$ajax('logout','POST').then(res=>{
               res=res.data;
               if(res.code==='001'){

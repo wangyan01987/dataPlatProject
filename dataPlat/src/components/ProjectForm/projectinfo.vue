@@ -14,35 +14,39 @@
       <a-input v-decorator="[ 'projectCode', {rules:[{validator:checkNumber}]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
       <span v-show="dataflag===0">{{obj.projectCode}}</span>
     </a-form-item>
-    <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+    <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
       <a-select @change="handleChange" placeholder="请选择项目类型" v-decorator="[ 'protype']">
         <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
       </a-select>
+      <span v-show="dataflag===0">{{obj.protype}}</span>
     </a-form-item>
+
     <a-form-item label="项目所在地" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
       <a-row :gutter="4">
         <a-col :span="8">
-          <a-form-item>
+          <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="省市" v-decorator="[ 'provinceId']">
-              <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in   provincearr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
           </a-form-item>
+          <span v-show="dataflag===0">{{obj.provinceName}}</span>
         </a-col>
         <a-col :span="8">
-          <a-form-item>
+          <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="城市" v-decorator="[ 'cityId']">
               <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
           </a-form-item>
+          <span v-show="dataflag===0">{{obj.cityName}}</span>
         </a-col>
         <a-col :span="8">
-          <a-form-item>
+          <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="区县" v-decorator="[
           'districtId']">
               <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
-
           </a-form-item>
+          <span v-show="dataflag===0">{{obj.districtName}}</span>
         </a-col>
       </a-row>
       <a-form-item class="special">
@@ -69,7 +73,7 @@
       <a-input v-decorator="[ 'buildNum' ]" disabled></a-input>
     </a-form-item>
     <a-form-item label="项目简介" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-textarea v-show="dataflag===1||2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"v-decorator="[ 'introduction',{rules: [{validator:checkName}]}]"/>
+      <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"v-decorator="[ 'introduction',{rules: [{validator:checkName}]}]"/>
       <span v-show="dataflag===0">{{obj.introduction}}</span>
     </a-form-item>
     <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
@@ -89,9 +93,11 @@
 </template>
 
 <script>
-  import {isName,isNum} from '@/utils/common.js'
+  import {isName,isNum} from '@/utils/common.js';
+  import moment from 'moment'
   export default {
     name: 'HelloWorld',
+    props: ['dataflag','projectId'],
     data() {
       const formItemLayout = {
         labelCol: {span: 4},
@@ -102,16 +108,20 @@
         wrapperCol: {span: 8, offset: 4},
       };
       return {
+        provincearr:[],
         obj:{},
         formItemLayout,
         formTailLayout,
         formData: this.$form.createForm(this),
-        arr:[{label:'工程',value:'001'},{label:'工程2',value:'002'}],
+        arr:[{label:'住宅',value:1},{label:'商业',value:2},
+          {label:'办公',value:3},{label:'教育',value:4},
+          {label:'其他',value:5},
+
+        ],
       }
 
     },
     components: {},
-    props: ['dataflag','projectId'],
     methods: {
       checkNumber(rule, value, callback){
             if(value&&!isNum(value)){
@@ -183,9 +193,31 @@
       handleChange(val) {
 
       },
+      getProjectInfo(){
+        let id=this.projectId;
+        let flag=this.dataflag;  //0查看 1编辑
+        this.$ajax('bomextract/project/getprojectbyprojid','GET',{projectId:id}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            let obj=res.data;
+            delete obj.projectId;
+            this.obj=Object.assign({},obj);
+            //编辑时获取值
+          if(flag===1){
+             delete obj.provinceName;
+             delete obj.cityName;
+             delete obj.districtName;
+            setTimeout(()=>{
+              this.setMsg(obj)
+            },5);
+          }
+          }
+        });
+      },
       setMsg(obj) {
-        this.obj=Object.assign({},obj);
+
         if (obj instanceof Object&&this.dataflag!==0) {
+          obj.proTime=moment(obj.proTime,'YYYY-MM-DD HH:mm:ss');
           this.formData.setFieldsValue(obj);
         }
 
@@ -193,35 +225,17 @@
     },
     watch:{
         dataflag(val){
-
-          var obj = {
-            name: 'lalallalla',
-            nickname: 'ahahhaaha',
-            buildingNumber: 5,
-
-          };
           var that=this;
-            if(val===1) {
-              //  setTimeout(function(){
-              //    that.setMsg(obj)
-              //  },50);
-            }
+          if(val===1) {
+            that.getProjectInfo();
+          }
         }
     },
     mounted() {
-      //编辑信息 001
-   if(this.dataflag===1||0){
-     let id=this.projectId;
-     this.$ajax('bomextract/project/getprojectbyprojid','GET',{projectId:id}).then(res=>{
-       res=res.data;
-       if(res.code==='001'){
-           let obj=res.data;
-           delete obj.projectId;
-         setTimeout(()=>{
-           this.setMsg(obj)
-         },50);
-       }
-     });
+      //编辑信息 001 产看000
+   if(this.dataflag===1||this.dataflag===0){
+
+     this.getProjectInfo();
 
    }
 

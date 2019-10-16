@@ -39,18 +39,15 @@
         { title: '职位', dataIndex: 'position', key: 'position' },
         { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
       ];
-      const dataSource = [
-        { index:1, name: '王杰', gender:'女', phone:'--', email: '15837456@qq.com',company:'--',position:'员工',isEdit:true },
-        { index:2, name: 'Lily', gender:'女', phone:'--', email: '15837456@qq.com',company:'--',position:'员工',isEdit:false },
-        { index:3, name: '--', gender:'女', phone:'--', email: '15837456@qq.com',company:'--',position:'员工',isEdit:false },
-      ];
       return{
         visible:false,
-        dataSource,
+        dataSource:[],
         columns,
         pagination:{},
         dataflag:'000',
-        title:'邀请新成员'
+        loading:false,
+        title:'邀请新成员',
+        projectId:''
       }
     },
     methods:{
@@ -81,27 +78,20 @@
         return record.index;
       },
       //加载信息
-      fetch (params = {}) {
-        // console.log('params:', params);
-        // reqwest({
-        //   url: 'https://randomuser.me/api',
-        //   method: 'get',
-        //   data: {
-        //     results: 10,
-        //     ...params,
-        //   },
-        //   type: 'json',
-        // }).then((data) => {
-        //   const pagination = { ...this.pagination };
-        //   // Read total count from server
-        //   // pagination.total = data.totalCount;
-        //   pagination.total = 200;
-        //pagination.pageSize='20'
-        //   this.loading = false;
-        //   this.data = data.results;
-        //   this.pagination = pagination;
-        //
-        // });
+      fetch (projectId,num,size) {
+        this.loading = true;
+       this.$ajax('bomextract/buildmember/getmember','POST',{projectid:projectId,pageNum:num,pageSize:size}).then((res) => {
+                     res=res.data;
+               if(res.code==='001'){
+                 const pagination = { ...this.pagination };
+                 pagination.total = res.count;
+                 pagination.pageSize=size;
+                 this.loading = false;
+                 this.dataSource = res.data;
+                 this.pagination = pagination;
+
+               }
+        });
       },
 
     },
@@ -113,7 +103,8 @@
        }
     },
     mounted(){
-      this.fetch();
+    this.projectId=this.$route.params.projectId;
+      this.fetch( this.projectId,1,20);
     }
   }
 </script>

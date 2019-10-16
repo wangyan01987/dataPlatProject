@@ -16,7 +16,12 @@ const router= new Router({
     {
       path:'/invite',
       name:'invite',
-      component:()=>import('@/views/invite')
+      component:()=>import('@/views/invite/index')
+    },
+    {
+       path:'/joinSuccess',
+      name:'joinSuccess',
+     component:()=>import('@/views/invite/joinSuccess.vue')
     },
     {
       path:'/',
@@ -75,12 +80,6 @@ const router= new Router({
       ]
     },
     {
-      path:'/inviteInProject',
-      name:'inviteInProject',
-      component:()=>import('@/views/invite')
-
-    },
-    {
       path:'*',
       component:()=>import('@/views/404')
     }
@@ -89,7 +88,7 @@ const router= new Router({
 import  store from '../store'
 router.beforeEach((to,from,next)=>{
   console.log(store.state.isLogin)
-     if(!store.state.isLogin&&to.path!=='/login'){
+     if(!store.state.isLogin&&to.path!=='/login'&&to.path!=='/invite'){
            next('/login')
      }else{
         next();

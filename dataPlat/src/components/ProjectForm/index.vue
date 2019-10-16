@@ -3,7 +3,7 @@
     <!--查看-->
     <a-modal :destroyOnClose=true :title='title' v-model="visible" @cancel="cancel" :footer="null">
       <span class="blue" @click="currentDataflag=1" v-if="currentDataflag===0">编辑信息</span>
-     <projectinfo ref="projectInfo" v-bind="propMsg"  @cancel="cancel" @save="save"></projectinfo>
+     <projectinfo ref="projectInfo" :dataflag="currentDataflag" :projectId="propMsg.projectId" @cancel="cancel" @save="save"></projectinfo>
     </a-modal>
     <br />
   </div>
@@ -17,7 +17,7 @@
       return {
         visible: false,
         footer:null,
-        currentDataflag:this.dataflag
+        currentDataflag:0
       }
     },
     methods: {
@@ -31,14 +31,6 @@
       cancel(){
             this.visible=false;
       },
-      confirm() {
-        this.$confirm({
-          title: 'Confirm',
-          content: 'Bla bla ...',
-          okText: '确认',
-          cancelText: '取消',
-        });
-      }
     },
     computed:{
         title(){

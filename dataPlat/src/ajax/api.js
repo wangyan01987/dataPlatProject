@@ -45,6 +45,9 @@ function getApi(dataType){
   service.interceptors.response.use(response => {
      const token=response.headers.token;
       const code = response.data.code;
+    if(token){
+        localStorage.setItem('token',token);
+      };
       if(code==='999'){
         store.commit('setLogin',false);   //重新登录
         //删除token
@@ -53,10 +56,7 @@ function getApi(dataType){
           //跳转到登录页
         router.push('/login');
 
-      }else if(token){
-        localStorage.setItem('token',token);
-
-      };
+      }
       return response;
 
     },

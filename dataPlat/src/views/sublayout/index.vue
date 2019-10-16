@@ -21,7 +21,7 @@
       </a-menu-item>
     </a-menu>
     <span class="blue" @click="showProjectInfo">查看项目信息</span>
-    <projectform  :dataflag='dataflag' ref="projectform" ></projectform>
+    <projectform  :propMsg='propMsg' ref="projectform" ></projectform>
     <router-view></router-view>
   </div>
 </template>
@@ -32,11 +32,14 @@
     data () {
       return {
         current: ['building'],
-        dataflag:0,
+        propMsg:{}
       }
     },
     methods:{
       showProjectInfo(){
+        let id=this.$route.params.projectId;
+        this.propMsg.dataflag=0;
+        this.propMsg.projectId=id;
         this.$refs.projectform.visible=true;
       this.$refs.projectform.currentDataflag=0;
       }

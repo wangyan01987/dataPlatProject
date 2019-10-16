@@ -34,13 +34,14 @@
 
 <script>
   import {isOnlyMobile,email} from '@/utils/common.js'
-  let id=1;
+
     export default {
         name: "addInfo",
       props:['dataflag'],
       data(){
+        let id=1;
           return{
-
+               id
           }
       },
       computed:{
@@ -88,6 +89,7 @@
             if(keys.length===1){
               return;
             }
+            this.id--;
             form.setFieldsValue({
               keys:keys.filter(item=>item!==k)
             })
@@ -99,16 +101,40 @@
              this.$message.error(`当前页面有效${this.flagName}超出剩余额度`);
              return;
            }
-           const nextKeys=keys.concat(++id);
+           const nextKeys=keys.concat(++this.id);
            form.setFieldsValue({
              keys:nextKeys
            });
         },
         handleSubmit (e) {
-
           this.form.validateFields((err, values) => {
             if (!err) {
-              console.log('Received values of form: ', values);
+               //发送邀请
+               let url;
+              let link=this.$parent.urlInfo;
+              let data=values.names.filter(item=>item!=null);
+              let projectName=this.$store.state.projectName;
+                    if(this.dataflag==='001'){
+                  url='bomextract/buildmember/inviteemail';
+                  this.$ajax(url,'POST',{link:link,projectName:projectName,emails:data}).then(res=>{
+                         if(res.data.code==='001'){
+                           this.$message.success('邀请成功',5);
+                         }else{
+                            this.$message.error(res.data.msg);
+                         }
+                  })
+                }else{
+                  url='bomextract/buildmember/invitesms';
+                  this.$ajax(url,'POST',{link:link,projectName:projectName,phones:data}).then(res=>{
+                    if(res.data.code==='001'){
+                      this.$message.success('邀请成功',5);
+                    }
+                    else{
+                      this.$message.error(res.data.msg);
+                    }
+                  })
+                };
+
             }
           });
         }

@@ -1,11 +1,11 @@
 <template>
 <div class="modal-container">
   <!--默认链接邀请 000-->
-  <div class="modal-item" v-if="dataflag==='000'">
+  <div class="modal-item" v-show="dataflag==='000'">
      <div class="item-body">
         <div class="item-title">
           <p>通过微信扫码，邀请成员</p>
-          <img src="https://p.ssl.qhimg.com/d/inn/0444533a/Snip20160525_6.png" alt="" >
+          <div id="qrCode" ref="qrCodeDiv"></div>
         </div>
        <div>
           <p class="action"><span @click="toEmail" >邮箱邀请</span><span @click="toPhone">手机号邀请</span></p>
@@ -13,12 +13,12 @@
      </div>
     <div class="item-footer">
       <p>通过发送链接，邀请成员</p>
-       <div> <a-input style="margin-right:5px;width:290px;" v-model="urlInfo"></a-input> <a-button type="primary" @click="copyUrl(urlInfo)">复制链接</a-button></div>
+       <div><a-input style="margin-right:5px;width:290px;" v-model="urlInfo"></a-input> <a-button type="primary" @click="copyUrl(urlInfo)">复制链接</a-button></div>
     </div>
   </div>
   <!--邮箱邀请 001-->
   <!--手机号邀请002-->
-  <div class="modal-item" v-else>
+  <div class="modal-item" v-if="dataflag!=='000'">
     <div class="item-body">
       <div class="item-title" v-if="dataflag==='001'">
         <p>通过邮箱邀请项目组成员</p>
@@ -45,16 +45,17 @@
 </template>
 
 <script>
-  import AddInfo from './addInfo'
+  import AddInfo from './addInfo';
+  import QRCode from 'qrcodejs2';
     export default {
         name: "modalInfo",
       components:{AddInfo},
       data(){
           return{
             dataflag:'000',
-            urlInfo:'www.baidu.com',
-            mobilelimitNumber:10,
-            emailLimitNum:9,
+            urlInfo:'',
+            mobilelimitNumber:0,
+            emailLimitNum:0,
             phoneArr:[]
           }
       },
@@ -69,6 +70,19 @@
             document.execCommand("Copy"); // 执行浏览器复制命令
             this.$message.success('复制成功,点击粘贴');
           },
+        getUrl(id){
+
+             this.$ajax('bomextract/buildmember/getprojinvitationlink','GET',{projectId:id}).then(res=>{
+                   res=res.data;
+                   if(res.code==='001'){
+                     this.urlInfo=res.data.link;
+                     this.emailLimitNum=res.data.emailNum;
+                     this.mobilelimitNumber=res.data.phoneNum;
+                     this.getUrlCode(this.urlInfo);
+                   }
+
+             })
+        },
         toEmail(){
              this.dataflag='001'
         },
@@ -76,16 +90,30 @@
           this.dataflag='002'
         },
         toUrl(){
-            this.dataflag='000'
+            this.dataflag='000';
+         // this.getUrlCode(this.urlInfo);
         },
         sendCode(key){
-          this.$refs.mobileInfo.handleSubmit();
-
-          }
+              this.$refs.mobileInfo.handleSubmit();
+          },
+        getUrlCode(url){
+          new QRCode(this.$refs.qrCodeDiv, {
+            text: url,
+            width: 112,
+            height: 112,
+            colorDark: "#333333", //二维码颜色
+            colorLight: "#ffffff", //二维码背景色
+            correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
+          })
+        }
       },
       beforeCreate(){
         this.form = this.$form.createForm(this);
         this.form.getFieldDecorator('keys', { initialValue: [], preserve: true });
+      },
+      mounted(){
+          let id=this.$route.params.projectId;
+          this.getUrl(id);
       }
     }
 </script>
