@@ -172,7 +172,7 @@
           }else{
             callback();
             this.mobile=this.formData.getFieldValue('phoneNumber');
-            console.log(this.mobile)
+            // console.log(this.mobile)
           }
         }
       },
@@ -196,9 +196,9 @@
           callback();
         }
       },
-      handleChange(val){
-        console.log(val)
-      },
+      // handleChange(val){
+      //   console.log(val)
+      // },
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){

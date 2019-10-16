@@ -132,7 +132,7 @@
             return;
           };
           //提交表单
-          console.log(fieldsValue)
+          // console.log(fieldsValue)
 
         })
       },
@@ -190,9 +190,9 @@
           callback();
         }
       },
-      handleChange(val){
-        console.log(val)
-      },
+      // handleChange(val){
+      //   console.log(val)
+      // },
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){

@@ -136,6 +136,7 @@
                 if(res.code==='001'){
                   this.$message.success('登录成功！');
                   this.$store.commit('setLogin',true);
+                  this.$store.commit('setPhone',fieldsValue.username);
                    //跳转到主页
                     this.$router.push('/home');
                 }
@@ -145,9 +146,9 @@
           })
         })
       },
-      handleChange(val){
-        console.log(val)
-      },
+      // handleChange(val){
+      //   console.log(val)
+      // },
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){

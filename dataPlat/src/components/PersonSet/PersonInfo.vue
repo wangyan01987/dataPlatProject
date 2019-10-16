@@ -12,7 +12,7 @@
              <span v-show="!isEditor">{{personInfo.name?personInfo.name:'未设置'}}</span>
            </a-form-item>
            <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="性别" >
-               <a-radio-group v-decorator="['radio-group']" v-show="isEditor">
+               <a-radio-group v-decorator="['sex']" v-show="isEditor">
                  <a-radio value="1">
                    女
                  </a-radio>
@@ -109,13 +109,18 @@
           personInfo:{
             name:'啦啦啦啦',
             emial:'',
-            phone:'15652738784'
+            phone:'',
+            gender:'',
+            company:'',
           },
           isEditPhone:false,
           isEditEmail:false,
           isEditor:false
         }
 
+      },
+      mounted(){
+        this.personInfo.phone = this.$store.state.phone;
       },
       methods:{
           editor(){
@@ -136,12 +141,32 @@
               this.visible=false;
         },
         submit(){
-          this.form.validateFields((err, fieldsValue) => {
+           this.form.validateFields((err, fieldsValue) => {
             if (err) {
               return;
             };
             //提交表单
-            console.log(fieldsValue)
+            this.$ajax('bomextract/user/modifypersoninfo','POST',fieldsValue).then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  // 更新数据
+                  this.$message.success('修改成功！');
+                  this.form.setFieldsValue(fieldsValue);
+                  this.personInfo.name = fieldsValue.name;
+                  this.personInfo.company = fieldsValue.company;
+                  if (fieldsValue.sex === "1"){
+                    this.personInfo.gender = "女";
+                  }else if(fieldsValue.sex === "2"){
+                    this.personInfo.gender = "男";
+                  }
+                  // 返回
+                  this.isEditor=false;
+                  
+                }
+                else{
+                  this.$message.err(res.msg);
+                }
+          })
           })
         },
         cancel(){

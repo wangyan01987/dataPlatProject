@@ -8,7 +8,8 @@ const store=new Vuex.Store({
   })],
   state:{
       isLogin:false,
-       projectName:''
+       projectName:'',
+       phone:'',
   },
   mutations:{
        setLogin(state,val){
@@ -16,6 +17,9 @@ const store=new Vuex.Store({
        },
     setProjectName(state,val){
          state.projectName=val;
+    },
+    setPhone(state, val){
+      state.phone=val;
     }
   }
 
