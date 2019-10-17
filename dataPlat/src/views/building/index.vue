@@ -1,7 +1,8 @@
 <template>
    <div class="box-container">
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
-     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}">
+     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
+     :loading="loading">
        <span slot="action" slot-scope="record,index" class="action">
          <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
          <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.index,index)" />
@@ -19,28 +20,26 @@
       data(){
         const columns = [
           { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}`},
-          { title: '楼栋名称', dataIndex: 'name', key: 'name' },
-          { title: '楼栋号', dataIndex: 'number', key: 'number' },
-          { title: '关联栋号', dataIndex: 'assiocateNum', key: 'assiocateNum' },
-          { title: '建筑层数', dataIndex: 'floor', key: 'floor' },
-          { title: '预制层数', dataIndex: 'preFloor', key: 'preFloor' },
-          { title: '抗震等级', dataIndex: 'protectLevel', key: 'protectLevel' },
-          { title: '单层建筑面积m²', dataIndex: 'area', key: 'area' },
-          { title: '构建类型', dataIndex: 'buildType', key: 'buildType' },
+          { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName' },
+          { title: '楼栋号', dataIndex: 'number', key: 'floorCode' },
+          { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor' },
+          { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum' },
+          { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
+          { title: '抗震等级', dataIndex: 'quakeGrade', key: 'quakeGrade' },
+          { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
+          { title: '构建类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [
-          { index:1, name: '——', number:'001', assiocateNmu: '002', floor: '14',preFloor:'14',protectLevel:'三级',area:112,buildType:'楼板、墙、梁' },
-          {index:2, name: '——', number:'002', assiocateNmu: '002', floor: '14',preFloor:'14',protectLevel:'三级',area:112,buildType:'楼板、墙、梁' },
-          { index:3, name: '——', number:'003', assiocateNmu: '002', floor: '14',preFloor:'14',protectLevel:'三级',area:112,buildType:'楼板、墙、梁' },
-          {index:4, name: '——', number:'004', assiocateNmu: '002', floor: '14',preFloor:'14',protectLevel:'三级',area:112,buildType:'楼板、墙、梁' },
+
 
         ];
           return{
             dataSource,
             columns,
             pagination:{},
-            dataflag:'000'
+            dataflag:'000',
+            loading:false,
           }
       },
       methods:{
@@ -48,7 +47,7 @@
             e.stopPropagation();
           this.$confirm({
             title: '删除单体',
-            iconType:'close-circle',
+            icon:'close-circle',
             content: '确认删除此单体？一旦将单体删除，所有与此单体相关信息、文件将会被清除。',
             okText: '确认',
             cancelText: '取消',
@@ -69,7 +68,7 @@
    this.dataflag='002';
           },
           getKey(record){
-               return record.index;
+               return record.floorId
           },
         click(record,index){
           let self=this;
@@ -85,31 +84,40 @@
               }
             }
         },
-        fetch (params = {}) {
-          // console.log('params:', params);
-          // reqwest({
-          //   url: 'https://randomuser.me/api',
-          //   method: 'get',
-          //   data: {
-          //     results: 10,
-          //     ...params,
-          //   },
-          //   type: 'json',
-          // }).then((data) => {
-          //   const pagination = { ...this.pagination };
-          //   // Read total count from server
-          //   // pagination.total = data.totalCount;
-          //   pagination.total = 200;
-          //pagination.pageSize='20'
-          //   this.loading = false;
-          //   this.data = data.results;
-          //   this.pagination = pagination;
-           //
-          // });
+        fetch (num,size) {
+            this.loading=true;
+            let obj={
+              projectId:this.projectId,
+              "pageNum":num,
+              "pageSize":size
+
+            };
+            this.$ajax('bomextract/build/getmonomer','POST',obj).then((res) => {
+              res=res.data;
+              if(res.code==='001'){
+                const pagination = { ...this.pagination };
+                pagination.total = res.count;
+                pagination.pageSize=size;
+                this.loading = false;
+                let obj=res.data;
+                   let obj1= obj.map(item=>{
+                     item.cmpTypeName=[];
+                         item.cmptType.forEach(item1=>{
+                          item.cmpTypeName.push( item1.component)
+                         });
+                         return item;
+                    });
+                this.dataSource = obj1;
+
+                this.pagination = pagination;
+              }
+
+          });
         }
       },
       mounted(){
-          this.fetch();
+          this.projectId=this.$route.params.projectId;
+          this.fetch(1,20);
       }
     }
 </script>
@@ -117,7 +125,7 @@
 <style scoped>
    .box-container{
      width: 82%;
-     height: 5.77rem;
+     height: auto;
      background-color: #ffffff;
      border: solid 1px #d9d9d9;
      margin:0.2rem auto;

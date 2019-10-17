@@ -5,7 +5,6 @@
       <span class="blue" @click="currentDataflag=1" v-if="currentDataflag===0">编辑信息</span>
      <projectinfo ref="projectInfo" :dataflag="currentDataflag" :projectId="propMsg.projectId" @cancel="cancel" @save="save"></projectinfo>
     </a-modal>
-    <br />
   </div>
 </template>
 <script>

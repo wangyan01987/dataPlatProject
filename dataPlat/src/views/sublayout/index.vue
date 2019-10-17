@@ -2,22 +2,22 @@
   <div class="sub-container">
     <a-menu v-model="current" mode="horizontal">
       <a-menu-item key="building">
-        <router-link to="building">单体</router-link>
+        <router-link :to="{name:'building'}">单体</router-link>
       </a-menu-item>
       <a-menu-item key="BOM" >
         <router-link to="BOM">BOM</router-link>
       </a-menu-item>
       <a-menu-item key="file">
-     <router-link to="file">文件</router-link>
+     <router-link  :to="{name:'file'}">文件</router-link>
       </a-menu-item>
       <a-menu-item key="issue">
-        <router-link to="issue">任务</router-link>
+        <router-link :to="{name:'issue'}">任务</router-link>
       </a-menu-item>
       <a-menu-item key="statics">
-        <router-link to="statics">统计</router-link>
+        <router-link :to="{name:'statics'}">统计</router-link>
       </a-menu-item>
       <a-menu-item key="member">
-        <router-link to="member">成员</router-link>
+        <router-link :to="{name:'member'}">成员</router-link>
       </a-menu-item>
     </a-menu>
     <span class="blue" @click="showProjectInfo">查看项目信息</span>
@@ -56,6 +56,11 @@
 <style scoped>
   .sub-container{
     position:relative;
+    width:100%;
+    /*height:100%;*/
+    min-height:100%;
+    display:flex;
+    flex-direction: column;
   }
   .blue{
       font-size: 14px;

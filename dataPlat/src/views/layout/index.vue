@@ -3,7 +3,7 @@
   <a-layout>
     <a-layout-header>
       <div class="top-header">
-        <div><img :src='headerImg'  style="width:32px"><a-icon   type="right" />
+        <div><a href="#/home"><img :src='headerImg'  style="width:32px"></a><a-icon   type="right" />
           <top-menu :menuList="menuList" v-if="projectName"></top-menu>
           <span>{{topTitle}}</span>
         </div>
@@ -18,7 +18,7 @@
           <img src="../../assets/images/youxiang@2x.png">
           <img src="../../assets/images/help@2x.png">
           <a-dropdown>
-      <a class="ant-dropdown-link" href="#">
+      <a class="ant-dropdown-link" href="javascript:void(0)">
         <span class="userIcon">{{userIcon}}</span>
       </a>
       <a-menu slot="overlay">
@@ -114,6 +114,8 @@
         let a=this.$route.name;
         if(a==='personSet'){
           this.topTitle='个人信息设置';
+        }else{
+          this.topTitle='';
         }
       }
     }

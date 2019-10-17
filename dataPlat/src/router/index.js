@@ -54,7 +54,14 @@ const router= new Router({
             {
               path:'BOM',
               name:'BOM',
-              component:()=>import('@/views/BOM')
+              component:()=>import('@/views/BOM'),
+              // redirect:{name:'bomview'},
+              // children:[{
+              //   name:'bomview',
+              //   path:'bomview',
+              //   component:()=>import('@/views/BOM/BOMView')
+              //
+              // }]
             },
             {
               path:'file',

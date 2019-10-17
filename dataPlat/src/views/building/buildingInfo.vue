@@ -1,6 +1,5 @@
 <template>
   <a-form :form="form"
-
   >
     <a-form-item
       label="楼栋名称"
@@ -10,46 +9,45 @@
       <a-input
         v-if="dataflag!=='000'"
         v-decorator="[
-          'name',
+          'floorName',
           {rules: [{ max:20,message:'最大长度为20个字符' }]}
         ]"
       />
-      <span v-else>{{buildingInfo.name}}</span>
+      <span v-else>{{buildingInfo.floorName}}</span>
     </a-form-item>
     <a-form-item
       label="楼栋号"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol"
     >
-      <a-input v-if="dataflag!=='000'" v-decorator="['number',
+      <a-input v-if="dataflag!=='000'" v-decorator="['floorCode',
           {rules: [{ required: true, message: '请输入楼栋号' },{pattern:/^[\w]+$/,message:'楼栋号输入格式不正确'}]}
         ]"
         placeholder="请输入楼栋号"
       >
       </a-input>
-      <span v-else>{{buildingInfo.number}}</span>
+      <span v-else>{{buildingInfo.floorCode}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-      <a-input-number :min="0" :max="15"  v-if="associateNumEdit&&dataflag!=='000'" :precision="1"  v-decorator="[ 'associateNum',{rules: [{}]}
-        ]" />
-      <span v-else>{{buildingInfo.associateNum}}</span>
+      <a-input-number :min="0" :max="15"  v-if="associateNumEdit&&dataflag!=='000'"   v-decorator="[ 'relationfloor']" />
+      <span v-else>{{buildingInfo.relationfloor}}</span>
       <a-icon type="plus-circle" @click="associateNumEdit=true" v-if="dataflag!=='000'" />
     </a-form-item>
     <a-form-item
       label="建筑层数"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number :min="0" :max="15"  v-decorator="['floor']" v-if="dataflag!=='000' "/>
-      <span v-else>{{buildingInfo.floor}}</span>
+      <a-input-number :min="0" :max="15"  v-decorator="['floorNum']" v-if="dataflag!=='000' "/>
+      <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
     <a-form-item
       label="预制层数"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
       <a-input-number :min="0" :max="15"  v-decorator="[
-          'prefloor'
+          'preFloorNum'
         ]"  v-if="dataflag!=='000'"/>
-      <span v-else>{{buildingInfo.prefloor}}</span>
+      <span v-else>{{buildingInfo.preFloorNum}}</span>
     </a-form-item>
     <a-form-item
       label="抗震等级"
@@ -58,73 +56,68 @@
       <a-select
         v-if="dataflag!=='000'"
         v-decorator="[
-          'protectLevel',
+          'quakeGrade',
           {rules: []}
         ]"
         placeholder="请选择抗震等级"
         @change="handleSelectChange"
       >
-        <a-select-option value="001">
+        <a-select-option value="1">
           一级
         </a-select-option>
-        <a-select-option value="002">
+        <a-select-option value="2">
           二级
         </a-select-option>
-        <a-select-option value="003">
+        <a-select-option value="3">
           三级
         </a-select-option>
-        <a-select-option value="004">
+        <a-select-option value=4">
           四级
         </a-select-option>
-        <a-select-option value="000">
-         无
-        </a-select-option>
       </a-select>
-      <span v-else>{{buildingInfo.protectLevel}}</span>
+      <span v-else>{{buildingInfo.quakeGrade}}</span>
     </a-form-item>
     <a-form-item
       label="单层建筑面积"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number  v-decorator="[ 'area' ]" v-if="dataflag!=='000'"/>
-      <span v-else>{{buildingInfo.prefloor}}</span>
+      <a-input-number  v-decorator="[ 'monolayerArea' ]" v-if="dataflag!=='000'"/>
+      <span v-else>{{buildingInfo.monolayerArea}}</span>
     </a-form-item>
     <a-form-item
       label="备注"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
       <a-textarea  v-decorator="[
-          'addition',
+          'remark',
           {rules: [{}]}
         ]" v-if="dataflag!=='000'"/>
-      <span v-else>{{buildingInfo.addition}}</span>
+      <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
     <p>构建类型</p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:''}"  class="buildingTable">
-      <template slot="numberArrange" slot-scope="text, record, index">
-        <div key="numberArrange">
+      <template slot="floors" slot-scope="text, record, index">
+        <div key="floors">
           <a-input
             v-if="dataflag!=='000'"
-            style="margin: -5px 0 "
+            style="margin: -5px 0; "
             :value="text"
-            @change="e => handleChange(e.target.value, record.index,'numberArrange')"
+            @change="e => handleChange(e.target.value, record.index,'floors')"
           />
           <template v-else>{{text}}</template>
         </div>
       </template>
-      <template slot="buildingType" slot-scope="text, record, index">
-        <div key="buildingType" >
+      <template slot="cmpttypeId" slot-scope="text, record, index">
+        <div key="cmpttypeId" >
           <a-select
             v-if="dataflag!=='000'"
             :value="text"
             style="margin: -5px 0"
-            @change="value=> handleSelectChange(value,record.index,'buildingType')"
+            @change="value=> handleSelectChange(value,record.index,'cmpttypeId')"
+            placeholder="请选择"
           >
-            <a-select-option value="001">
-              结构
-            </a-select-option>
-            <a-select-option value="002">
-              结构2
+            <a-select-option v-for="item in typeList" :value="item.typeId" :key="item.typeId">
+              {{item.typeName}}
             </a-select-option>
           </a-select>
           <template v-else>{{text}}</template>
@@ -160,24 +153,26 @@
       };
       const columns = [
         { title: '序号', dataIndex: 'index', key: 'index'  },
-        { title: '楼层段', dataIndex: 'numberArrange', key: 'numberArrange',scopedSlots: { customRender: 'numberArrange' } },
-        { title: '构件类型', dataIndex: 'buildingType', key: 'buildingType',scopedSlots: { customRender: 'buildingType' } },
+        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' } },
+        { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } },
         { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
       ];
       const dataSource = [
-        { index:1, numberArrange: '——', buildingType:'001' },
-        { index:2, numberArrange: '——', buildingType:'002' },
-        { index:3, numberArrange: '——', buildingType:'002' },
+        // { index:1, floors: '——', buildingType:'001',cmpttypeId:'001' },
+        // { index:2, floors: '——', buildingType:'002',cmpttypeId:'002' },
+        // { index:3, floors: '——', buildingType:'003',cmpttypeId:'003' },
       ];
       return {
         buildingInfo:{},
+        typeList:[],
         formLayout: 'horizontal',
         formItemLayout,
         form: this.$form.createForm(this),
         associateNumEdit:false,
         columns,
         dataSource,
-        isSubmit:false
+        isSubmit:false,
+        projectId:""
       };
     },
     methods: {
@@ -198,9 +193,23 @@
         e.preventDefault();
         this.form.validateFields((err, values) => {
           if (!err) {
-            console.log('Received values of form: ', values);
             this.isSubmit=true;
-            console.log(this.dataSource)
+            let obj=Object.assign({},values);
+              obj.projectId=this.$route.params.projectId;
+              let data=JSON.parse(JSON.stringify(this.dataSource));
+                let newArr=data.map(item=>{
+                  delete item.index;
+                    return item;
+                });
+              obj.cmptType=newArr;
+              this.$ajax('bomextract/build/addmonomer','POST',obj).then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  this.$message.success('创建成功',5)
+                }else{
+                  this.$message.error(res.msg);
+                }
+              })
           }
         });
       },
@@ -222,10 +231,24 @@
 
                }
       },
+      //获取构件类型下拉框
+       getBuildingType(){
+        this.$ajax('bomextract/build/getcmpttypeidname','GET').then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            this.typeList=res.data;
+            console.log(this.typeList)
+          }
+        })
+       },
+      getMonomer(){
+        this.$ajax('bomextract/build/getmonomer','POST')
+      }
     },
     mounted(){
       if(this.dataflag==='002'){
         this.dataSource=[];
+        this.getBuildingType();
       }
     }
   };
