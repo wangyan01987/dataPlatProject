@@ -1,0 +1,83 @@
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  font-size:625%;
+}
+body{
+  font-size:14px;
+}
+.ant-modal-wrap{
+  overflow: hidden;
+}
+.ant-modal{
+  top:20px;
+  padding-bottom:0;
+  max-height:95%;
+  overflow-y:auto;
+}
+.ant-menu-horizontal{
+  padding-left:0.54rem;
+}
+.sub-container{
+  text-align:left;
+}
+.box-body .ant-tabs-bar{
+  border:none;
+}
+.login-box .ant-tabs-nav-wrap{
+  margin-bottom:0.4rem ;
+}
+.login-box .ant-input-affix-wrapper{
+  height:0.4rem;
+}
+.register .ant-form-item-control-wrapper{
+  text-align:left;
+}
+.ant-tabs-bar.ant-tabs-top-bar{
+  background-color:#fff;
+  text-align: left;
+  padding-left:70px;
+}
+.main-container{
+  height:100%;
+}
+.ant-layout{
+  height:100%;
+}
+.ant-layout-content>div{
+  background-color:#F2F3F5;
+}
+.top-header{
+  border-bottom: 1px solid #eee;
+}
+.ant-table-pagination.ant-pagination{
+  float:none;
+  text-align: center;
+}
+.ant-form-item{
+  margin-bottom: 10px;
+}
+.buildingTable .ant-table-placeholder{
+display:none
+}
+.login-box .ant-tabs-bar{
+  margin-bottom: 0;
+}
+.ant-modal-body .content-box {
+  height:232px;
+}
+/*.ant-modal-body{*/
+  /*padding:0;*/
+/*}*/
+.ant-table-body td{
+  max-width:380px;
+  overflow: hidden;
+ white-space: nowrap;
+  text-overflow: ellipsis;
+
+}
