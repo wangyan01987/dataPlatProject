@@ -11,7 +11,7 @@
 
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" bordered>
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  >
            <template
              v-for="col in ['version', 'floor', 'prodId','addinfo']"
              :slot="col"
@@ -32,14 +32,15 @@
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.key)"><a-icon type="save" style="font-size:16px;" /></a>
+          <a @click="() => save(record.key)"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
           <a-popconfirm title="确定取消?" @confirm="() => cancel(record.key)">
-            <a><a-icon type="close-circle" style="font-size:16px;" /></a>
+            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
           </a-popconfirm>
         </span>
                <span v-else>
-          <a @click="() => edit(record.key)"><a-icon type="edit" style="font-size:16px;" /></a>
-                 <a > <a-icon type="copy"  @click="goDetail"/></a>
+          <a @click="() => edit(record.key)"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
+                 <a @click="()=>deleteItem(record,text,index)"> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
+                 <a > <a-icon type="copy"  @click="goDetail(record)"/></a>
         </span>
              </div>
            </template>
@@ -48,11 +49,12 @@
       <a-drawer
         title="BOM详情"
         placement="right"
-        :closable="false"
+        :width="1000"
         @close="onClose"
         :visible="visible"
+        :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}"
       >
-       <bom-info></bom-info>
+       <bom-info v-bind="propmsg"></bom-info>
       </a-drawer>
     </div>
 </template>
@@ -64,6 +66,7 @@
       title: '序号',
       dataIndex: 'index',
       width: '10%',
+    customRender:(text, record, index)=>`${index+1}`
     },
     {
       title: '版本',
@@ -103,7 +106,6 @@
   for (let i = 1; i < 100; i++) {
     data.push({
       key: i.toString(),
-      index: ` ${i}`,
       floor: 32,
       version: `版本 ${i}`,
     });
@@ -115,7 +117,9 @@
       return {
         data,
         columns,
-        visible:false
+        visible:false,
+        loading:false,
+        propmsg:''
       };
     },
     props:['objType','buildNum'],
@@ -128,6 +132,9 @@
       }
     },
     methods: {
+      deleteItem(record){
+        //删除构件
+      },
       onSearch(){
 
       },
@@ -135,8 +142,9 @@
         //关闭
         this.visible = false;
       },
-      goDetail(){
+      goDetail(record){
         this.visible=true;
+        this.propMsg=record;
       },
       handleChange(value, key, column) {
         const newData = [...this.data];
@@ -161,6 +169,7 @@
           delete target.editable;
           this.data = newData;
           this.cacheData = newData.map(item => ({ ...item }));
+          this.$message.success('保存成功',2);
         }
       },
       cancel(key) {

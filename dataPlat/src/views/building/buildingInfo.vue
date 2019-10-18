@@ -158,9 +158,6 @@
         { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
       ];
       const dataSource = [
-        // { index:1, floors: '——', buildingType:'001',cmpttypeId:'001' },
-        // { index:2, floors: '——', buildingType:'002',cmpttypeId:'002' },
-        // { index:3, floors: '——', buildingType:'003',cmpttypeId:'003' },
       ];
       return {
         buildingInfo:{},
