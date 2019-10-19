@@ -2,13 +2,13 @@
    <div class="box-container">
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
-     :loading="loading">
+     :loading="loading" :current='current'>
        <span slot="action" slot-scope="record,index" class="action">
-         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
-         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.index,index)" />
+         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record.floorId,$event,index)"/>
+         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
        </span>
      </a-table>
-     <info-form :dataflag="dataflag" ref="infoform"></info-form>
+     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc'></info-form>
    </div>
 </template>
 
@@ -40,10 +40,22 @@
             pagination:{},
             dataflag:'000',
             loading:false,
+            floorId:'',
+            current:1
           }
       },
       methods:{
-        deleteBuilding(e,index){
+        handlesubmitSucc(){
+          if(this.dataflag==='002'){
+           this.fetch(1,20);
+          }
+          else{
+            let currentIndex=this.current;
+            this.fetch(currentIndex,20);
+          }
+         
+        },
+        deleteBuilding(e,floorId,index){
             e.stopPropagation();
           this.$confirm({
             title: '删除单体',
@@ -52,16 +64,32 @@
             okText: '确认',
             cancelText: '取消',
             onOk:()=>{
+              this.$ajax('bomextract/build/delmonomer','GET',{'floorId':floorId}).then((res) => {
+              res=res.data;
+              if(res.code==='001'){
               let dataSource=[...this.dataSource];
-              this.dataSource=dataSource.filter(item=>item.index!==index);
+              this.dataSource=dataSource.filter(item=>item.floorId!==floorId);
               this.$message.success('删除成功！');
+              }
+              else{
+                this.$message.error(res.msg);
+                
+              }
+
+
+          });
+              
             }
           });
         },
-        editBuilding(record,e){
+        editBuilding(floorId,e,index){
+          // 获取单体信息
           e.stopPropagation();
           this.$refs.infoform.visible=true;
           this.dataflag='001';
+          this.floorId=floorId;
+
+
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

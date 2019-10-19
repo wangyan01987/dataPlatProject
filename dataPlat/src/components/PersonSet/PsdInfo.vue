@@ -8,7 +8,7 @@
             <a-input
               placeholder="请输入旧密码"
               v-decorator="[
-          'oldpassword',
+          'oldPassword',
           {
             rules: [{
               validator: validPass,
@@ -19,7 +19,7 @@
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-input placeholder="请输入新密码" v-decorator="[ 'newpassword',{
+            <a-input placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
             rules: [{
               validator: validnewPass,
             }],
@@ -76,11 +76,6 @@
         formItemLayout: formItemLayout,
         formTailLayout,
         form: this.$form.createForm(this),
-        personInfo:{
-          name:'啦啦啦啦',
-          emial:'',
-          phone:'15652738784'
-        },
       }
 
     },
@@ -89,7 +84,7 @@
         if(!value){
           callback('请输入新密码')
         }
-        else  if(!isPassword(value)){
+        else if(!isPassword(value)){
           callback('密码格式不正确');
         }
         else{
@@ -100,34 +95,47 @@
         if(!value){
           callback('请输入密码')
         }
-        else  if(!isPassword(value)){
+        else if(!isPassword(value)){
           callback('密码格式不正确');
         }
         else{
           callback();
         }
       },
-      compareToFirstPassword  (rule, value, callback) {
-        const form = this.formData;
+      compareToFirstPassword(rule, value, callback) {
+        var form = this.form;
         if(!value){
           callback('请再次输入密码');
         }
-        if (value && value !== form.getFieldValue('password')) {
+        else if(value !== form.getFieldValue('newPassWord')) {
           callback('两次输入密码不一致');
-        } else {
+        } 
+        else{
           callback();
         }
       },
       submit(){
-        this.form.validateFields((err, fieldsValue) => {
-          if (err) {
-            return;
-          };
-          //提交表单
-          console.log(fieldsValue)
-          //提交成功后提示，跳重新登录
-        })
-      },
+          this.form.validateFields((err, fieldsValue) => {
+            if (err) {
+              console.log("123")
+              return;
+            };
+            console.log("vvv")
+            //提交表单
+            this.$ajax('bomextract/user/modifypassword','POST',fieldsValue).then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  // 更新数据
+                  this.$message.success('修改成功！');
+                  // 重新登录
+                  
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+          })
+          })
+        },
       cancel(){
         this.form.resetFields();
         this.isEditor=false;

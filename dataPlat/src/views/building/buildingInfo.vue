@@ -71,7 +71,7 @@
         <a-select-option value="3">
           三级
         </a-select-option>
-        <a-select-option value=4">
+        <a-select-option value="4">
           四级
         </a-select-option>
       </a-select>
@@ -145,7 +145,7 @@
 
 <script>
   export default {
-    props:['dataflag'],
+    props:['dataflag','floorId'],
     data () {
       const formItemLayout = {
         labelCol: { span: 6 },
@@ -199,10 +199,20 @@
                     return item;
                 });
               obj.cmptType=newArr;
-              this.$ajax('bomextract/build/addmonomer','POST',obj).then(res=>{
+              var url = "";
+              if(this.dataflag==='002'){
+                url='bomextract/build/addmonomer'
+              }else if(this.dataflag==='001'){
+                url='bomextract/build/modifymonomer';
+                obj.floorId=this.floorId;
+                delete obj.projectId;
+              }
+              this.$ajax(url,'POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
-                  this.$message.success('创建成功',5)
+                  this.$message.success('创建成功',5);
+                  this.$emit('success',true);
+               
                 }else{
                   this.$message.error(res.msg);
                 }
@@ -234,7 +244,6 @@
           res=res.data;
           if(res.code==='001'){
             this.typeList=res.data;
-            console.log(this.typeList)
           }
         })
        },
@@ -245,6 +254,9 @@
     mounted(){
       if(this.dataflag==='002'){
         this.dataSource=[];
+        this.getBuildingType();
+      }else if(this.dataflag==='001'){
+        // this.dataSource="";  获取该条信息的值
         this.getBuildingType();
       }
     }

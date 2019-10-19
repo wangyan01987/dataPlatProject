@@ -5,7 +5,7 @@
        <div class="info-box">
          <a-form :form="form" >
            <a-form-item  label="姓名" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'name',
+             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',
 {rules: [,{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'}]}
         ]">
              </a-input>
@@ -26,7 +26,7 @@
              <a-input v-show="isEditor"
                placeholder="请输入所属公司"
                v-decorator="[
-          'company',
+          'companyName',
           {rules: [{max:20,message:'最大长度为40个字符'}],
           }
         ]"
@@ -34,9 +34,9 @@
              </a-input>
              <span  v-show="!isEditor">{{personInfo.company?personInfo.company:'未设置'}}</span>
            </a-form-item>
-           <a-form-item label="职位" :label-col="formItemLayout.labelCol" v-show="isEditor"
+           <a-form-item label="职位" :label-col="formItemLayout.labelCol"
                         :wrapper-col="formItemLayout.wrapperCol">
-             <a-input placeholder="请输入职位"
+             <a-input placeholder="请输入职位" v-show="isEditor"
                       v-decorator="[ 'position',{rules: [{max:20,message:'最大长度为20个字符'}], }  ]">
              </a-input>
              <span  v-show="!isEditor">{{personInfo.position?personInfo.position:'未设置'}}</span>
@@ -76,7 +76,7 @@
              </a-col>
              <a-col :span="6">
                <span  class="action"  v-show="isEditEmail" @click="isEditEmail=false">取消</span>
-               <span  class="action"  v-show="isEditEmail">确定</span>
+               <span  class="action"  v-show="isEditEmail" @click="modifyEmail">确定</span>
              </a-col>
            </a-row>
          </a-form-item>
@@ -88,6 +88,7 @@
 
 <script>
   import ResetPhone from './ResetPhone.vue'
+  import {email} from '@/utils/common.js'
     export default {
         name: "PersonInfo",
       components:{ResetPhone},
@@ -107,11 +108,12 @@
           formTailLayout,
           form: this.$form.createForm(this),
           personInfo:{
-            name:'啦啦啦啦',
+            name:'',
             emial:'',
             phone:'',
             gender:'',
             company:'',
+            position:'',
           },
           isEditPhone:false,
           isEditEmail:false,
@@ -120,7 +122,29 @@
 
       },
       mounted(){
-        this.personInfo.phone = this.$store.state.phone;
+        // 获取个人信息
+        this.$ajax('bomextract/user/getpersoninfo','POST').then(res=>{
+                res=res.data;
+                console.log
+                if(res.code==='001'){
+                  // 更新数据
+                  this.personInfo.name = res.data.userName;
+                  this.personInfo.email = res.data.email;
+                  this.personInfo.phone = res.data.phoneNumber;
+                  if (res.data.sex === "1"){
+                    this.personInfo.gender = "女";
+                  }else if(res.data.sex === "2"){
+                    this.personInfo.gender = "男";
+                  }
+                  this.personInfo.company = res.data.companyName;
+                  this.personInfo.position = res.data.position;
+                  // 返回
+                  this.isEditEmail=false;
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+          })
       },
       methods:{
           editor(){
@@ -129,16 +153,40 @@
           checkName(){
 
           },
-
+          checkEmail(rule, value,callback){
+              if(value&&!email(value)){
+                callback('邮箱格式不正确');
+              }
+              else{
+                callback();
+              }
+          },
         checkPhone(){
 
+        },
+        modifyEmail(){
+          var newEmail = this.form.getFieldValue("email");
+          this.$ajax('bomextract/user/modifyemail','POST',{"email":newEmail}).then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  // 更新数据
+                  this.$message.success('修改成功！');
+                  this.personInfo.email = newEmail;
+                  // 返回
+                  this.isEditEmail=false;
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+          })
+          
         },
         changePhone(){
           this.visible=true;
         },
         handleOk(){
               this.$refs.resetphone.handleSubmit();
-              this.visible=false;
+          
         },
         submit(){
            this.form.validateFields((err, fieldsValue) => {
@@ -152,8 +200,9 @@
                   // 更新数据
                   this.$message.success('修改成功！');
                   this.form.setFieldsValue(fieldsValue);
-                  this.personInfo.name = fieldsValue.name;
-                  this.personInfo.company = fieldsValue.company;
+                  this.personInfo.name = fieldsValue.userName;
+                  this.personInfo.company = fieldsValue.companyName;
+                  this.personInfo.position = fieldsValue.position;
                   if (fieldsValue.sex === "1"){
                     this.personInfo.gender = "女";
                   }else if(fieldsValue.sex === "2"){
@@ -164,7 +213,7 @@
                   
                 }
                 else{
-                  this.$message.err(res.msg);
+                  this.$message.error(res.msg);
                 }
           })
           })
