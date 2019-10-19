@@ -86,6 +86,7 @@
     },
     methods:{
       validnewPass(rule, value, callback){
+        console.log('----')
         if(!value){
           callback('请输入新密码')
         }
@@ -107,22 +108,28 @@
           callback();
         }
       },
-      compareToFirstPassword  (rule, value, callback) {
-        const form = this.formData;
+      compareToFirstPassword(rule, value, callback) {
+
+        const form = this.form;
+        console.log(form.getFieldValue('oldpassword'))
         if(!value){
           callback('请再次输入密码');
         }
-        if (value && value !== form.getFieldValue('password')) {
-          callback('两次输入密码不一致');
-        } else {
-          callback();
+        else{
+          if(value!== form.getFieldValue('oldpassword')) {
+            callback('两次输入密码不一致');
+          }
+          else {
+            callback();
+          }
         }
+
       },
       submit(){
         this.form.validateFields((err, fieldsValue) => {
-          if (err) {
-            return;
-          };
+          // if (err) {
+          //   return;
+          // };
           //提交表单
           console.log(fieldsValue)
           //提交成功后提示，跳重新登录

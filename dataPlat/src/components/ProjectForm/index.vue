@@ -24,8 +24,10 @@
       save() {
         this.visible = false;
         setTimeout(()=>{
+          console.log('--------------');
+          console.log(this.$parent)
           this.$parent.getItem(1);
-        },5);
+        },50);
       },
       cancel(){
             this.visible=false;

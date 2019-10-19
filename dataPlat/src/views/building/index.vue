@@ -5,7 +5,7 @@
      :loading="loading">
        <span slot="action" slot-scope="record,index" class="action">
          <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
-         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.index,index)" />
+         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
        </span>
      </a-table>
      <info-form :dataflag="dataflag" ref="infoform"></info-form>
@@ -21,7 +21,7 @@
         const columns = [
           { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}`},
           { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName' },
-          { title: '楼栋号', dataIndex: 'number', key: 'floorCode' },
+          { title: '楼栋号', dataIndex: 'floorCode', key: 'floorCode' },
           { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor' },
           { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum' },
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
@@ -30,10 +30,7 @@
           { title: '构建类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
-        const dataSource = [
-
-
-        ];
+        const dataSource = [];
           return{
             dataSource,
             columns,
@@ -43,7 +40,7 @@
           }
       },
       methods:{
-        deleteBuilding(e,index){
+        deleteBuilding(e,index,key){
             e.stopPropagation();
           this.$confirm({
             title: '删除单体',
@@ -53,7 +50,7 @@
             cancelText: '取消',
             onOk:()=>{
               let dataSource=[...this.dataSource];
-              this.dataSource=dataSource.filter(item=>item.index!==index);
+              this.dataSource=dataSource.filter(item=>item.floorId!==index);
               this.$message.success('删除成功！');
             }
           });
@@ -62,6 +59,7 @@
           e.stopPropagation();
           this.$refs.infoform.visible=true;
           this.dataflag='001';
+          //获取数据
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

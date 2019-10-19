@@ -11,7 +11,7 @@
       <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
-      <a-input v-decorator="[ 'projectCode', {rules:[{validator:checkNumber}]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
+      <a-input v-decorator="[ 'projectCode', {rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
       <span v-show="dataflag===0">{{obj.projectCode}}</span>
     </a-form-item>
     <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >

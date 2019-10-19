@@ -76,7 +76,7 @@
              </a-col>
              <a-col :span="6">
                <span  class="action"  v-show="isEditEmail" @click="isEditEmail=false">取消</span>
-               <span  class="action"  v-show="isEditEmail">确定</span>
+               <span  class="action"  v-show="isEditEmail" @click="modifyEmail">确定</span>
              </a-col>
            </a-row>
          </a-form-item>
@@ -123,6 +123,9 @@
         this.personInfo.phone = this.$store.state.phone;
       },
       methods:{
+        modifyEmail(){
+             let email=this.form.getFieldValue('email');
+        },
           editor(){
             this.isEditor=true
           },
@@ -161,7 +164,7 @@
                   }
                   // 返回
                   this.isEditor=false;
-                  
+
                 }
                 else{
                   this.$message.err(res.msg);

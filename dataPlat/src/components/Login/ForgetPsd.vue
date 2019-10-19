@@ -172,7 +172,6 @@
           }else{
             callback();
             this.mobile=this.formData.getFieldValue('phoneNumber');
-            // console.log(this.mobile)
           }
         }
       },

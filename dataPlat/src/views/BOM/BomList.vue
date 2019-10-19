@@ -4,7 +4,7 @@
         <template slot="barGrade" slot-scope="text,record,index">
           <div >
             <a-select  style="width: 120px" @change="handleChange"  v-if="record.editable">
-              <a-select-option value="1" v-for="item in barGradeArr" :key="item" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option  v-for="item in barGradeArr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
             <template v-else>{{text}}</template>
           </div>
@@ -12,7 +12,7 @@
         <template slot="specification" slot-scope="text,record,index">
           <div >
             <a-select  style="width: 120px" @change="handleChange"  v-if="record.editable">
-              <a-select-option value="1" v-for="item in specificationArr" :key="item" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option value="1" v-for="item in specificationArr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
             <template v-else>{{text}}</template>
           </div>
@@ -27,7 +27,7 @@
                             v-if="record.editable"
                             style="margin: -5px 0"
                             :value="text"
-                            @change="e => handleChange(e.target.value, record.key, col)"
+                            @change="value => handleChange(value, record.key, col)"
             />
             <template v-else>{{text}}</template>
           </div>

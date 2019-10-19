@@ -19,7 +19,7 @@
                                  v-if="record.editable"
                                  style="margin: -5px 0"
                                  :value="text"
-                                 @change="e => handleChange(e.target.value, record.key, col)"
+                                 @change="value => handleChange(value, record.key, col)"
                  />
                  <template v-else>{{text}}</template>
                </div>
@@ -166,6 +166,7 @@
       },
 
       handleChange(value, key, column) {
+        console.log(key)
         const newData = [...this.data];
         const target = newData.filter(item => key === item.key)[0];
         if (target) {

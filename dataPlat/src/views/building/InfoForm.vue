@@ -1,3 +1,4 @@
+
 <template>
     <a-modal
       :title=title
@@ -9,9 +10,8 @@
         <a-button type="default"  v-show="dataflag!=='000'" @click="handleCancel">取消</a-button>
         <a-button type="primary" v-show="dataflag!=='000'" @click="handleOk">确定</a-button>
       </template>
-      <building-info :dataflag="dataflag" ref="building"></building-info>
+      <building-info :dataflag="dataflag" ref="building" @success="visible=false"></building-info>
     </a-modal>
-
 </template>
 <script>
   import BuildingInfo from './buildingInfo'
@@ -22,7 +22,6 @@
       return {
         visible: false,
         confirmLoading: false,
-
       }
     },
     computed:{
@@ -35,9 +34,6 @@
        }
     },
     methods: {
-      showModal() {
-        this.visible = true
-      },
       handleOk(e) {
         this.$refs.building.handleSubmit(e);
       },

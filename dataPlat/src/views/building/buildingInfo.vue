@@ -8,9 +8,7 @@
     >
       <a-input
         v-if="dataflag!=='000'"
-        v-decorator="[
-          'floorName',
-          {rules: [{ max:20,message:'最大长度为20个字符' }]}
+        v-decorator="[ 'floorName', {rules: [{ max:20,message:'最大长度为20个字符' }]}
         ]"
       />
       <span v-else>{{buildingInfo.floorName}}</span>
@@ -31,7 +29,7 @@
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
       <a-input-number :min="0" :max="15"  v-if="associateNumEdit&&dataflag!=='000'"   v-decorator="[ 'relationfloor']" />
       <span v-else>{{buildingInfo.relationfloor}}</span>
-      <a-icon type="plus-circle" @click="associateNumEdit=true" v-if="dataflag!=='000'" />
+      <a-icon type="plus-circle" @click="addAssociateNum" v-if="dataflag!=='000'" />
     </a-form-item>
     <a-form-item
       label="建筑层数"
@@ -173,6 +171,9 @@
       };
     },
     methods: {
+      addAssociateNum(){
+
+      },
       addBuilding(){
         let a=this.dataSource.length+1;
         let obj={index:a++
@@ -202,7 +203,8 @@
               this.$ajax('bomextract/build/addmonomer','POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
-                  this.$message.success('创建成功',5)
+                  this.$message.success('创建成功',5);
+                  this.$emit('success',true);
                 }else{
                   this.$message.error(res.msg);
                 }
@@ -225,7 +227,6 @@
                if(target){
                  target[column]=value;
                  this.dataSource=newData;
-
                }
       },
       //获取构件类型下拉框
