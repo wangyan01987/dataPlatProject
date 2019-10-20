@@ -58,6 +58,7 @@
 
 <script>
   import ResetPhone from './ResetPhone.vue'
+  import {isPassword} from '@/utils/common.js'
   export default {
     name: "PersonInfo",
     components:{ResetPhone},
@@ -81,7 +82,6 @@
     },
     methods:{
       validnewPass(rule, value, callback){
-        console.log('----')
         if(!value){
           callback('请输入新密码')
         }
@@ -104,14 +104,12 @@
         }
       },
       compareToFirstPassword(rule, value, callback) {
-
         const form = this.form;
-        console.log(form.getFieldValue('oldpassword'))
         if (!value) {
           callback('请再次输入密码');
         }
         else {
-          if (value !== form.getFieldValue('oldpassword')) {
+          if (value !== form.getFieldValue('newPassWord')) {
             callback('两次输入密码不一致');
           }
           else {
@@ -123,10 +121,9 @@
       submit(){
           this.form.validateFields((err, fieldsValue) => {
             if (err) {
-              console.log("123")
               return;
             };
-
+            delete fieldsValue.repassword
             //提交表单
             this.$ajax('bomextract/user/modifypassword','POST',fieldsValue).then(res=>{
                 res=res.data;
@@ -134,6 +131,7 @@
                   // 更新数据
                   this.$message.success('修改成功！');
                   // 重新登录
+                  
 
                 }
                 else{
