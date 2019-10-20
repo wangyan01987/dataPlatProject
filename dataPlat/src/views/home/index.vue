@@ -26,7 +26,7 @@
        </div>
     </div>
     <div class="slide-item" @click='loadItem'>
-      <p>滑动加载更多</p>
+      <p>加载更多</p>
       <p><a-icon type="down" /></p>
     </div>
     <projectform ref="projectform" :propMsg="propMsg"></projectform>
@@ -35,6 +35,7 @@
 
 <script>
   import projectform from '@/components/ProjectForm'
+  let count=1;
     export default {
       name: "index",
       components:{projectform},
@@ -63,6 +64,14 @@
           addItemList: []
         }
       },
+      watch:{
+        // 'itemList'(newval,oldval){
+        //      if(newval.length<oldval.length){
+        //
+        //      }
+        // }
+
+      },
       methods: {
         goToDetail(id,name){
           this.$router.push({name:'projectDetail',params:{projectId:id}});
@@ -70,8 +79,11 @@
         },
         loadItem() {
           //获取新的数据
-          this.addItemList=this.addItemList.map(this.randomImg);
-          this.itemList=this.itemList.concat(this.addItemList);
+          this.getItem(count++).then(res=>{
+            this.addItemList= res. map(this.randomImg);
+            this.itemList=this.itemList.concat(this.addItemList);
+          });
+
         },
         editItem(id,e){
           //编辑信息 flag=1
@@ -119,18 +131,23 @@
           });
 
         },
-        getItem(num,page){
+       async getItem(num,page){
           page=19;
           this.loaded=true;
-          this.$ajax('bomextract/project/getprojectsbypage','POST',{"pageNum":num, "pageSize":page}).then(res=>{
+          let  storeList=[];
+         await this.$ajax('bomextract/project/getprojectsbypage','POST',{"pageNum":num, "pageSize":page}).then(res=>{
             res=res.data;
             if(res.code==='001'){
               this.loaded=false;
-              this.itemList=res.data;
-              this.itemList= this.itemList.map(this.randomImg);
+              if(res.data.length!==0){
+                storeList=res.data.map(this.randomImg);
+              }
+              else{
+                this.$message.loading('没有更多数据了',1);
+              }
             }
-
           });
+           return storeList;
         },
         addItem(){
           //添加信息 flag=2
@@ -151,8 +168,11 @@
         //项目名称清零
         this.$store.commit('setProjectName',null);
         //获取项目列表
-        this.getItem(1);
-        //项目复制图片
+       this.getItem(1).then(res=>{
+         this.itemList=res;
+         let arr5=res.slice(0,4);
+         this.$store.commit('setMenuList',arr5);
+       });
 
         //滑动加载
         var that = this;
