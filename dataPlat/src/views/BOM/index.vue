@@ -3,14 +3,14 @@
  <div class="container-item link">
     <div class="item-top">
       <span>楼栋号：</span>
-      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid">
-          <a-select-option  v-for="item in  buildingNumArr" :value="item" :key='item+Math.random()' >{{item}}</a-select-option>
+      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placceholder="请选择">
+          <a-select-option  v-for="item in  buildingNumArr" :value="item" :key='item' >{{item}}</a-select-option>
       </a-select>
     </div>
    <div>
    </div>
    <a-anchor @click="goBom">
-     <a-anchor-link  :href="item"  v-for="item in dataList" :title="item" :key="item" />
+     <a-anchor-link  :href="item"  v-for="item in dataList" :title="item" :key="item"  />
    </a-anchor>
       <span v-for="item in dataList" :id="item"></span>
  </div>
@@ -40,13 +40,15 @@
       methods:{
           handleChange(val){
             //获取构件类型列表
+            console.log(this.buildingid)
             this.getType(val);
           },
 
         goBom(e,link){
             e.preventDefault();
             this.bomprops={
-              objType:link.title
+              objType:link.title,
+              buildingid:this.buildingid
             }
         },
         //获取构件类型
@@ -54,7 +56,7 @@
             this.$ajax('bomextract/bom/getcmpttypebybuildid','POST',{buildingid:val}).then(res=>{
                     res=res.data;
                     if(res.code==='001'){
-                      console.log(res.data)
+                        this.dataList=res.data;
                     }
                })
           },

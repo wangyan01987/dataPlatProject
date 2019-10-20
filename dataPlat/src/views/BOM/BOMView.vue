@@ -1,19 +1,19 @@
 <template>
     <div class="bom-item-container">
         <div class="bom-item-top">
-          楼层：<a-select defaultValue="1" style="width: 200px;margin-right:0.24rem;"  @change="handleChange">
-              <a-select-option value="1">1</a-select-option>
+          楼层：<a-select  style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择">
+              <a-select-option v-for="item in floorArr" :value="item.val" :key="item.val">{{item.label}}</a-select-option>
             </a-select>
-              版本号：<a-select defaultValue="1" style="width: 200px;margin-right:0.24rem;" >
-                <a-select-option value="1">版本号</a-select-option>
+              版本号：<a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" >
+                <a-select-option v-for="item in versionArr" :value="item.val" :key="item.val">{{item.label}}</a-select-option>
               </a-select>
-              <a-input-search placeholder="搜索"  @search="onSearch"  style="width:300px"/>
+              <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%"/>
 
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  >
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' >
            <template
-             v-for="col in ['version', 'floor', 'prodId','addinfo']"
+             v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
              slot-scope="text, record, index"
            >
@@ -38,8 +38,10 @@
           </a-popconfirm>
         </span>
                <span v-else>
-          <a @click="() => edit(record.key)"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
-                 <a @click="()=>deleteItem(record,text,index)"> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
+          <a @click="() => edit(record.key)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>
+                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.key)">
+                       <a> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
+                 </a-popconfirm>
                  <a > <a-icon type="copy"  @click="goDetail(record)"/></a>
         </span>
              </div>
@@ -54,7 +56,7 @@
         :visible="visible"
         :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}"
       >
-       <bom-info v-bind="propmsg"></bom-info>
+       <bom-info :propmsg="propmsg"></bom-info>
       </a-drawer>
     </div>
 </template>
@@ -89,9 +91,9 @@
     },
     {
       title: '备注',
-      dataIndex: 'addinfo',
+      dataIndex: 'remark',
       width: '20%',
-      scopedSlots: { customRender: 'addinfo' },
+      scopedSlots: { customRender: 'remark' },
 
     },
 
@@ -102,14 +104,10 @@
     },
   ];
 
-  const data = [];
-  for (let i = 1; i < 100; i++) {
-    data.push({
-      key: i.toString(),
-      floor: 32,
-      version: `版本 ${i}`,
-    });
-  }
+  const data = [{
+    cmptId:'00001'
+
+  }];
   export default {
     components:{BomInfo},
     data() {
@@ -119,10 +117,12 @@
         columns,
         visible:false,
         loading:false,
-        propmsg:''
+        propmsg:'',
+        floorArr:[],
+        versionArr:[],
       };
     },
-    props:['objType','buildNum'],
+    props:['objType','buildingid'],
     watch:{
        'objType'(val){
          //更新数据
@@ -131,9 +131,56 @@
          //楼栋号更新的话，将objType清空
       }
     },
+    computed:{
+      bomprops(){
+        let obj={
+          objType:this.objType,
+          buildingid:this.buildingid
+        };
+      return obj;
+      }
+    },
     methods: {
-      deleteItem(record){
+      getKey(record){
+           return  record.cmptid;
+      },
+      getVersion(){
+        //获取版本号
+
+        this.$ajax('bomextract/bom/getversiondict','POST',this.bomprops).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+                this.versionArr=res.data;
+          }
+        })
+      },
+      getOption(){
+         //获取楼层列表
+        this.$ajax('bomextract/bom/getfloordict','POST',this.bomprops).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            this.floorArr=res.data;
+          }
+        })
+      },
+      floorChange(val){
+
+      },
+      deleteItem(record,key){
         //删除构件
+
+        this.$ajax('bomextract/bom/deletecomponent','POST',{buildingId:this.buildingid,data:[record.cmptId]}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+               this.$message.success('删除成功',2);
+               this.data.filter(item=>item.key!==key);
+            let newData= this.data.filter(item=>item.key!==key);
+            this.data=newData;
+          }
+          else{
+            this.$message.error(res.msg);
+          }
+        });
       },
       onSearch(){
 
@@ -169,6 +216,14 @@
           delete target.editable;
           this.data = newData;
           this.cacheData = newData.map(item => ({ ...item }));
+           //服务器保存
+          console.log(target)
+          this.$ajax('bomextract/bom/modifycmpt','POST',target).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+                this.$message.success('修改成功！',2);
+            }
+          })
           this.$message.success('保存成功',2);
         }
       },
@@ -182,6 +237,22 @@
         }
       },
     },
+    mounted(){
+      //获取bom数据
+     this.$ajax('bomextract/bom/getbominfobypage','POST',this.bomprops).then(res=>{
+       res=res.data;
+       this.loading=true;
+       if(res.code==='001'){
+         res.data.forEach(item=>{
+           item.cmptInfo.bomList=item.bomList;
+            item.cmptInfo.sizeList=item.sizeList;
+           this.data.push(item.cmptInfo);
+         });
+         this.loading=false;
+       }
+
+     })
+    }
   };
 </script>
 

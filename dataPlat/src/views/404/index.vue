@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-
+  <img src="./404@2x.png" alt="">
 </div>
 </template>
 
@@ -14,6 +14,5 @@
   .container{
     width:100%;
     height:100%;
-    background-image: url("./404@2x.png");
   }
 </style>

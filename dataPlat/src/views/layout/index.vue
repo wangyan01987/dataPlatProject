@@ -3,9 +3,10 @@
   <a-layout>
     <a-layout-header>
       <div class="top-header">
-        <div><a href="#/home"><img :src='headerImg'  style="width:32px"></a><a-icon   type="right" />
-          <top-menu :menuList="menuList" v-if="projectName"></top-menu>
-          <span>{{topTitle}}</span>
+        <div><a href="#/home"><img :src='headerImg'  style="width:32px"></a>
+          <a-icon   type="right"  v-show="$route.name!=='home'" />
+          <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
+          <span v-else>{{topTitle}}</span>
         </div>
         <div>
           <a-input-search
@@ -29,7 +30,6 @@
           <span  @click="logout">退出登录</span>
         </a-menu-item>
       </a-menu>
-
   </a-dropdown>
 
           <span class="userName">{{userName}}</span>
@@ -47,37 +47,29 @@
         name: "index",
       components:{topMenu},
       data(){
-          return{
-            userName:'杨依',
-            menuList:[{
-              name:'1号项目',
-              id:'001'
-            },{
-              name:'2号项目',
-              id:'002'
-            }],
-            topTitle:''
-
+          return {
+            userName: '杨依',
           }
       },
       computed:{
-          // menuList(){
-          //   return this.$store.state.menuList;
-          // },
+          menuList(){
+            console.log(this.$store.state.menuList)
+            return this.$store.state.menuList;
+          },
+            topTitle(){
+              let a=this.$route.name;
+              if(a==='personSet'){
+               return '个人信息设置';
+              }else{
+               return '';
+              }
+            },
           userIcon(){
             return this.userName.substring(0,1);
           },
-        isInProject(){
-             return this.$store.state.inProject;
-        },
-        projectName(){
-            return this.$store.state.projectName;
-        },
         headerImg(){
-            if(this.$store.state.inProject){
-
+            if(this.$route.name=='home'){
               return require('../../assets/images/zhuye-hui@2x.png');
-
             }
             else{
                return  require('../../assets/images/zhuye@2x.png');
@@ -109,12 +101,7 @@
         }
       },
       mounted(){
-        let a=this.$route.name;
-        if(a==='personSet'){
-          this.topTitle='个人信息设置';
-        }else{
-          this.topTitle='';
-        }
+
       }
     }
 </script>
