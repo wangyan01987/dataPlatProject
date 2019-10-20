@@ -27,7 +27,7 @@
       <span v-else>{{buildingInfo.floorCode}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-      <a-input-number :min="0" :max="15"  v-if="associateNumEdit&&dataflag!=='000'"   v-decorator="[ 'relationfloor']" />
+      <a-input-number :min="0" :max="15"  v-if="dataflag!=='000'"   v-decorator="[ 'relationfloor']" />
       <span v-else>{{buildingInfo.relationfloor}}</span>
       <a-icon type="plus-circle" @click="addAssociateNum" v-if="dataflag!=='000'" />
     </a-form-item>

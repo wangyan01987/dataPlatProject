@@ -48,12 +48,12 @@
       components:{topMenu},
       data(){
           return {
-            userName: '杨依',
+            
           }
       },
       computed:{
+        
           menuList(){
-            console.log(this.$store.state.menuList)
             return this.$store.state.menuList;
           },
             topTitle(){
@@ -65,7 +65,10 @@
               }
             },
           userIcon(){
-            return this.userName.substring(0,1);
+            return this.$store.state.userName.substring(0,1);
+          },
+          userName(){
+                 return this.$store.state.userName
           },
         headerImg(){
             if(this.$route.name=='home'){
@@ -81,6 +84,20 @@
            // console.log(to)
           }
 
+      },
+      mounted(){
+        // 获取个人信息
+        this.$ajax('bomextract/user/getpersoninfo','POST').then(res=>{
+                res=res.data;
+                if(res.code==='001'){
+                  // 更新数据
+                 // this.userName = res.data.userName;
+                 this.$store.commit('setUserName',res.data.userName);
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+          })
       },
       methods:{
           onSearch(){
@@ -100,9 +117,6 @@
             });
         }
       },
-      mounted(){
-
-      }
     }
 </script>
 
