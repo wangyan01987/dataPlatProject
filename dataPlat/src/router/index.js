@@ -14,6 +14,11 @@ const router= new Router({
       component:()=>import('@/views/login')
     },
     {
+      path:'/loginMobile',
+      name:'loginMobile',
+      component:()=>import('@/views/loginMobile')
+    },
+    {
       path:'/invite',
       name:'invite',
       component:()=>import('@/views/invite/index')
@@ -92,14 +97,22 @@ const router= new Router({
     }
   ]
 });
-import  store from '../store'
+import  store from '../store';
+
+
 router.beforeEach((to,from,next)=>{
-  // console.log(store.state.isLogin)
-     if(!store.state.isLogin&&to.path!=='/login'&&to.path!=='/invite'){
-           next('/login')
-     }else{
-        next();
+  let client=document.body.clientWidth;
+     if(client<750&&to.path!=='/loginMobile'){
+        next('/loginMobile');
      }
+     else{
+       if(!store.state.isLogin&&to.path!=='/login'&&to.path!=='/invite'){
+         next('/login')
+       }else{
+         next();
+       };
+     }
+
 });
 export default router;
 
