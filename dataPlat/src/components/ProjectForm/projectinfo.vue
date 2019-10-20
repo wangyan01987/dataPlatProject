@@ -124,20 +124,6 @@
     },
     components: {},
     methods: {
-      getProvince(){
-        console.log("123");
-        
-        if(!this.formData.parentId){
-          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":""}).then(res=>{
-            res=res.data;
-            if(res.code==='001'){
-            console.log(res);
-            }else{
-              this.$message.error(res.msg);
-            }
-          });
-      }
-      },
       checkNumber(rule, value, callback){
             if(value&&!isNum(value)){
               callback('项目编号不符合规范，请重新输入');
@@ -264,7 +250,16 @@
 
      this.getProjectInfo();
 
-   }
+   };
+    this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
+      res=res.data;
+      if(res.code==='001'){
+      console.log(res);
+      }else{
+        console.log(res);
+        this.$message.error(res.msg);
+      }
+    });
 
     }
   }

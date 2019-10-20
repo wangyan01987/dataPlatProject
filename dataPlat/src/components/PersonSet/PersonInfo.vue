@@ -125,7 +125,6 @@
         // 获取个人信息
         this.$ajax('bomextract/user/getpersoninfo','POST').then(res=>{
                 res=res.data;
-                console.log
                 if(res.code==='001'){
                   // 更新数据
                   this.personInfo.name = res.data.userName;
@@ -206,6 +205,7 @@
                   this.personInfo.name = fieldsValue.userName;
                   this.personInfo.company = fieldsValue.companyName;
                   this.personInfo.position = fieldsValue.position;
+                  this.$store.commit('setUserName',this.personInfo.name);
                   if (fieldsValue.sex === "1"){
                     this.personInfo.gender = "女";
                   }else if(fieldsValue.sex === "2"){

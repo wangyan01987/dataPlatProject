@@ -28,7 +28,9 @@
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
 
+
       <a-input-number :min="0" :max="15"  v-decorator="[`relationfloor${index}`]" v-if="dataflag!=='000'" v-for="(item,index) in relationfloor" :key="index" />
+
       <span v-else>{{buildingInfo.relationfloor}}</span>
       <a-icon type="plus-circle" @click="addAssociateNum" v-if="dataflag!=='000'" />
     </a-form-item>
