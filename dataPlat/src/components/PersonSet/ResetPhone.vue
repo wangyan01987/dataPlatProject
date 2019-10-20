@@ -3,7 +3,7 @@
     <a-form :form="formData">
 
       <a-form-item >
-        <a-input placeholder="请输入手机号"   v-decorator="[ 'account',
+        <a-input placeholder="请输入手机号"   v-decorator="[ 'phoneNumber',
             {rules: [{validator:checkAccount}]}
         ]">
           <img slot="prefix" :src='require("../../assets/images/iphone@2x.png")' style="width:14px"/>
@@ -12,7 +12,7 @@
       <a-form-item>
         <a-row :gutter="8">
           <a-col :span="16">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'assignCode',{rules: [{validator:assignCode}]}]">
+            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}]}]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
@@ -57,6 +57,16 @@
       sendCode(){
         //获取验证码
         //发送请求
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        this.$ajax('sendsms','POST',{type:'mdfpwd',phoneNumber:mobile}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            this.$message.success('发送成功');
+          }
+          else{
+            this.$message.error(res.msg);
+          }
+        });
         const TIME_COUNT = 60;
         if (!this.timer) {
           this.count = TIME_COUNT;
@@ -80,7 +90,20 @@
             return;
           };
           //提交表单
-          console.log(fieldsValue)
+          this.$ajax('bomextract/user/modifyphone','POST', fieldsValue).then(res=>{
+            res = res.data;
+            if(res.code==='001'){
+                  // 更新数据
+                  this.$message.success('修改成功！');
+                  //
+                  this.$parent.phoneNumber=fieldsValue.phoneNumber;
+                  this.$parent.visible=false;
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+      
+        })
         })
       },
       cancel(){

@@ -15,7 +15,7 @@
       <span v-show="dataflag===0">{{obj.projectCode}}</span>
     </a-form-item>
     <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
-      <a-select @change="handleChange" placeholder="请选择项目类型" v-decorator="[ 'protype']">
+      <a-select placeholder="请选择项目类型" v-decorator="[ 'protype']">
         <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
       </a-select>
       <span v-show="dataflag===0">{{obj.protype}}</span>
@@ -34,7 +34,7 @@
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="城市" v-decorator="[ 'cityId']">
-              <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in cityarr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.cityName}}</span>
@@ -43,7 +43,7 @@
           <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="区县" v-decorator="[
           'districtId']">
-              <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in districtarr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.districtName}}</span>
@@ -116,13 +116,28 @@
         arr:[{label:'住宅',value:1},{label:'商业',value:2},
           {label:'办公',value:3},{label:'教育',value:4},
           {label:'其他',value:5},
-
         ],
+        cityarr:[],
+        districtarr:[],
       }
 
     },
     components: {},
     methods: {
+      getProvince(){
+        console.log("123");
+        
+        if(!this.formData.parentId){
+          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":""}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+            console.log(res);
+            }else{
+              this.$message.error(res.msg);
+            }
+          });
+      }
+      },
       checkNumber(rule, value, callback){
             if(value&&!isNum(value)){
               callback('项目编号不符合规范，请重新输入');
@@ -191,6 +206,18 @@
            this.$emit('cancel');
       },
       handleChange(val) {
+        console.log("123");
+        
+        if(!this.formData.parentId){
+          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":""}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+            console.log(res);
+            }else{
+              this.$message.error(res.msg);
+            }
+          });
+        }
 
       },
       getProjectInfo(){
