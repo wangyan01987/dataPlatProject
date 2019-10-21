@@ -124,6 +124,7 @@
                 this.loading = false;
                 let obj=res.data;
                    let obj1= obj.map(item=>{
+                     item.relationfloor=item.relationfloor.join('，');
                      item.cmpTypeName=[];
                          item.cmptType.forEach(item1=>{
                           item.cmpTypeName.push( item1.component)

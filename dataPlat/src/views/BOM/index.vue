@@ -3,7 +3,7 @@
  <div class="container-item link">
     <div class="item-top">
       <span>楼栋号：</span>
-      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placceholder="请选择">
+      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placeholder="请选择">
           <a-select-option  v-for="item in  buildingNumArr" :value="item.val" :key='item.val' >{{item.label}}</a-select-option>
       </a-select>
     </div>

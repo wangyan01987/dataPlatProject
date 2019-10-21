@@ -192,8 +192,6 @@
            this.$emit('cancel');
       },
       handleChange(val) {
-        console.log("123");
-        
         if(!this.formData.parentId){
           this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":""}).then(res=>{
             res=res.data;

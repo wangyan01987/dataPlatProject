@@ -131,7 +131,7 @@
           });
 
         },
-       async getItem(num,page){
+       async getItem(num,page,flag){
           page=19;
           this.loaded=true;
           let  storeList=[];
@@ -141,6 +141,10 @@
               this.loaded=false;
               if(res.data.length!==0){
                 storeList=res.data.map(this.randomImg);
+                if(flag){
+                  this.itemList=storeList;
+                  console.log(this.itemList)
+                }
               }
               else{
                 this.$message.loading('没有更多数据了',1);
@@ -153,8 +157,6 @@
           //添加信息 flag=2
           this.propMsg.dataflag=2;
           this.$refs.projectform.visible=true;
-
-
         },
         randomImg(item){
             //产生随机数
