@@ -2,12 +2,12 @@
     <div class="bom-item-container">
         <div class="bom-item-top">
           楼层：<a-select  style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择">
-              <a-select-option v-for="item in floorArr" :value="item.val" :key="item.val">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in floorArr" :value="item" :key="item">{{item}}</a-select-option>
             </a-select>
-              版本号：<a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" >
-                <a-select-option v-for="item in versionArr" :value="item.val" :key="item.val">{{item.label}}</a-select-option>
+              版本号：<a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" >
+                <a-select-option v-for="item in versionArr" :value="item" :key="item">{{item}}</a-select-option>
               </a-select>
-              <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%"/>
+              <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%" />
         </div>
        <div class="bom-item-body">
          <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey':pagination="pagination">
@@ -31,14 +31,14 @@
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.key)"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-          <a-popconfirm title="确定取消?" @confirm="() => cancel(record.key)">
+          <a @click="() => save(record.cmptId)"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
+          <a-popconfirm title="确定取消?" @confirm="() => cancel(record.cmptId)">
             <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
           </a-popconfirm>
         </span>
                <span v-else>
                  <a @click="() => edit(record.cmptId)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>
-                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.key)">
+                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.cmptId)">
                        <a> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
                  </a-popconfirm>
                  <a > <a-icon type="copy"  @click="goDetail(record)"/></a>
@@ -117,7 +117,10 @@
         propmsg:'12345ddd',
         floorArr:[],
         versionArr:[],
-        pagination:{}
+        pagination:{},
+        floor:'',
+        version:'',
+        prodid:'11'
       };
     },
     props:['objType','buildingid'],
@@ -125,7 +128,7 @@
        'objType':{
          handler(val){
          //获取bom数据
-        console.log('开始获取bom数据啦')
+        console.log('开始获取bom数据啦');
         if(val){
           this.getBom(1,20);
         }
@@ -134,42 +137,51 @@
        },
       'buildingid'(val){
          //楼栋号更新的话，将objType清空
-        this.getBom(1,20);
+        // this.objType=null;
+        // this.getBom(1,20);
       }
     },
     computed:{
       bomprops(){
         let obj={
-          objType:this.objType,
+          cmptType:this.objType,
           buildingid:this.buildingid,
-        };
-      return obj;
+          };
+          return obj;
       }
     },
     methods: {
       getKey(record){
-           return  record.index;
+           return  record.cmptId;
       },
       getVersion(){
         //获取版本号
+        if(this.versionArr.length===0){}
         this.$ajax('bomextract/bom/getversiondict','POST',this.bomprops).then(res=>{
           res=res.data;
           if(res.code==='001'){
-                this.versionArr=res.data;
+            this.versionArr=res.data;
           }
         })
       },
       getOption(){
          //获取楼层列表
-        this.$ajax('bomextract/bom/getfloordict','POST',this.bomprops).then(res=>{
-          res=res.data;
-          if(res.code==='001'){
-            this.floorArr=res.data;
-          }
-        })
+        if(this.floorArr.length===0){
+          this.$ajax('bomextract/bom/getfloordict','POST',this.bomprops).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              this.floorArr=res.data;
+            }
+          })
+        }
       },
       floorChange(val){
-
+           this.floor=val;
+           this.getBom(1,20);
+      },
+      versionChange(val){
+        this.version=val;
+        this.getBom(1,20);
       },
       getBom(num,size){
         this.data=[];
@@ -179,6 +191,9 @@
         obj.pageSize=size;
         obj.buildingId=this.buildingid;
         obj.cmptType=this.objType;
+        obj.version=this.version;
+        obj.floor=this.floor;
+        obj.prodid=this.prodid;
         this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
           res=res.data;
           this.loading=true;
@@ -211,8 +226,9 @@
           }
         });
       },
-      onSearch(){
-
+      onSearch(val){
+        this.prodid=val;
+         this.getBom(1,20);
       },
       onClose(){
         //关闭
@@ -231,7 +247,6 @@
         }
       },
       edit(key) {
-        console.log(key)
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
         if (target) {
@@ -241,12 +256,14 @@
       },
       save(key) {
         const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
+        const target = newData.filter(item => key === item.cmptId)[0];
         const newtarget={...target};
         if (target) {
           let bomList=newtarget.bomList;
           let sizeList=newtarget.sizeList;
           delete target.editable;
+          delete target.bomList;
+          delete target.sizeList;
           let obj={
               cmptBaseInfo:target,
              bomList:bomList,
@@ -266,9 +283,9 @@
       },
       cancel(key) {
         const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
+        const target = newData.filter(item => key === item.cmptId)[0];
         if (target) {
-          Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
+          Object.assign(target, this.cacheData.filter(item => key === item.cmptId)[0]);
           delete target.editable;
           this.data = newData;
         }

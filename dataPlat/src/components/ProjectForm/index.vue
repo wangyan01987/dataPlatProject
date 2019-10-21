@@ -24,8 +24,8 @@
       save() {
         this.visible = false;
         setTimeout(()=>{
-          this.$parent.getItem(1);
-        },50);
+          this.$parent.getItem(1,19,true);
+        },200);
       },
       cancel(){
             this.visible=false;

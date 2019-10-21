@@ -251,6 +251,7 @@
           res=res.data;
           if(res.code==='001'){
             this.typeList=res.data;
+
           }
         })
        },
@@ -264,7 +265,6 @@
         this.dataSource=[];
         this.getBuildingType();
       }else if(this.dataflag==='001'){
-        // this.dataSource="";  获取该条信息的值
         this.getBuildingType();
       }else {
         let record = this.$store.state.record;

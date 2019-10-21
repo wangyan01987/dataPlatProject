@@ -105,10 +105,10 @@
       title: '类型',
       dataIndex: 'sizeName',
       width: '15%',
-      customRender:(text, record, index)=>'整版信息'
+      customRender:(text, record, index)=>'整板信息'
     },
     {
-      title: '整版面积（m²）',
+      title: '整板面积（m²）',
       dataIndex: 'area',
       width: '10%',
     },
@@ -333,6 +333,8 @@
             let target1={...target};
             target1.cmptSizeId=target.sizeId;
             delete  target1.sizeId;
+            delete target1.sizeName;
+            delete target1.diameter;
             this.$ajax('bomextract/bom/modifycmptsize','POST',target1).then(res=>{
               res=res.data;
               if(res.code==='001'){
