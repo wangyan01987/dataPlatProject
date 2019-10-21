@@ -8,10 +8,9 @@
                 <a-select-option v-for="item in versionArr" :value="item.val" :key="item.val">{{item.label}}</a-select-option>
               </a-select>
               <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%"/>
-
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' >
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey':pagination="pagination">
            <template
              v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
@@ -22,7 +21,7 @@
                  v-if="record.editable"
                  style="margin: -5px 0"
                  :value="text"
-                 @change="e => handleChange(e.target.value, record.key, col)"
+                 @change="e => handleChange(e.target.value, record.cmptId, col)"
                />
                <template v-else
                >{{text}}</template
@@ -38,7 +37,7 @@
           </a-popconfirm>
         </span>
                <span v-else>
-          <a @click="() => edit(record.key)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>
+                 <a @click="() => edit(record.cmptId)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>
                  <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.key)">
                        <a> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
                  </a-popconfirm>
@@ -51,9 +50,10 @@
       <a-drawer
         title="BOM详情"
         placement="right"
-        :width="1000"
+        :width="1100"
         @close="onClose"
         :visible="visible"
+        :destroyOnClose="true"
         :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}"
       >
        <bom-info :propmsg="propmsg"></bom-info>
@@ -104,10 +104,7 @@
     },
   ];
 
-  const data = [{
-    cmptId:'00001'
-
-  }];
+  const data =[];
   export default {
     components:{BomInfo},
     data() {
@@ -117,36 +114,44 @@
         columns,
         visible:false,
         loading:false,
-        propmsg:'',
+        propmsg:'12345ddd',
         floorArr:[],
         versionArr:[],
+        pagination:{}
       };
     },
     props:['objType','buildingid'],
     watch:{
-       'objType'(val){
-         //更新数据
+       'objType':{
+         handler(val){
+         //获取bom数据
+        console.log('开始获取bom数据啦')
+        if(val){
+          this.getBom(1,20);
+        }
+           },
+         immediate:true
        },
-      'buildNum'(val){
+      'buildingid'(val){
          //楼栋号更新的话，将objType清空
+        this.getBom(1,20);
       }
     },
     computed:{
       bomprops(){
         let obj={
           objType:this.objType,
-          buildingid:this.buildingid
+          buildingid:this.buildingid,
         };
       return obj;
       }
     },
     methods: {
       getKey(record){
-           return  record.cmptid;
+           return  record.index;
       },
       getVersion(){
         //获取版本号
-
         this.$ajax('bomextract/bom/getversiondict','POST',this.bomprops).then(res=>{
           res=res.data;
           if(res.code==='001'){
@@ -166,9 +171,33 @@
       floorChange(val){
 
       },
+      getBom(num,size){
+        this.data=[];
+        size=20;
+        let obj={};
+        obj.pageNum=num;
+        obj.pageSize=size;
+        obj.buildingId=this.buildingid;
+        obj.cmptType=this.objType;
+        this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
+          res=res.data;
+          this.loading=true;
+          if(res.code==='001'||res.state=='success'){
+            this.loading=false;
+            const pagination = { ...this.pagination };
+            pagination.total = res.count;
+            pagination.pageSize=size;
+            this.pagination=pagination;
+            res.data.forEach(item=>{
+              item.cmptBaseInfo.bomList=item.bomList;
+              item.cmptBaseInfo.sizeList=item.sizeList;
+              this.data.push(item.cmptBaseInfo);
+            });
+          }
+        })
+      },
       deleteItem(record,key){
         //删除构件
-
         this.$ajax('bomextract/bom/deletecomponent','POST',{buildingId:this.buildingid,data:[record.cmptId]}).then(res=>{
           res=res.data;
           if(res.code==='001'){
@@ -190,20 +219,21 @@
         this.visible = false;
       },
       goDetail(record){
+        this.propmsg=record;
         this.visible=true;
-        this.propMsg=record;
       },
       handleChange(value, key, column) {
         const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
+        const target = newData.filter(item => key === item.cmptId)[0];
         if (target) {
           target[column] = value;
           this.data = newData;
         }
       },
       edit(key) {
+        console.log(key)
         const newData = [...this.data];
-        const target = newData.filter(item => key === item.key)[0];
+        const target = newData.filter(item => key === item.cmptId)[0];
         if (target) {
           target.editable = true;
           this.data = newData;
@@ -212,18 +242,25 @@
       save(key) {
         const newData = [...this.data];
         const target = newData.filter(item => key === item.key)[0];
+        const newtarget={...target};
         if (target) {
+          let bomList=newtarget.bomList;
+          let sizeList=newtarget.sizeList;
           delete target.editable;
+          let obj={
+              cmptBaseInfo:target,
+             bomList:bomList,
+             sizeList:sizeList
+          };
           this.data = newData;
           this.cacheData = newData.map(item => ({ ...item }));
            //服务器保存
-          console.log(target)
-          this.$ajax('bomextract/bom/modifycmpt','POST',target).then(res=>{
+          this.$ajax('bomextract/bom/modifycmpt','POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
                 this.$message.success('修改成功！',2);
             }
-          })
+          });
           this.$message.success('保存成功',2);
         }
       },
@@ -238,20 +275,7 @@
       },
     },
     mounted(){
-      //获取bom数据
-     this.$ajax('bomextract/bom/getbominfobypage','POST',this.bomprops).then(res=>{
-       res=res.data;
-       this.loading=true;
-       if(res.code==='001'){
-         res.data.forEach(item=>{
-           item.cmptInfo.bomList=item.bomList;
-            item.cmptInfo.sizeList=item.sizeList;
-           this.data.push(item.cmptInfo);
-         });
-         this.loading=false;
-       }
 
-     })
     }
   };
 </script>

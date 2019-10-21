@@ -72,10 +72,7 @@
               }
               else{
                 this.$message.error(res.msg);
-
               }
-
-
           });
 
             }

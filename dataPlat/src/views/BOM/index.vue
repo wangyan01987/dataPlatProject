@@ -4,7 +4,7 @@
     <div class="item-top">
       <span>楼栋号：</span>
       <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placceholder="请选择">
-          <a-select-option  v-for="item in  buildingNumArr" :value="item" :key='item' >{{item}}</a-select-option>
+          <a-select-option  v-for="item in  buildingNumArr" :value="item.val" :key='item.val' >{{item.label}}</a-select-option>
       </a-select>
     </div>
    <div>
@@ -26,7 +26,7 @@
       components:{BomView},
       data(){
           return{
-            dataList:['叠合楼板','分户墙'],
+            dataList:[],
             bomprops:{},
             buildingNumArr:[],
             buildingid:''
@@ -40,20 +40,19 @@
       methods:{
           handleChange(val){
             //获取构件类型列表
-            console.log(this.buildingid)
             this.getType(val);
           },
-
         goBom(e,link){
             e.preventDefault();
             this.bomprops={
               objType:link.title,
               buildingid:this.buildingid
-            }
+            };
+            console.log(this.bomprops);
         },
         //获取构件类型
           getType(val){
-            this.$ajax('bomextract/bom/getcmpttypebybuildid','POST',{buildingid:val}).then(res=>{
+            this.$ajax('bomextract/bom/getcmpttypebybuildid','GET',{buildingid:val}).then(res=>{
                     res=res.data;
                     if(res.code==='001'){
                         this.dataList=res.data;
@@ -72,10 +71,9 @@
             if(res.code==='001'){
                 let arr=[];
                  res.data.forEach(item=>{
-                    arr.push(item.floorCode);
+                    arr.push({label:item.floorCode,val:item.floorId});
                  });
                  this.buildingNumArr=arr;
-
             }
 
           });

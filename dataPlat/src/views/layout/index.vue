@@ -20,7 +20,7 @@
           <img src="../../assets/images/help@2x.png">
           <a-dropdown>
       <a class="ant-dropdown-link" href="javascript:void(0)">
-        <span class="userIcon">{{userIcon}}</span>
+        <a-avatar :style="{color:'#fff',backgroundColor: iconColor}">{{userIcon}}</a-avatar>
       </a>
       <a-menu slot="overlay">
         <a-menu-item>
@@ -48,11 +48,15 @@
       components:{topMenu},
       data(){
           return {
-            
+
+            colorArr:['#ecbc27','#ced182',' #f39798','#58b788','#f48e46','#5a91c9','#fb91bd','#5bbefc','#5ae0ca'],
           }
       },
       computed:{
-        
+        iconColor(){
+                  let flag=Math.floor(Math.random()*9);
+                  return this.colorArr[flag];
+        },
           menuList(){
             return this.$store.state.menuList;
           },

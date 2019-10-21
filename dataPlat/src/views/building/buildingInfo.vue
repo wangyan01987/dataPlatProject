@@ -1,11 +1,7 @@
 <template>
   <a-form :form="form"
   >
-    <a-form-item
-      label="楼栋名称"
-      :label-col="formItemLayout.labelCol"
-      :wrapper-col="formItemLayout.wrapperCol"
-    >
+    <a-form-item label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
       <a-input
         v-if="dataflag!=='000'"
         v-decorator="[ 'floorName', {rules: [{ max:20,message:'最大长度为20个字符' }]}
@@ -13,11 +9,7 @@
       />
       <span v-else>{{buildingInfo.floorName}}</span>
     </a-form-item>
-    <a-form-item
-      label="楼栋号"
-      :label-col="formItemLayout.labelCol"
-      :wrapper-col="formItemLayout.wrapperCol"
-    >
+    <a-form-item label="楼栋号" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
       <a-input v-if="dataflag!=='000'" v-decorator="['floorCode',
           {rules: [{ required: true, message: '请输入楼栋号' },{pattern:/^[\w]+$/,message:'楼栋号输入格式不正确'}]}
         ]"
@@ -27,10 +19,12 @@
       <span v-else>{{buildingInfo.floorCode}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-
-
-      <a-input-number :min="0" :max="15"  v-decorator="[`relationfloor${index}`]" v-if="dataflag!=='000'" v-for="(item,index) in relationfloor" :key="index" />
-
+      <span v-for="(item,index) in relationfloor" v-if="dataflag!=='000'" >
+        <a-input-number :min="0" :max="15"  v-decorator="[`relationfloor${index}`]"  :key="index"
+        @click="item.editable=true" @blur="item.editable=false"
+        />
+        <a-icon type="close-circle" v-show="item.editable" @click="deleteInput(item.key)"/>
+      </span>
       <span v-else>{{buildingInfo.relationfloor}}</span>
       <a-icon type="plus-circle" @click="addAssociateNum" v-if="dataflag!=='000'" />
     </a-form-item>
@@ -145,6 +139,7 @@
 </template>
 
 <script>
+  let count=0;
   export default {
     props:['dataflag','floorId'],
     data () {
@@ -175,7 +170,7 @@
     },
     methods: {
       addAssociateNum(){
-          this.relationfloor.push({});
+          this.relationfloor.push({key:count++});
       },
       addBuilding(){
         let a=this.dataSource.length+1;
@@ -189,6 +184,11 @@
       },
       getKey(record) {
         return record.index;
+      },
+      deleteInput(key){
+        this.relationfloor=this.relationfloor.filter(item=>{
+          return  item.key!==key;
+          });
       },
       handleSubmit(e) {
         e.preventDefault();
@@ -210,7 +210,12 @@
                 url='bomextract/build/modifymonomer';
                 obj.floorId=this.floorId;
                 delete obj.projectId;
-              }
+              };
+              //关联楼栋
+            obj.relationfloor=[];
+                  for(let i=0;i<this.relationfloor.length;i++){
+                    obj.relationfloor.push(obj[`relationfloor${i}`]);
+                  }
               this.$ajax(url,'POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
@@ -249,9 +254,7 @@
           }
         })
        },
-      getMonomer(){
-        this.$ajax('bomextract/build/getmonomer','POST')
-      }
+
     },
     mounted(){
       if(this.dataflag==='002'){

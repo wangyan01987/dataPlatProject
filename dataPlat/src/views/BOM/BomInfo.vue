@@ -15,11 +15,7 @@
                slot-scope="text, record, index"
              >
                <div :key="col">
-                 <a-input-number :min="0"
-                                 v-if="record.editable"
-                                 style="margin: -5px 0"
-                                 :value="text"
-                                 @change="value => handleChange(value, record.key, col,'001')"
+                 <a-input-number :min="0" v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.key, col,'001')"
                  />
                  <template v-else>{{text}}</template>
                </div>
@@ -31,8 +27,7 @@
           <a-popconfirm title="确定取消?" @confirm="() => cancel(record.key)">
             <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
           </a-popconfirm>
-        </span>
-                 <span v-else>
+        </span><span v-else>
           <a @click="() => edit(record.key,'001')"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
         </span>
                </div>
@@ -52,26 +47,23 @@
         <a-table :columns="columsSource" :pagination="false" :dataSource="dataSource" :rowKey="record=>{record.materialId}">
           <template slot="barGrade" slot-scope="text,record,index">
             <div >
-              <a-select  style="width: 120px" @focus="handleChangeLevel(record)"  v-if="record.editable">
-                  <a-select-option  v-for="item in specificationArr" :key="item" :value="item">{{item}}</a-select-option>
+              <a-select  style="width: 120px" @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.key, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
+                  <a-select-option  v-for="item in barGradeArr " :key="item" :value="item">{{item}}</a-select-option>
               </a-select>
               <template v-else>{{text}}</template>
             </div>
           </template>
           <template slot="specification" slot-scope="text,record,index">
             <div >
-              <a-select  style="width: 120px" @focus="handleChangeSize"  v-if="record.editable">
-                <a-select-option value="1" v-for="item in barGradeArr " :key="item" :value="item">{{item}}</a-select-option>
+              <a-select  style="width: 120px" @focus="handleChangeSize(record)"  v-if="record.editable" placeholder="请选择" :value="text"  @change="value => handleChange(value, record.key,'specification','002')">
+                <a-select-option value="1" v-for="item in specificationArr" :key="item.specification" :value="item.specification">{{item.specification}}</a-select-option>
               </a-select>
               <template v-else>{{text}}</template>
             </div>
           </template>
-          <template
-            v-for="col in ['length', 'amount', 'allWeight']"
-            :slot="col"
-            slot-scope="text, record, index"
+          <template slot="amount" slot-scope="text, record, index"
           >
-            <div :key="col">
+            <div>
               <a-input-number :min="0"
                               v-if="record.editable"
                               style="margin: -5px 0"
@@ -101,7 +93,6 @@
 </template>
 
 <script>
-  import BomList from './BomList'
   const columnsStatics=[
 
     {
@@ -119,38 +110,39 @@
     {
       title: '整版面积（m²）',
       dataIndex: 'area',
-      width: '15%',
+      width: '10%',
     },
     {
-      title: '整板体积(m³)(m²)',
+      title: '整板体积(m³)',
       dataIndex: 'volume',
-      width: '15%',
+      width: '10%',
 
     },
     {
       title: '洞口面积(m²)',
-      dataIndex: ' holeArea',
-      width: '20%',
+      dataIndex: 'holeArea',
+      width: '10%',
 
     },
     {
       title: '缺口体积(m³)',
-      dataIndex: ' gapVolume',
-      width: '20%',
+      dataIndex: 'gapVolume',
+      width: '10%',
 
     },
     {
       title: '整板净面积(m²)',
-      dataIndex: ' actualArea',
-      width: '20%',
+      dataIndex: 'actualArea',
+      width: '10%',
 
     },
     {
       title: '整板净体积(m³)',
-      dataIndex: ' actualVolume',
-      width: '20%',
+      dataIndex: 'actualVolume',
+      width: '10%',
     },
   ];
+  //尺寸信息
   const columns = [
     {
       title: '序号',
@@ -200,7 +192,7 @@
     },
     {
       title: '类型',
-      dataIndex: 'version',
+      dataIndex: 'matl1st',
       width: '15%',
     },
     {
@@ -224,7 +216,6 @@
       title: '长度/面积',
       dataIndex: 'length',
       width: '15%',
-      scopedSlots: { customRender: 'length' },
     },
     {
       title: '数量',
@@ -234,9 +225,8 @@
     },
     {
       title: '总量',
-      dataIndex: 'allWeight',
+      dataIndex: 'allweight',
       width: '15%',
-      scopedSlots: { customRender: 'allWeight' },
     },
     {
       title: '图形',
@@ -251,21 +241,19 @@
   ];
   const data = [];
   const typeMap={
-    ' 混凝土类':1,
-    ' 钢材类':2,
-    ' 钢筋半成品类':3,
-    '水电预埋件类':4,
-    '预埋件类':5,
-    '保温材料类':6,
-    ' 装饰面类':7,
-    '混凝土配料类':8
+    '混凝土类':'01',
+    '钢材类':'02',
+    '钢筋半成品类':'03',
+    '水电预埋件类':'04',
+    '预埋件类':'05',
+    '保温材料类':'06',
+    '装饰面类':'07',
+    '混凝土配料类':'08'
   };
   export default {
     data() {
       this.cacheData = data.map(item => ({ ...item }));
       const dataSource=[];
-
-
       return {
         data,
         columns,
@@ -282,10 +270,10 @@
     props:['propmsg'],
     computed:{
       productNum(){
-        return this.propmsg.productNum;
+        return this.propmsg.prodCode;
       },
       productId(){
-        return this.propmsg.productId;
+        return this.propmsg.prodId;
       },
       },
     methods: {
@@ -342,12 +330,15 @@
             this.data = newData;
             this.cacheData = newData.map(item => ({ ...item }));
             //保存尺寸信息
-            this.$ajax('bomextract/bom/modifycmptsize','POST',target).then(res=>{
+            let target1={...target};
+            target1.cmptSizeId=target.sizeId;
+            delete  target1.sizeId;
+            this.$ajax('bomextract/bom/modifycmptsize','POST',target1).then(res=>{
               res=res.data;
               if(res.code==='001'){
                 this.$message.success('修改成功',2);
                 //修改统计信息
-                this.dataStatics=res.data;
+                this.dataStatics=[res.data];
               }
               else{
                 this.$message.error('修改失败',2);
@@ -356,7 +347,7 @@
 
           }
         }
-        else if(dataflag==='002'){
+        else if(flag==='002'){
           const newData = [...this.dataSource];
           const target = newData.filter(item => key === item.key)[0];
           if (target) {
@@ -364,7 +355,13 @@
             this.dataSource = newData;
             this.cacheData = newData.map(item => ({ ...item }));
             //保存物料信息
-            this.$ajax('bomextract/bom/modifymaterial','POST',target).then(res=>{
+            let obj={
+              materialId:target.matlId,
+              matlId:target.amount,
+              specification:target.specification,
+              barGrade:target.barGrade,
+            };
+            this.$ajax('bomextract/bom/modifymaterial','POST',obj).then(res=>{
               res=res.data;
               if(res.code==='001'){
                 this.$message.success('修改成功',2);
@@ -380,10 +377,12 @@
       },
       handleChangeSize(record){
            //获取规格列表
+        console.log(record)
               let obj={};
                 obj.firsttype=typeMap[record.matl1st];
-                obj.matlname=record.matlname;
-                this.$ajax('bomextract/bom/getspecifications','POST',obj).then(res=> {
+                obj.matlname=record.matlName;
+                console.log(obj);
+                this.$ajax('bomextract/bom/getspecifications','GET',obj).then(res=> {
                   res = res.data;
                   if(res.code==='001') {
                     this.specificationArr= res.data;
@@ -411,12 +410,14 @@
       },
     },
     mounted(){
+      console.log('----------')
+      console.log(this.propmsg)
       //尺寸信息
-      this.data=this.props.sizeList;
+      this.data=this.propmsg.sizeList;
       //统计信息数组
-      this.dataStatics=[this.props];
+      this.dataStatics=[this.propmsg];
       //物料信息
-       this.dataSource=this.props.bomList;
+      this.dataSource=this.propmsg.bomList;
 
     }
   };
