@@ -225,6 +225,14 @@
              delete obj.cityName;
              delete obj.districtName;
              //获取联动值
+            this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                this.provincearr=res.data;
+              }else{
+                this.$message.error(res.msg);
+              }
+            });
             if(obj.provinceId){
               this.provincehandleChange(obj.provinceId);
               this.handleChange(obj.cityId);
@@ -260,7 +268,7 @@
    if(this.dataflag===1||this.dataflag===0){
      this.getProjectInfo();
    };
-    if(this.dataflag!==0){
+    if(this.dataflag===2){
       this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
         res=res.data;
         if(res.code==='001'){
