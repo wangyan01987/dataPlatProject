@@ -4,7 +4,7 @@
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
        <span slot="action" slot-scope="record,index" class="action">
-         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record.floorId,$event,index)"/>
+         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
          <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
        </span>
      </a-table>
@@ -77,13 +77,13 @@
             }
           });
         },
-        editBuilding(floorId,e,index){
+        editBuilding(record,e,index){
           // 获取单体信息
           e.stopPropagation();
           this.$refs.infoform.visible=true;
           this.dataflag='001';
-
-          this.floorId=floorId;
+          this.floorId=record.floorId;
+          this.$store.commit("setRecord", record)
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

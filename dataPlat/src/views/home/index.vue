@@ -131,7 +131,6 @@
                 storeList=res.data.map(this.randomImg);
                 if(flag){
                   this.itemList=storeList;
-                  console.log(this.itemList)
                 }
               }
               else{
