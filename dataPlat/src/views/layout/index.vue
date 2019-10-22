@@ -69,7 +69,7 @@
               }
             },
           userIcon(){
-            return this.$store.state.userName.substring(0,1);
+            return this.$store.state.userName.toUpperCase().substring(0,1);
           },
           userName(){
                  return this.$store.state.userName

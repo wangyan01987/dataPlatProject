@@ -42,7 +42,6 @@
           }
       },
       methods:{
-
         handlesubmitSucc(){
           if(this.dataflag==='002'){
            this.fetch(1,20);
@@ -138,6 +137,14 @@
 
           });
         }
+      },
+      watch:{
+          '$route.params'(val){
+              if(val){
+                this.projectId=val.projectId;
+                this.fetch(1,20);
+              }
+          }
       },
       mounted(){
           this.projectId=this.$route.params.projectId;

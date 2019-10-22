@@ -3,7 +3,7 @@
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember">+邀请新成员</a-button></p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="record,text" slot="icon">
-         <span class="userIcon" :style="{backgroundColor:setColor}">{{text.name.toUpperCase().substring(0,1)}}</span>
+        <a-avatar :style="{color:'#fff',backgroundColor: setColor}">{text.name.toUpperCase().substring(0,1)}}</a-avatar>
       </template>
        <span slot="action" slot-scope="record,index" class="action" v-if="record.isEdit">
          <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.index,index)" />

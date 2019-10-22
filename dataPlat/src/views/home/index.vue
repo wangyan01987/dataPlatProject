@@ -35,7 +35,7 @@
 
 <script>
   import projectform from '@/components/ProjectForm'
-  let count=1;
+  let count=2;
     export default {
       name: "index",
       components:{projectform},
@@ -65,12 +65,6 @@
         }
       },
       watch:{
-        // 'itemList'(newval,oldval){
-        //      if(newval.length<oldval.length){
-        //
-        //      }
-        // }
-
       },
       methods: {
         goToDetail(id,name){
@@ -92,10 +86,7 @@
             dataflag:1,
             projectId:id
           };
-
          this.$refs.projectform.visible=true;
-
-
         },
         deleteItem(id,e){
          e.stopPropagation();
@@ -123,11 +114,8 @@
                    self.$message.success(res.msg)
                  }
               });
-
             },
-            onCancel(){
-
-            }
+            onCancel(){}
           });
 
         },
@@ -163,7 +151,6 @@
             let key= Math.floor(Math.random()*5);
             item.img=this.imgList[key].src;
             return item;
-
         }
       },
       mounted() {
@@ -175,7 +162,6 @@
          let arr5=res.slice(0,4);
          this.$store.commit('setMenuList',arr5);
        });
-
         //滑动加载
         var that = this;
         window.addEventListener("scroll", function () {
