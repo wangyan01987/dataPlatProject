@@ -255,7 +255,10 @@
           }
         })
        },
-
+      buildingDetails(record){
+        // 单体详情
+        this.buildingInfo=record;
+      },
     },
     mounted(){
       if(this.dataflag==='002'){
@@ -263,6 +266,9 @@
         this.getBuildingType();
       }else if(this.dataflag==='001'){
         this.getBuildingType();
+      }else {
+        let record = this.$store.state.record;
+        this.buildingDetails(record);
       }
     }
   };

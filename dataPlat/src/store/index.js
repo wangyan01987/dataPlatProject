@@ -12,6 +12,7 @@ const store=new Vuex.Store({
        phone:'',
        menuList:[],
        userName:"",
+       record:{},
   },
   mutations:{
        setLogin(state,val){
@@ -28,6 +29,9 @@ const store=new Vuex.Store({
     },
     setUserName(state, val){
       state.userName=val;
+    },
+    setRecord(state, val){
+      state.record=val;
     },
   }
 

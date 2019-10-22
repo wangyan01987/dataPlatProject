@@ -25,8 +25,8 @@
       <a-row :gutter="4">
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="handleChange" placeholder="省市" v-decorator="[ 'provinceId']">
-              <a-select-option v-for="item in   provincearr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+            <a-select @change="provincehandleChange" placeholder="省市" v-decorator="[ 'provinceId']">
+              <a-select-option v-for="item in   provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.provinceName}}</span>
@@ -34,16 +34,16 @@
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
             <a-select @change="handleChange" placeholder="城市" v-decorator="[ 'cityId']">
-              <a-select-option v-for="item in cityarr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.cityName}}</span>
         </a-col>
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="handleChange" placeholder="区县" v-decorator="[
+            <a-select placeholder="区县" v-decorator="[
           'districtId']">
-              <a-select-option v-for="item in districtarr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+              <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.districtName}}</span>
@@ -191,17 +191,26 @@
       cancel(){
            this.$emit('cancel');
       },
-      handleChange(val) {
-        if(!this.formData.parentId){
-          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":""}).then(res=>{
+      provincehandleChange(val) {
+          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
             res=res.data;
             if(res.code==='001'){
-            console.log(res);
+            this.cityarr=res.data;
             }else{
               this.$message.error(res.msg);
             }
           });
-        }
+
+      },
+      handleChange(val) {
+          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+            this.districtarr=res.data;
+            }else{
+              this.$message.error(res.msg);
+            }
+          });
 
       },
       getProjectInfo(){
@@ -252,9 +261,8 @@
     this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
       res=res.data;
       if(res.code==='001'){
-      console.log(res);
+      this.provincearr=res.data;
       }else{
-        console.log(res);
         this.$message.error(res.msg);
       }
     });

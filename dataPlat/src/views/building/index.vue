@@ -93,6 +93,7 @@
                return record.floorId
           },
         click(record,index){
+          
           let self=this;
             return{
               props:{
@@ -102,6 +103,7 @@
                 click(){
                   self.$refs.infoform.visible=true;
                   self.dataflag='000';
+                  self.$store.commit("setRecord",record);
                 }
               }
             }
