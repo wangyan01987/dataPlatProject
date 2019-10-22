@@ -27,7 +27,7 @@
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
           { title: '抗震等级', dataIndex: 'quakeGrade', key: 'quakeGrade' },
           { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
-          { title: '构建类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
+          { title: '构件类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];

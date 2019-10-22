@@ -55,16 +55,16 @@
         placeholder="请选择抗震等级"
         @change="handleSelectChange"
       >
-        <a-select-option value="1">
+        <a-select-option value=1>
           一级
         </a-select-option>
-        <a-select-option value="2">
+        <a-select-option value=2>
           二级
         </a-select-option>
-        <a-select-option value="3">
+        <a-select-option value=3>
           三级
         </a-select-option>
-        <a-select-option value="4">
+        <a-select-option value=4>
           四级
         </a-select-option>
       </a-select>
@@ -87,7 +87,7 @@
         ]" v-if="dataflag!=='000'"/>
       <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
-    <p>构建类型</p>
+    <p>构件类型</p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:''}"  class="buildingTable">
       <template slot="floors" slot-scope="text, record, index">
         <div key="floors">
@@ -262,9 +262,6 @@
       buildingDetails(record){
         // 单体详情
         let gradeMap=['一级','二级','三级','四级'];
-        if(record.quakeGrade){
-           record.quakeGrade=gradeMap[ record.quakeGrade-1];
-        }
         if(record.relationfloor){
          let arr= record.relationfloor.split('，');
          let arr1=[];
@@ -274,6 +271,9 @@
           this.relationfloor1=arr1;
         }
         this.buildingInfo={...record};
+        if(record.quakeGrade){
+           this.buildingInfo.quakeGrade=gradeMap[record.quakeGrade-1];
+        }
        setTimeout(()=>{
          let copyRecord={...record};
          delete copyRecord.floorId;
@@ -295,8 +295,7 @@
         this.buildingDetails(record);
         this.getBuildingType();
       }else {
-        //产看单体
-
+        //查看单体
         let record = this.$store.state.record;
         this.buildingDetails(record);
       }
