@@ -275,8 +275,13 @@
         }
         this.buildingInfo={...record};
        setTimeout(()=>{
-         this.form.setFieldsValue({...record});
-       },200);
+         let copyRecord={...record};
+         delete copyRecord.floorId;
+         delete copyRecord.cmptType;
+         delete copyRecord.cmpTypeName;
+         delete copyRecord.relationfloor;
+         this.form.setFieldsValue(copyRecord);
+       },300);
         this.dataSource=record.cmptType;
       },
     },
