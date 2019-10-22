@@ -128,7 +128,6 @@
        'objType':{
          handler(val){
          //获取bom数据
-        console.log('开始获取bom数据啦');
         if(val){
           this.getBom(1,20);
         }

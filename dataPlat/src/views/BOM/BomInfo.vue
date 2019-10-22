@@ -379,11 +379,9 @@
       },
       handleChangeSize(record){
            //获取规格列表
-        console.log(record)
               let obj={};
                 obj.firsttype=typeMap[record.matl1st];
                 obj.matlname=record.matlName;
-                console.log(obj);
                 this.$ajax('bomextract/bom/getspecifications','GET',obj).then(res=> {
                   res = res.data;
                   if(res.code==='001') {
@@ -412,8 +410,6 @@
       },
     },
     mounted(){
-      console.log('----------')
-      console.log(this.propmsg)
       //尺寸信息
       this.data=this.propmsg.sizeList;
       //统计信息数组

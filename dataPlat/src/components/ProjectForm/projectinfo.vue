@@ -15,7 +15,7 @@
       <span v-show="dataflag===0">{{obj.projectCode}}</span>
     </a-form-item>
     <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
-      <a-select placeholder="请选择项目类型" v-decorator="[ 'protype']">
+      <a-select placeholder="请选择项目类型" v-decorator="['protype']">
         <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
       </a-select>
       <span v-show="dataflag===0">{{obj.protype}}</span>
@@ -25,15 +25,15 @@
       <a-row :gutter="4">
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="provincehandleChange" placeholder="省市" v-decorator="[ 'provinceId']">
-              <a-select-option v-for="item in   provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
+            <a-select @change="provincehandleChange" placeholder="省市" v-decorator="['provinceId']">
+              <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
             </a-select>
           </a-form-item>
           <span v-show="dataflag===0">{{obj.provinceName}}</span>
         </a-col>
         <a-col :span="8">
           <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="handleChange" placeholder="城市" v-decorator="[ 'cityId']">
+            <a-select @change="handleChange" placeholder="城市" v-decorator="['cityId']">
               <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
             </a-select>
           </a-form-item>
@@ -115,8 +115,7 @@
         formData: this.$form.createForm(this),
         arr:[{label:'住宅',value:1},{label:'商业',value:2},
           {label:'办公',value:3},{label:'教育',value:4},
-          {label:'其他',value:5},
-        ],
+          {label:'其他',value:5}],
         cityarr:[],
         districtarr:[],
       }
@@ -195,23 +194,21 @@
           this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
             res=res.data;
             if(res.code==='001'){
-            this.cityarr=res.data;
+              this.cityarr=res.data;
             }else{
               this.$message.error(res.msg);
             }
           });
-
       },
       handleChange(val) {
-          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
-            res=res.data;
-            if(res.code==='001'){
-            this.districtarr=res.data;
-            }else{
-              this.$message.error(res.msg);
-            }
-          });
-
+            this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                this.districtarr=res.data;
+              }else{
+                this.$message.error(res.msg);
+              }
+            });
       },
       getProjectInfo(){
         let id=this.projectId;
@@ -227,6 +224,11 @@
              delete obj.provinceName;
              delete obj.cityName;
              delete obj.districtName;
+             //获取联动值
+            if(obj.provinceId){
+              this.provincehandleChange(obj.provinceId);
+              this.handleChange(obj.cityId);
+            }
             setTimeout(()=>{
               this.setMsg(obj)
             },5);
@@ -237,7 +239,9 @@
       setMsg(obj) {
 
         if (obj instanceof Object&&this.dataflag!==0) {
-          obj.proTime=moment(obj.proTime,'YYYY-MM-DD HH:mm:ss');
+         if(obj.proTime){
+           obj.proTime=moment(obj.proTime,'YYYY-MM-DD HH:mm:ss');
+         }
           this.formData.setFieldsValue(obj);
         }
 
@@ -254,18 +258,18 @@
     mounted() {
       //编辑信息 001 产看000
    if(this.dataflag===1||this.dataflag===0){
-
      this.getProjectInfo();
-
    };
-    this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
-      res=res.data;
-      if(res.code==='001'){
-      this.provincearr=res.data;
-      }else{
-        this.$message.error(res.msg);
-      }
-    });
+    if(this.dataflag!==0){
+      this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
+        res=res.data;
+        if(res.code==='001'){
+          this.provincearr=res.data;
+        }else{
+          this.$message.error(res.msg);
+        }
+      });
+    }
 
     }
   }

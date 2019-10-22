@@ -2,7 +2,7 @@
    <div class="box-container">
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
-     :loading="loading" :current='current'>
+     :loading="loading" :current='current' style="cursor: pointer">
        <span slot="action" slot-scope="record,index" class="action">
          <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record.floorId,$event,index)"/>
          <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
@@ -93,7 +93,7 @@
                return record.floorId
           },
         click(record,index){
-          
+
           let self=this;
             return{
               props:{

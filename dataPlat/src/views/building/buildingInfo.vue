@@ -19,13 +19,11 @@
       <span v-else>{{buildingInfo.floorCode}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-      <span v-for="(item,index) in relationfloor" v-if="dataflag!=='000'" >
-        <a-input-number :min="0" :max="15"  v-decorator="[`relationfloor${index}`]"  :key="index"
-        @click="item.editable=true" @blur="item.editable=false"
-        />
+      <span v-for="(item,index) in relationfloor1" v-if="dataflag!=='000'" >
+        <a-input-number :min="0" :max="15"   :key="index"  v-model="item.val"  @focus="item.editable=true" @blur="item.editable=false"/>
         <a-icon type="close-circle" v-show="item.editable" @click="deleteInput(item.key)"/>
       </span>
-      <span v-else>{{buildingInfo.relationfloor}}</span>
+      <span v-if="dataflag==='000'">{{buildingInfo.relationfloor}}</span>
       <a-icon type="plus-circle" @click="addAssociateNum" v-if="dataflag!=='000'" />
     </a-form-item>
     <a-form-item
@@ -148,7 +146,7 @@
         wrapperCol: { span: 12},
       };
       const columns = [
-        { title: '序号', dataIndex: 'index', key: 'index'  },
+        { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}` },
         { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' } },
         { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } },
         { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
@@ -161,7 +159,7 @@
         formLayout: 'horizontal',
         formItemLayout,
         form: this.$form.createForm(this),
-        relationfloor:[{}],
+        relationfloor1:[{}],
         columns,
         dataSource,
         isSubmit:false,
@@ -170,7 +168,7 @@
     },
     methods: {
       addAssociateNum(){
-          this.relationfloor.push({key:count++});
+          this.relationfloor1.push({key:count++});
       },
       addBuilding(){
         let a=this.dataSource.length+1;
@@ -186,7 +184,7 @@
         return record.index;
       },
       deleteInput(key){
-        this.relationfloor=this.relationfloor.filter(item=>{
+        this.relationfloor1=this.relationfloor1.filter(item=>{
           return  item.key!==key;
           });
       },
@@ -213,14 +211,17 @@
               };
               //关联楼栋
             obj.relationfloor=[];
-                  for(let i=0;i<this.relationfloor.length;i++){
-                    obj.relationfloor.push(obj[`relationfloor${i}`]);
-                  }
+                  this.relationfloor1.forEach(item=>{
+                    obj.relationfloor.push(item.val);
+                  });
+                  let params=obj;
               this.$ajax(url,'POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
-                  this.$message.success('创建成功',5);
+                  this.$message.success(res.msg,5);
                   this.$emit('success',true);
+                  params.relationfloor=params.relationfloor.join('，');
+                  this.$store.commit("setRecord",params);
                 }else{
                   this.$message.error(res.msg);
                 }
@@ -257,7 +258,23 @@
        },
       buildingDetails(record){
         // 单体详情
-        this.buildingInfo=record;
+        let gradeMap=['一级','二级','三级','四级'];
+        if(record.quakeGrade){
+           record.quakeGrade=gradeMap[ record.quakeGrade-1];
+        }
+        if(record.relationfloor){
+         let arr= record.relationfloor.split('，');
+         let arr1=[];
+           arr.forEach((item)=>{
+             arr1.push({val:item});
+           });
+          this.relationfloor1=arr1;
+        }
+        this.buildingInfo={...record};
+       setTimeout(()=>{
+         this.form.setFieldsValue({...record});
+       },200);
+        this.dataSource=record.cmptType;
       },
     },
     mounted(){
@@ -265,8 +282,13 @@
         this.dataSource=[];
         this.getBuildingType();
       }else if(this.dataflag==='001'){
+        //编辑单体
+        let record = this.$store.state.record;
+        this.buildingDetails(record);
         this.getBuildingType();
       }else {
+        //产看单体
+
         let record = this.$store.state.record;
         this.buildingDetails(record);
       }
