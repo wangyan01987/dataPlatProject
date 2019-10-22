@@ -253,7 +253,7 @@
           this.data = newData;
         }
       },
-      save(key) {
+     async save(key) {
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
         const newtarget={...target};
@@ -263,21 +263,28 @@
           delete target.editable;
           delete target.bomList;
           delete target.sizeList;
-          let obj={
-              cmptBaseInfo:target,
-             bomList:bomList,
-             sizeList:sizeList
-          };
+          let obj={cmptBaseInfo:target, bomList:bomList, sizeList:sizeList};
           this.data = newData;
           this.cacheData = newData.map(item => ({ ...item }));
            //服务器保存
-          this.$ajax('bomextract/bom/modifycmpt','POST',obj).then(res=>{
-            res=res.data;
-            if(res.code==='001'){
+          //没有校验编号唯一
+
+          // let proFlag=  await  this.$ajax('bomextract/bom/proidexist','GET',{
+          // }).then(res=>{
+          //   res=res.data;
+          //   if(res.code!=='001'){
+          //     this.$message.error('产品编号已存在');
+          //     return false;
+          //   }
+          // });
+          if(true){
+            this.$ajax('bomextract/bom/modifycmpt','POST',obj).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
                 this.$message.success('修改成功！',2);
-            }
-          });
-          this.$message.success('保存成功',2);
+              }
+            });
+          }
         }
       },
       cancel(key) {

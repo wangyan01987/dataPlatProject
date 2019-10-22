@@ -4,7 +4,7 @@
     <a-form-item label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
       <a-input
         v-if="dataflag!=='000'"
-        v-decorator="[ 'floorName', {rules: [{ max:20,message:'最大长度为20个字符' }]}
+        v-decorator="[ 'floorName', {rules: [{ max:20,message:'最大长度为20个字符' },{ required: true, message: '请输入楼栋名称' }]}
         ]"
       />
       <span v-else>{{buildingInfo.floorName}}</span>
@@ -74,7 +74,7 @@
       label="单层建筑面积"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number  v-decorator="[ 'monolayerArea' ]" v-if="dataflag!=='000'"/>
+      <a-input-number  v-decorator="[ 'monolayerArea' ]" v-if="dataflag!=='000'" :min="0"/>
       <span v-else>{{buildingInfo.monolayerArea}}</span>
     </a-form-item>
     <a-form-item
@@ -123,7 +123,7 @@
            cancelText="取消"
            okText="确定"
            okType="danger"
-           @confirm="() => deleteBuilding(record.index)">
+           @confirm="() => deleteBuilding(record.floors)">
            <a-icon slot="icon" type="question-circle-o" style="color: red" />
         <img :src="require('../../assets/images/shanchu@2x.png')" alt=""  style="width:14px;cursor:pointer;"/>
         </a-popconfirm>
@@ -178,7 +178,7 @@
       },
       deleteBuilding(key) {
         const dataSource = [...this.dataSource];
-      this.dataSource=dataSource.filter(item=>item.index!==key)
+      this.dataSource=dataSource.filter(item=>item.floors!==key)
       },
       getKey(record) {
         return record.index;
@@ -198,13 +198,16 @@
               let data=JSON.parse(JSON.stringify(this.dataSource));
                 let newArr=data.map(item=>{
                   delete item.index;
+                  delete item.cmpttypeId;
                     return item;
                 });
               obj.cmptType=newArr;
-              var url = "";
+              var url = "";let msg;
               if(this.dataflag==='002'){
+                msg='添加成功';
                 url='bomextract/build/addmonomer'
               }else if(this.dataflag==='001'){
+                msg='修改成功';
                 url='bomextract/build/modifymonomer';
                 obj.floorId=this.floorId;
                 delete obj.projectId;
@@ -218,7 +221,7 @@
               this.$ajax(url,'POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
-                  this.$message.success(res.msg,5);
+                  this.$message.success(msg,5);
                   this.$emit('success',true);
                   params.relationfloor=params.relationfloor.join('，');
                   this.$store.commit("setRecord",params);

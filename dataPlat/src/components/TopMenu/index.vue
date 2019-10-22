@@ -5,7 +5,7 @@
     </a>
   <a-menu slot="overlay" >
     <a-menu-item v-for="item in menuList" :key="item.projectId" @click="changeProject(item.projectName)">
-      <router-link :to='"/projectDetail/"+item.projectId' ><img :src="item.img"  style="width:30px;margin-right:10px;"/>
+      <router-link :to='"/projectDetail/"+item.projectId+"/"+path' ><img :src="item.img"  style="width:30px;margin-right:10px;"/>
         <span >{{item.projectName}}</span></router-link>
     </a-menu-item>
   </a-menu>
@@ -16,10 +16,19 @@
     export default {
         name: "index",
       props:['menuList'],
+      data(){
+          return{
+
+          }
+      },
+
       computed:{
            projectName(){
              return this.$store.state.projectName;
-           }
+           },
+        path(){
+             return this.$route.name;
+        }
       },
       methods:{
           changeProject(name){

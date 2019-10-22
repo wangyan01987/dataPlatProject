@@ -1,6 +1,6 @@
 <template>
   <div class="sub-container">
-    <a-menu v-model="current" mode="horizontal">
+    <a-menu  :defaultSelectedKeys="current" mode="horizontal">
       <a-menu-item key="building">
         <router-link :to="{name:'building'}">单体</router-link>
       </a-menu-item>
@@ -31,9 +31,18 @@
     components:{projectform},
     data () {
       return {
-        current: ['building'],
         propMsg:{}
       }
+    },
+    computed:{
+      current(){
+        return [this.$route.name]
+      }
+    },
+    watch:{
+         '$route.name'(val){
+
+         }
     },
     methods:{
       showProjectInfo(){
