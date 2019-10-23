@@ -91,7 +91,6 @@
   </div>
 </div>
 </template>
-
 <script>
   import {isName,isNum} from '@/utils/common.js';
   import moment from 'moment'
