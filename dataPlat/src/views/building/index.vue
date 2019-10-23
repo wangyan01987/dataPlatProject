@@ -4,7 +4,7 @@
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
        <span slot="action" slot-scope="record,index" class="action">
-         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record.floorId,$event,record)"/>
+         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
          <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
        </span>
      </a-table>
@@ -27,7 +27,7 @@
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
           { title: '抗震等级', dataIndex: 'quakeGrade', key: 'quakeGrade' },
           { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
-          { title: '构建类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
+          { title: '构件类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];
@@ -77,13 +77,13 @@
             }
           });
         },
-        editBuilding(floorId,e,record){
+        editBuilding(record,e,index){
           // 获取单体信息
           e.stopPropagation();
           this.$refs.infoform.visible=true;
           this.dataflag='001';
-          this.$store.commit("setRecord",record);
-          this.floorId=floorId;
+          this.floorId=record.floorId;
+          this.$store.commit("setRecord", record)
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

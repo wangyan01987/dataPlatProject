@@ -179,6 +179,7 @@
             if(res.code==='001'){
               this.$message.success(`${msg}成功`, 5);
               this.formData.resetFields();
+              this.$store.commit("setProjectName", obj.projectName);
             }else{
               this.$message.error(res.msg);
             }
