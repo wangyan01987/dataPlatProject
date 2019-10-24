@@ -2,7 +2,9 @@
   <div class="hello">
     <a-form :form="formData" >
       <a-form-item >
-        <a-input placeholder="请输入手机号"   v-decorator="[
+        <a-input placeholder="请输入手机号"
+                 size="large"
+                 v-decorator="[
            'phoneNumber',
             {rules: [{validator:checkName}]}
         ]">
@@ -10,9 +12,11 @@
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-row :gutter="8">
-          <a-col :span="16">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="['code',
+        <a-row :gutter="10">
+          <a-col :span="15">
+            <a-input placeholder="请输入验证码" id="success"
+                     size="large"
+                     v-decorator="['code',
             {rules: [{validator:assignCode}]}]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
@@ -145,24 +149,13 @@
           };
           //提交表单
           let obj=fieldsValue;
-          this.$ajax('loginbycaptcha','POST',obj,'form').then(res=>{
+          this.$ajax('loginbycaptcha','POST',obj).then(res=>{
             res=res.data;
                       if(res.code==='001'){
-                        this.$message.success('登录成功',5);
-                        this.$store.commit('setLogin',true);
-                        this.$store.commit('setPhone',fieldsValue.phoneNumber);
-                        if(this.$route.query.joinProject){
-                          let projectName=this.$route.query.projectName;
-                          let projectId=this.$route.query.projectId;
-                          this.$router.push({name:'joinSuccess',query:{projectName:projectName,projectId:projectId,hasfinished:true}});
-                        }
-                        else{
-                          //跳转到主页
-                          this.$router.push('/home');
-                        }
+                        this.$message.success('登录成功',5)
                       }
                       else{
-                        this.$message.error(res.msg);
+                        this.$message.error(res.msg)
                         this.errorMsg='手机号或验证码错误';
                         document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
                         document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
@@ -171,6 +164,9 @@
 
         })
       },
+      // handleChange(val){
+      //   console.log(val)
+      // },
 
     },
     mounted(){

@@ -20,7 +20,7 @@
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
       <span v-for="(item,index) in relationfloor1" v-if="dataflag!=='000'" >
-        <a-input-number :min="0" :max="15"   :key="index"  v-model="item.val"  @focus="item.editable=true" @blur="item.editable=false"/>
+        <a-input-number :min="0" :max="Math.pow(10,16)-1"   :key="index"  v-model="item.val"  @focus="item.editable=true" @blur="item.editable=false"/>
         <a-icon type="close-circle" v-show="item.editable" @click="deleteInput(item.key)"/>
       </span>
       <span v-if="dataflag==='000'">{{buildingInfo.relationfloor}}</span>
@@ -30,14 +30,14 @@
       label="建筑层数"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number :min="0" :max="15"  v-decorator="['floorNum']" v-if="dataflag!=='000' "/>
+      <a-input-number :min="0"   v-decorator="['floorNum']" v-if="dataflag!=='000' "/>
       <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
     <a-form-item
       label="预制层数"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number :min="0" :max="15"  v-decorator="[
+      <a-input-number :min="0" :max="Math.pow(10,16)-1"  v-decorator="[
           'preFloorNum'
         ]"  v-if="dataflag!=='000'"/>
       <span v-else>{{buildingInfo.preFloorNum}}</span>
@@ -48,27 +48,24 @@
       :wrapper-col="formItemLayout.wrapperCol">
       <a-select
         v-if="dataflag!=='000'"
-        v-decorator="[
-          'quakeGrade',
-          {rules: []}
-        ]"
+        v-decorator="['quakeGrade']"
         placeholder="请选择抗震等级"
         @change="handleSelectChange"
       >
-        <a-select-option value=1>
+        <a-select-option :value=1>
           一级
         </a-select-option>
-        <a-select-option value=2>
+        <a-select-option :value=2>
           二级
         </a-select-option>
-        <a-select-option value=3>
+        <a-select-option :value=3>
           三级
         </a-select-option>
-        <a-select-option value=4>
+        <a-select-option :value=4>
           四级
         </a-select-option>
       </a-select>
-      <span v-else>{{buildingInfo.quakeGrade}}</span>
+      <span v-else>{{buildingInfo.quakeGradeName}}</span>
     </a-form-item>
     <a-form-item
       label="单层建筑面积"
@@ -95,7 +92,7 @@
             v-if="dataflag!=='000'"
             style="margin: -5px 0; "
             :value="text"
-            @change="e => handleChange(e.target.value, record.index,'floors')"
+            @change="e => handleChange(e.target.value, record.id,'floors')"
           />
           <template v-else>{{text}}</template>
         </div>
@@ -106,14 +103,14 @@
             v-if="dataflag!=='000'"
             :value="text"
             style="margin: -5px 0"
-            @change="value=> handleSelectChange(value,record.index,'cmpttypeId')"
+            @change="value=> handleSelectChange(value,record.id,'cmpttypeId')"
             placeholder="请选择"
           >
             <a-select-option v-for="item in typeList" :value="item.typeId" :key="item.typeId">
               {{item.typeName}}
             </a-select-option>
           </a-select>
-          <template v-else>{{text}}</template>
+          <template v-else>{{record.component}}</template>
         </div>
       </template>
        <template slot="action" slot-scope="text,record" class="action" v-if="dataflag!=='000'">
@@ -123,7 +120,7 @@
            cancelText="取消"
            okText="确定"
            okType="danger"
-           @confirm="() => deleteBuilding(record.floors)">
+           @confirm="() => deleteBuilding(record.id)">
            <a-icon slot="icon" type="question-circle-o" style="color: red" />
         <img :src="require('../../assets/images/shanchu@2x.png')" alt=""  style="width:14px;cursor:pointer;"/>
         </a-popconfirm>
@@ -137,7 +134,7 @@
 </template>
 
 <script>
-  let count=0;
+  let count=1;
   export default {
     props:['dataflag','floorId'],
     data () {
@@ -159,7 +156,7 @@
         formLayout: 'horizontal',
         formItemLayout,
         form: this.$form.createForm(this),
-        relationfloor1:[{}],
+        relationfloor1:[{key:0}],
         columns,
         dataSource,
         isSubmit:false,
@@ -178,15 +175,18 @@
       },
       deleteBuilding(key) {
         const dataSource = [...this.dataSource];
-      this.dataSource=dataSource.filter(item=>item.floors!==key)
+      this.dataSource=dataSource.filter(item=>item.id!==key)
       },
       getKey(record) {
-        return record.index;
+        return record.id;
       },
       deleteInput(key){
+        if(this.relationfloor1.length===1){
+          return;
+        }
         this.relationfloor1=this.relationfloor1.filter(item=>{
           return  item.key!==key;
-          });
+        });
       },
       handleSubmit(e) {
         e.preventDefault();
@@ -198,7 +198,7 @@
               let data=JSON.parse(JSON.stringify(this.dataSource));
                 let newArr=data.map(item=>{
                   delete item.index;
-                  delete item.cmpttypeId;
+                  delete item.component;
                     return item;
                 });
               obj.cmptType=newArr;
@@ -214,7 +214,7 @@
               };
               //关联楼栋
             obj.relationfloor=[];
-                  this.relationfloor1.forEach(item=>{
+                  this.relationfloor1.forEach((item,index)=>{
                     obj.relationfloor.push(item.val);
                   });
                   let params=obj;
@@ -232,18 +232,19 @@
           }
         });
       },
-      handleSelectChange(value,index,column){
+      handleSelectChange(value,key,column){
         const newData = [...this.dataSource];
-        const  target= newData.filter(item=>item.index===index)[0];
+        const  target= newData.filter(item=>item.id===key)[0];
         if(target){
           target[column]=value;
           this.dataSource=newData;
 
         }
       },
-      handleChange(value, index, column) {
+      handleChange(value, key, column) {
+
         const newData = [...this.dataSource];
-         const  target= newData.filter(item=>item.index===index)[0];
+         const  target= newData.filter(item=>item.id===key)[0];
                if(target){
                  target[column]=value;
                  this.dataSource=newData;
@@ -255,33 +256,36 @@
           res=res.data;
           if(res.code==='001'){
             this.typeList=res.data;
-
           }
         })
        },
       buildingDetails(record){
         // 单体详情
-        let gradeMap=['一级','二级','三级','四级'];
         if(record.relationfloor){
          let arr= record.relationfloor.split('，');
          let arr1=[];
-           arr.forEach((item)=>{
-             arr1.push({val:item});
+           arr.forEach((item,index)=>{
+             arr1.push({val:item,key:index});
            });
+           count=arr.length-1;
           this.relationfloor1=arr1;
         }
         this.buildingInfo={...record};
-        if(record.quakeGrade){
-           this.buildingInfo.quakeGrade=gradeMap[record.quakeGrade-1];
-        }
-       setTimeout(()=>{
-         let copyRecord={...record};
-         delete copyRecord.floorId;
-         delete copyRecord.cmptType;
-         delete copyRecord.cmpTypeName;
-         delete copyRecord.relationfloor;
-         this.form.setFieldsValue(copyRecord);
-       },300);
+        let copyRecord={
+          floorName:record.floorName,
+          floorCode:record.floorCode,
+          floorNum:record.floorNum,
+          preFloorNum:record.preFloorNum,
+          quakeGrade:record.quakeGrade,
+          monolayerArea:record.monolayerArea,
+          remark:record.remark
+          };
+        if(this.dataflag==='001'){
+          setTimeout(()=>{
+            this.form.setFieldsValue(copyRecord);
+          },500);
+        };
+
         this.dataSource=record.cmptType;
       },
     },

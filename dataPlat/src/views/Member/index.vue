@@ -2,16 +2,14 @@
   <div class="box-container">
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember">+邀请新成员</a-button></p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
-      <template slot-scope="record,text" slot="icon">
-        <a-avatar :style="{color:'#fff',backgroundColor: setColor}">{text.name.toUpperCase().substring(0,1)}}</a-avatar>
+      <template slot-scope="text,record" slot="icon">
+        <a-avatar :style="{color:'#fff',backgroundColor: setColor}">{{record.userName.substring(0,1)}}</a-avatar>
       </template>
-       <span slot="action" slot-scope="record,index" class="action" v-if="record.isEdit">
-         <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.index,index)" />
+       <span slot="action" slot-scope="text,record,index" class="action" >
+         <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.userId)" v-if="record.isDelete"/>
        </span>
     </a-table>
-    <info-form :dataflag="dataflag" ref="infoform"></info-form>
-    <a-modal
-      :destroyOnClose=true
+    <a-modal :destroyOnClose=true
       :title='title'
       v-model="visible"
       @cancel="cancel"
@@ -23,21 +21,20 @@
   </div>
 </template>
 <script>
-  import  InfoForm from './infoForm';
   import ModalInfo from './modalInfo'
   export default {
     name: "index",
-    components:{InfoForm,ModalInfo},
+    components:{ModalInfo},
     data(){
       const columns = [
         { title: '', dataIndex: 'icon', key: 'icon',scopedSlots: { customRender: 'icon' }},
-        { title: '姓名', dataIndex: 'name', key: 'name' },
+        { title: '姓名', dataIndex: 'userName', key: 'userName' },
         { title: '性别', dataIndex: 'gender', key: 'gender' },
-        { title: '手机', dataIndex: 'phone', key: 'phone' },
+        { title: '手机', dataIndex: 'phoneNumber', key: 'phoneNumber' },
         { title: '邮箱', dataIndex: 'email', key: 'email' },
-        { title: '公司', dataIndex: 'company', key: 'company' },
+        { title: '公司', dataIndex: 'companyName', key: 'companyName' },
         { title: '职位', dataIndex: 'position', key: 'position' },
-        { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
+        { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
       ];
       return{
         visible:false,
@@ -59,7 +56,7 @@
 
       },
       //单体操作
-      deleteMember(e,index){
+      deleteMember(e,userId){
         e.stopPropagation();
         this.$confirm({
           icon:'close-circle',
@@ -68,32 +65,56 @@
           okText: '确认',
           cancelText: '取消',
           onOk:()=>{
-            let dataSource=[...this.dataSource];
-            this.dataSource=dataSource.filter(item=>item.index!==index);
-            this.$message.success('删除成功！');
+            //删除
+            this.$ajax('bomextract/buildmember/delbuildperson','POST',{userId:userId,projectId:this.projectId}).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                let dataSource=[...this.dataSource];
+                this.dataSource=dataSource.filter(item=>item.userId!==userId);
+                this.$message.success('删除成功！');
+              }
+              else{
+                this.$message.error('删除失败');
+              }
+            });
+
           }
         });
       },
       getKey(record){
-        return record.index;
+        return record.userId;
+      },
+      changePage(page, size){
+        this.fetch( this.projectId,page,20)
       },
       //加载信息
       fetch (projectId,num,size) {
         this.loading = true;
-       this.$ajax('bomextract/buildmember/getmember','POST',{projectid:projectId,pageNum:num,pageSize:size}).then((res) => {
+       this.$ajax('bomextract/buildmember/getmember','POST',{projectId:projectId,pageNum:num,pageSize:size}).then((res) => {
                      res=res.data;
+                     let mapset=['男','女'];
                if(res.code==='001'){
+                 this.loading = false;
                  const pagination = { ...this.pagination };
                  pagination.total = res.count;
                  pagination.pageSize=size;
-                 this.loading = false;
+                 pagination.onChange=this.changePage;
                  this.dataSource = res.data;
+                 this.dataSource.map(item=>{
+                        item.gender=mapset[item['sex']];
+                        return item;
+                   });
                  this.pagination = pagination;
-
                }
         });
       },
 
+    },
+    watch:{
+        '$route.params.projectId'(val){
+           this.projectId=val;
+           this.fetch(val,1,20);
+        }
     },
     computed:{
        setColor(){
@@ -105,6 +126,7 @@
     mounted(){
     this.projectId=this.$route.params.projectId;
       this.fetch( this.projectId,1,20);
+
     }
   }
 </script>

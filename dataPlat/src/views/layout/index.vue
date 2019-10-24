@@ -112,8 +112,8 @@
               res=res.data;
               if(res.code==='001'){
                  this.$store.commit('setLogin',false);
-                this.$router.push('/login')
                 this.$message.success('退出登录');
+                this.$router.push('/login');
                  }
               else{
                 this.$message.error(res.msg);

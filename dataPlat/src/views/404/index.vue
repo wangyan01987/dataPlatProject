@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <img src="./404@2x.png" alt="">
+  <img src="./404@2x.png" alt="" style="width:40%;vertical-align:middle">
 </div>
 </template>
 

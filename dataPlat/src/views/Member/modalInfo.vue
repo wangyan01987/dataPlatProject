@@ -66,12 +66,11 @@
             oInput.value = url;
             document.body.appendChild(oInput);
             oInput.select(); // 选择对象;
-            oInput.style.display='none'
+            oInput.style.lineHeight=0;
             document.execCommand("Copy"); // 执行浏览器复制命令
             this.$message.success('复制成功,点击粘贴');
           },
         getUrl(id){
-
              this.$ajax('bomextract/buildmember/getprojinvitationlink','GET',{projectId:id}).then(res=>{
                    res=res.data;
                    if(res.code==='001'){
@@ -91,9 +90,8 @@
         },
         toUrl(){
             this.dataflag='000';
-         // this.getUrlCode(this.urlInfo);
         },
-        sendCode(key){
+        sendCode(){
               this.$refs.mobileInfo.handleSubmit();
           },
         getUrlCode(url){
@@ -164,4 +162,7 @@
  .item-info{
    margin-top:40px;
  }
+  #qrCode{
+    height:120px;
+  }
 </style>

@@ -4,8 +4,8 @@
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
        <span slot="action" slot-scope="record,index" class="action">
-         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)"/>
-         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)" />
+         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)" class="item-edit"/>
+         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)"  class="item-delete"/>
        </span>
      </a-table>
      <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc'></info-form>
@@ -25,7 +25,7 @@
           { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor' },
           { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum' },
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
-          { title: '抗震等级', dataIndex: 'quakeGrade', key: 'quakeGrade' },
+          { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName' },
           { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
           { title: '构件类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
@@ -50,7 +50,6 @@
             let currentIndex=this.current;
             this.fetch(currentIndex,20);
           }
-
         },
         deleteBuilding(e,floorId,index){
             e.stopPropagation();
@@ -123,16 +122,20 @@
                 pagination.total = res.count;
                 pagination.pageSize=size;
                 this.loading = false;
+                let gradeMap=['一级','二级','三级','四级'];
                 let obj=res.data;
                    let obj1= obj.map(item=>{
+                      item.quakeGradeName= gradeMap[item.quakeGrade];
                      item.relationfloor=item.relationfloor.join('，');
                      item.cmpTypeName=[];
                          item.cmptType.forEach(item1=>{
-                          item.cmpTypeName.push( item1.component)
+                          item.cmpTypeName.push( item1.component);
                          });
                          return item;
                     });
-                this.dataSource = obj1;
+
+                this.dataSource=obj1;
+
 
                 this.pagination = pagination;
               }

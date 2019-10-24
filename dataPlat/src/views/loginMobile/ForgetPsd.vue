@@ -2,30 +2,21 @@
   <div class="register">
     <a-form :form="formData">
       <a-form-item >
-        <a-input placeholder="请输入姓名"   v-decorator="[
-           'name',
-            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}]}
-        ]">
-          <a-icon type="mobile"  slot="prefix"/>
-        </a-input>
-      </a-form-item>
-      <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
-           'account',
-            {rules: [{validator:checkAccount}]}
+           'phoneNumber',
+            {rules: [{validator:checkAccount}],validateTrigger:['change','blur']}
         ]">
-          <a-icon type="mobile"  slot="prefix"/>
+          <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-
       <a-form-item>
         <a-row :gutter="8">
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
-          'assignCode',
-            {rules: [{validator:assignCode}]}
+          'code',
+            {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
         ]">
-              <a-icon type="safety"  slot="prefix" />
+              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
           <a-col :span="8">
@@ -42,13 +33,14 @@
             rules: [{
               validator: validPass,
             }],
+            validateTrigger:['change','blur']
           }
         ]"
           type="password"
         >
-          <a-icon type="lock"  slot="prefix"/>
+          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
         </a-input>
-        <p>6-16位字母、数字或符号组成，区分大小写</p>
+        <p><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -59,44 +51,16 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
+            validateTrigger:['change','blur']
           }
         ]"
           type="password"
         >
-          <a-icon type="lock"  slot="prefix"/>
+          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
         </a-input>
-
-      </a-form-item>
-      <a-form-item>
-        <a-auto-complete
-          v-decorator="[
-          'email',
-          {rules: [{
-              validator: validEmail,
-            }]}
-        ]"
-          placeholder="请输入邮箱地址"
-          @change="handleEmailChange">
-          <template slot="dataSource">
-            <a-select-option
-              v-for="email in autoCompleteResult"
-              :key="email">
-              {{ email }}
-            </a-select-option>
-          </template>
-          <a-input />
-        </a-auto-complete>
       </a-form-item>
       <a-form-item >
-        <a-checkbox v-decorator="['agreement', {valuePropName: 'checked'}]">
-          已阅读并同意
-          <a href="/static" target="_blank">
-            PST及平台服务协议
-          </a>
-        </a-checkbox>
-      </a-form-item>
-      <a-form-item >
-        <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit" >注册</a-button>
+        <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit" >提交</a-button>
       </a-form-item>
     </a-form>
 
@@ -106,7 +70,7 @@
 <script>
   import {isOnlyMobile,isPassword} from '@/utils/common.js'
   export default {
-    name: 'register',
+    name: 'ForgetPsd',
     data () {
       return {
         codeText:'获取验证码',
@@ -114,26 +78,78 @@
         btnabled:true,
         btnType:'default',
         autoCompleteResult:'',
+        mobile:''
       }
 
     },
-    components:{
-
+    watch:{
+      mobile(val){
+        if(val){
+          this.initData()
+        }else{
+          this.resetData();
+        }
+      }
     },
     methods:{
+      initData(){
+        this.codeText='获取验证码';
+        this.btnabled = false;
+        this.btnType='primary'
+      },
+      resetData(){
+        this.codeText='获取验证码';
+        this.btnabled = true;
+        this.btnType='default'
+      },
       sendCode(){
+        //获取验证码
+        //发送请求
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        this.$ajax('sendsms','POST',{type:'modifyPwd',phoneNumber:mobile}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            this.$message.success('发送成功');
+          }
+          else{
+            this.$message.error(res.msg);
+          }
+        });
+        const TIME_COUNT = 60;
+        if (!this.timer) {
+          this.count = TIME_COUNT;
+          this.timer = setInterval(() => {
+            if (this.count > 0 && this.count <= TIME_COUNT) {
+              this.count--;
+              this.codeText = `重新获取${this.count}s`;
+              this.btnabled = true;
+              this.btnType = 'default';
+            } else {
+              this.initData()
+            }
+          }, 1000)
+        }
 
       },
-      validEmail(){
-      },
+
       handleSubmit  (e) {
         this.formData.validateFields((err, fieldsValue) => {
           if (err) {
             return;
           };
+          let obj=fieldsValue;
+           delete obj.repassword;
           //提交表单
-          // console.log(fieldsValue)
-
+          this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
+                 res=res.data;
+            if(res.code==='001'){
+                this.$message.success('修改成功',5);
+                this.visible=false;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
+          })
         })
       },
       handleEmailChange  (value) {
@@ -146,6 +162,7 @@
         this.autoCompleteResult = autoCompleteResult;
       },
       checkAccount(rule, value, callback){
+        this.mobile=null;
         if(!value){
           callback('请输入手机号')
         }
@@ -154,19 +171,7 @@
             callback('手机号输入格式不正确')
           }else{
             callback();
-          }
-        }
-      },
-
-      checkName(rule, value, callback){
-        if(!value){
-          callback('请输入姓名')
-        }
-        else {
-          if(!isOnlyMobile(value)){
-            callback('姓名输入格式不正确')
-          }else{
-            callback();
+            this.mobile=this.formData.getFieldValue('phoneNumber');
           }
         }
       },
@@ -199,7 +204,6 @@
             this.formData.setFieldsValue({item:obj[item]});
           }
         }
-
       },
       compareToFirstPassword  (rule, value, callback) {
         const form = this.formData;
@@ -238,6 +242,7 @@
   }
   .register p{
     margin:0;
+    line-height:0;
   }
 
 

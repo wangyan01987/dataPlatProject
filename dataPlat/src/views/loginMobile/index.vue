@@ -1,122 +1,67 @@
 <template>
-<div class="container">
-  <a-form :form="formData" >
-    <a-form-item >
-      <a-input placeholder="请输入手机号"   v-decorator="[
-           'username',
-            {rules: [{validator:checkName}]}
-        ]"  class="test">
-        <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
-      </a-input>
-    </a-form-item>
-    <a-form-item>
-      <a-input
-        placeholder="请输入密码"
-        v-decorator="[
-          'password',
-          {
-            rules: [{
-              validator: validPass,
-            }],
-          }
-        ]"
-        type="password"
-        ref="phone" class="test">
-        <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-      </a-input>
-
-    </a-form-item>
-    <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
-  </a-form>
+<div class="container mobile">
+  <div class="login-box box-body " v-show="login">
+    <a-tabs defaultActiveKey="1" @change="callback" >
+      <a-tab-pane tab="登录" key="1">
+         <login v-show="loginType==='001'"></login>
+        <loginmobile v-show="loginType==='002'"></loginmobile>
+      </a-tab-pane>
+      <a-tab-pane tab="注册" key="2" forceRender><register></register></a-tab-pane>
+    </a-tabs>
+    <div class="action-box" v-if="loginType==='001'||loginType==='002'">
+      <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
+      <span @click="loginMobile"  v-show="loginType==='001'">验证码快速登录</span>
+      <span  v-show="loginType==='002'"></span>
+      <span @click="loginType='001'"  v-show="loginType==='002'" >账号密码登录</span>
+    </div>
+  </div>
+    <div class="login-box box-body" v-show="!login">
+      <P class="repsd"><span>重置密码</span></P>
+      <forgetpsd ></forgetpsd>
+         <p style="text-align:right"><a @click="login=true">返回登录页</a></p>
+    </div>
 </div>
 </template>
 
 <script>
+  import login from './login'
+  import register from './register'
+  import forgetpsd from './ForgetPsd'
+  import loginmobile from  './Login-phone'
   export default {
-    name: 'HelloWorld',
-    data () {
-      const formTailLayout = {
-        labelCol: { span: 4 },
-        wrapperCol: { span: 8, offset: 4 },
-      };
-      return {
-        formTailLayout,
-        formData:this.$form.createForm(this),
-      }
-
-    },
-    components:{},
-    methods:{
-      checkName(rule, value, callback){
-        if(!value){
-          callback('请输入手机号')
-        }
-        else {
-          if(!isOnlyMobile(value)){
-            callback('手机号输入格式不正确')
-          }else{
-            callback();
-          }
-        }
-      },
-      assignCode(rule, value, callback){
-        if(!value){
-          callback('请输入验证码');
-          //验证码验证
-        }
-        else if(value!==this.identifyCode.toLowerCase()){
-          callback('验证码不正确');
-        }
-        else {
-          callback();
-        }
-      },
-      validPass(rule, value, callback){
-        if(!value){
-          callback('请输入密码')
-        }
-        else {
-          callback();
-        }
-      },
-      submit(){
-        this.formData.validateFields((err, fieldsValue) => {
-          if (err) {
-            return;
-          };
-          //提交表单
-          let obj=fieldsValue;
-          delete obj.assignCode;
-          this.$ajax('loginbypwd','POST',obj,true).then(res=>{
-            res=res.data;
-            if(res.code==='001'){
-              this.$message.success('登录成功！');
-              this.$store.commit('setLogin',true);
-              this.$store.commit('setPhone',fieldsValue.username);
-              //跳转到主页
-              this.$router.push('/home');
-            }
-            else{
-              this.$message.error(res.msg);
-            }
-          })
-        })
-      },
-      setMsg(obj){
-        if(obj instanceof Object){
-          for(var item in obj){
-            this.formData.setFieldsValue({item:obj[item]});
-          }
-        }
-
+    name: "index",
+    components:{login ,register,loginmobile,forgetpsd},
+    data(){
+      return{
+        //001  账号登陆，默认
+        //002  快速登陆
+        //000 注册
+        loginType:'001',
+        visible:false,
+        login:true
       }
     },
     mounted(){
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
-
+      // this.$store.commit('setLogin',true);
+      //  console.log(this.$store.state.isLogin)
+    },
+    methods:{
+      callback(val){
+        if(val==='2'){
+          this.loginType='000'
+        }else{
+          this.loginType='001';
+        }
+      },
+      forgetPsd(){
+        this.login=false;
+      },
+      loginMobile(){
+        this.loginType='002'
+      },
     }
   }
+
 </script>
 
 
@@ -124,6 +69,60 @@
    .container{
      height:100%;
      width:100%;
-        background-image: url("../../assets/images/bg-dl@2x.png");
+     background: url("./image/bg-h5.png") no-repeat  ;
+     background-size:cover;
+     position:relative;
    }
+  .login-box{
+    width: 9.1rem;
+    height: 58.4%;
+    background-color: #ffffff;
+    border-radius: 0.2rem;
+    position:absolute;
+    bottom:3.6%;
+    left:4.3%;
+    padding:0.5rem;
+  }
+   .action-box{
+     display:flex;
+     justify-content: space-between;
+     width: 100%;
+     font-family: PingFangSC-Regular;
+     font-size: 14px;
+     font-weight: normal;
+     font-stretch: normal;
+     letter-spacing: 0px;
+     color: #1890ff;
+     margin-top:24px;
+   }
+   .action-box span{
+     cursor:pointer;
+   }
+   .markTitle{
+     position:absolute;
+     left:1.6rem;
+     bottom: 0.9rem;
+     font-family: PingFangSC-Semibold;
+     font-size: 24px;
+     font-weight: normal;
+     font-stretch: normal;
+     letter-spacing: 0px;
+     color: rgba(255, 255, 255, 0.45);
+   }
+  .repsd{
+    text-align:center;
+    font-family: PingFangSC-Medium;
+    font-size: 16px;
+    letter-spacing: 0px;
+    color: #1890ff;
+    padding-bottom:10px;
+  }
+  .repsd span{
+    display:block;
+    width:2.3rem;
+    line-height:40px;
+    border-bottom:2px solid #1890ff ;
+    margin:0 auto;
+
+  }
 </style>

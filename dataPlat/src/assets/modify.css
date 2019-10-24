@@ -4,7 +4,11 @@
   margin:0;
   padding:0;
 }
-
+@media screen and (min-width: 1080px){
+  html{
+    font-size:625% !important;
+  }
+}
 html{
   font-size:625%;
 }
@@ -33,7 +37,7 @@ body{
   margin-bottom:0.4rem ;
 }
 .login-box .ant-input-affix-wrapper{
-  height:0.4rem;
+  height:40px;
 }
 .register .ant-form-item-control-wrapper{
   text-align:left;
@@ -79,5 +83,8 @@ display:none
   overflow: hidden;
  white-space: nowrap;
   text-overflow: ellipsis;
-
 }
+.sub-container .box-container{
+  flex:auto;
+}
+

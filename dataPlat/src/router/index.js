@@ -9,6 +9,11 @@ Router.prototype.push = function push(location) {
 const router= new Router({
   routes: [
     {
+       path:'/joinSuccess',
+      name:'joinSuccess',
+     component:()=>import('@/views/invite/joinSuccess.vue')
+    },
+    {
       path:'/login',
       name:'login',
       component:()=>import('@/views/login')
@@ -22,11 +27,6 @@ const router= new Router({
       path:'/invite',
       name:'invite',
       component:()=>import('@/views/invite/index')
-    },
-    {
-       path:'/joinSuccess',
-      name:'joinSuccess',
-     component:()=>import('@/views/invite/joinSuccess.vue')
     },
     {
       path:'/',
@@ -60,13 +60,6 @@ const router= new Router({
               path:'BOM',
               name:'BOM',
               component:()=>import('@/views/BOM'),
-              // redirect:{name:'bomview'},
-              // children:[{
-              //   name:'bomview',
-              //   path:'bomview',
-              //   component:()=>import('@/views/BOM/BOMView')
-              //
-              // }]
             },
             {
               path:'file',
@@ -91,6 +84,7 @@ const router= new Router({
         },
       ]
     },
+
     {
       path:'*',
       component:()=>import('@/views/404')
@@ -98,21 +92,20 @@ const router= new Router({
   ]
 });
 import  store from '../store';
-
-
-router.beforeEach((to,from,next)=>{
-  let client=document.body.clientWidth;
-     if(client<750&&to.path!=='/loginMobile'){
-        next('/loginMobile');
-     }
-     else{
-       if(!store.state.isLogin&&to.path!=='/login'&&to.path!=='/invite'){
-         next('/login')
-       }else{
-         next();
-       };
-     }
-
-});
+// router.beforeEach((to,from,next)=>{
+//   let client=document.body.clientWidth;
+//   if(client<750&&to.path!=='/loginMobile'){
+//     //next({path:'/loginMobile' });
+//   }
+//   else {
+//     // if (!store.state.isLogin && to.path !== '/login' && to.path !== '/invite' && to.name !== 'joinSuccess') {
+//     //   next('/login')
+//     // } else {
+//     //   next();
+//     // }
+//   }
+//
+//
+// });
 export default router;
 

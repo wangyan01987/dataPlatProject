@@ -1,53 +1,35 @@
 <template>
-  <div class="register">
+  <div class="register-mobile">
     <a-form :form="formData" >
       <a-form-item >
-        <a-input placeholder="请输入手机号"   v-decorator="[
+        <a-input placeholder="请输入手机号" size="large"  v-decorator="[
            'username',
             {rules: [{validator:checkName}]}
         ]"  class="test">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-
-      <a-form-item>
-        <a-row :gutter="8">
-          <a-col :span="16">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="[
-          'assignCode',
-            {rules: [{validator:assignCode}]}
-        ]">
-              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
-            </a-input>
-
-          </a-col>
-             <a-col :span="6">
-               <s-identify :identifyCode="identifyCode"></s-identify>
-             </a-col>
-          <a-col :span="2">
-            <span><a-icon type="redo" @click="refreshCode"  /></span>
-          </a-col>
-        </a-row>
-      </a-form-item>
-      <a-form-item>
+      <a-form-item style="margin-top:6.8%;">
         <a-input
           placeholder="请输入密码"
+          size="large"
           v-decorator="[
           'password',
-          {
-            rules: [{
+          { rules: [{
               validator: validPass,
             }],
           }
         ]"
           type="password"
-        ref="phone" class="test">
+          ref="phone" class="test">
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
         </a-input>
-
       </a-form-item>
-      <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
+     <a-form-item>
+       <a-button @click='submit' type="primary" style="width:100%;margin-top:20px;" size="large">登录</a-button>
+     </a-form-item>
     </a-form>
+
 
   </div>
 </template>
@@ -101,18 +83,6 @@
           }
         }
       },
-      assignCode(rule, value, callback){
-        if(!value){
-          callback('请输入验证码');
-          //验证码验证
-        }
-        else if(value!==this.identifyCode.toLowerCase()){
-          callback('验证码不正确');
-        }
-        else {
-          callback();
-        }
-      },
       validPass(rule, value, callback){
         if(!value){
           callback('请输入密码')
@@ -129,34 +99,23 @@
 
           //提交表单
           let obj=fieldsValue;
-           delete obj.assignCode;
+          delete obj.assignCode;
           this.$ajax('loginbypwd','POST',obj,true).then(res=>{
-                res=res.data;
-                if(res.code==='001'){
-                  this.$message.success('登录成功！');
-                  this.$store.commit('setLogin',true);
-                  this.$store.commit('setPhone',fieldsValue.username);
-
-                  //判断是否需要跳到joinSuccess
-                  if(this.$route.query.joinProject){
-                    let projectName=this.$route.query.projectName;
-                    let projectId=this.$route.query.projectId;
-                    this.$router.push({name:'joinSuccess',query:{projectName:projectName,projectId:projectId,hasfinished:true}});
-                  }
-                  else{
-                    //跳转到主页
-                    this.$router.push('/home');
-                  }
-                }
-                else{
-                  this.$message.error(res.msg);
-                }
+            res=res.data;
+            if(res.code==='001'){
+              this.$message.success('登录成功！');
+              this.$store.commit('setLogin',true);
+              this.$store.commit('setPhone',fieldsValue.username);
+              //跳转到主页
+              this.$router.push('/home');
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           })
         })
       },
-      // handleChange(val){
-      //   console.log(val)
-      // },
+
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){
@@ -167,8 +126,6 @@
       }
     },
     mounted(){
-      this.identifyCode = ''
-      this.makeCode(this.identifyCodes, 4)
 
     }
   }

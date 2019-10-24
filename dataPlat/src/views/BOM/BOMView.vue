@@ -10,7 +10,7 @@
               <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%" />
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey':pagination="pagination">
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey':pagination="pagination" :locale="{emptyText: '暂无数据'}">
            <template
              v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
@@ -50,7 +50,7 @@
       <a-drawer
         title="BOM详情"
         placement="right"
-        :width="1100"
+        :width="1200"
         @close="onClose"
         :visible="visible"
         :destroyOnClose="true"
@@ -183,6 +183,7 @@
         this.getBom(1,20);
       },
       getBom(num,size){
+        this.loading=true;
         this.data=[];
         size=20;
         let obj={};
@@ -195,7 +196,6 @@
         obj.prodid=this.prodid;
         this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
           res=res.data;
-          this.loading=true;
           if(res.code==='001'||res.state=='success'){
             this.loading=false;
             const pagination = { ...this.pagination };

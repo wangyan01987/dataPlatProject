@@ -48,7 +48,6 @@
               objType:link.title,
               buildingid:this.buildingid
             };
-            console.log(this.bomprops);
         },
         //获取构件类型
           getType(val){
@@ -60,11 +59,11 @@
                })
           },
         //获取楼栋号
-        getBuildingNum(){
+        getBuildingNum(num,size){
               let  obj={
                   projectId: this.projectId,
-                  "pageNum":1,
-                  "pageSize":20
+                  "pageNum":num,
+                  "pageSize":size
                 };
           this.$ajax('bomextract/build/getmonomer','POST',obj).then((res) => {
             res=res.data;
@@ -79,9 +78,16 @@
           });
         }
       },
+      watch:{
+        '$route.params'(val){
+          if(val){
+            this.getBuildingNum(1,20);
+          }
+        }
+      },
       mounted(){
              //获取项目单体楼栋号
-             this.getBuildingNum();
+             this.getBuildingNum(1,20);
 
       }
     }
