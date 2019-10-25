@@ -53,19 +53,17 @@
       },
       mounted(){
         this.code=this.$route.query.code;
-        console.log(this.code)
         if(this.code){
           this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:this.code}).then(res=>{
             res=res.data;
             if(res.code==='001'){
-              this.isValid=true;
+              this.isValid=res.data.isValid;
               this.userName=res.data.userName;
               this.projectName=res.data.projectName;
               this.projectId=res.data.projectId;
             }
             else{
               this.$message.error(res.msg);
-              this.isValid=true;
             }
           })
         };

@@ -125,7 +125,7 @@
                 let gradeMap=['一级','二级','三级','四级'];
                 let obj=res.data;
                    let obj1= obj.map(item=>{
-                      item.quakeGradeName= gradeMap[item.quakeGrade];
+                      item.quakeGradeName= gradeMap[item.quakeGrade-1];
                      item.relationfloor=item.relationfloor.join('，');
                      item.cmpTypeName=[];
                          item.cmptType.forEach(item1=>{

@@ -152,10 +152,9 @@
                           }
                           else{
                             this.$message.error(res.msg);
-                            this.$router.push('/home');
+                            this.$router.push({name:'joinSuccess',query:{code:code}});
                           }
                         });
-
                       }
 
                     });

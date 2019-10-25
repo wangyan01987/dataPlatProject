@@ -59,17 +59,15 @@
                this.projectId=res.data.projectId;
                this.flag='001'
              }
-             else{
-               this.flag='002';
-               this.errorMsg=res.msg;
-             }
-          })
+
+          });
+
+
 
         }
         else{
           this.$message.error('错误');
         }
-
 
           }
 

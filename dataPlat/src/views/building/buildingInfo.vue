@@ -19,8 +19,8 @@
       <span v-else>{{buildingInfo.floorCode}}</span>
     </a-form-item>
     <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-      <span v-for="(item,index) in relationfloor1" v-if="dataflag!=='000'" >
-        <a-input-number :min="0" :max="Math.pow(10,16)-1"   :key="index"  v-model="item.val"  @focus="item.editable=true" @blur="item.editable=false"/>
+      <span v-for="(item,index) in relationfloor1" v-if="dataflag!=='000'"  >
+             <a-input-number :min="0" :max="Math.pow(10,16)-1"   :key="index"  v-model="item.val" @focus="item.editable=true" @blur="item.editable=false" />
         <a-icon type="close-circle" v-show="item.editable" @click="deleteInput(item.key)"/>
       </span>
       <span v-if="dataflag==='000'">{{buildingInfo.relationfloor}}</span>
@@ -71,17 +71,16 @@
       label="单层建筑面积"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
-      <a-input-number  v-decorator="[ 'monolayerArea' ]" v-if="dataflag!=='000'" :min="0"/>
-      <span v-else>{{buildingInfo.monolayerArea}}</span>
+     <div v-if="dataflag!=='000'"><a-input-number  v-decorator="[ 'monolayerArea' ]" :min="0.01" :max="Math.pow(10,10)-1" :step="0.01"/>m²</div>
+      <span v-else>{{buildingInfo.monolayerArea}}m²</span>
     </a-form-item>
     <a-form-item
       label="备注"
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
       <a-textarea  v-decorator="[
-          'remark',
-          {rules: [{}]}
-        ]" v-if="dataflag!=='000'"/>
+          'remark',{rules: [{max:399,message:'最大长度为400'}]}
+        ]" v-if="dataflag!=='000'" :maxLength='400'/>
       <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
     <p>构件类型</p>
@@ -278,7 +277,7 @@
            arr.forEach((item,index)=>{
              arr1.push({val:item,key:index});
            });
-           count=arr.length-1;
+           count=arr.length;
           this.relationfloor1=arr1;
         }
         this.buildingInfo={...record};
