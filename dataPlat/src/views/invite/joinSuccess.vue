@@ -38,39 +38,42 @@
           }
       },
       mounted(){
-          let hasfinished=this.$route.query.hasfinished;
-        this.projectName=this.$route.query.projectName;
-        this.projectId=this.$route.query.projectId;
-         if(hasfinished){
-            this.flag='001';
-         }
-         else{
-           this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:this.projectId}).then(res=>{
+          //获取参数
+        let code=this.$route.query.code;
+        if(!this.$store.state.isLogin&&code) {
+          this.flag='000';
+          setTimeout(() => {
+            this.$router.push({
+              name: 'login',
+              query: {code:code}
+            });
+
+          }, 3000);
+          return;
+        }
+        else if(code){
+          this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
              res=res.data;
              if(res.code==='001'){
-               if(!this.$store.state.isLogin)
-               {
-                 this.flag='000';
-                 this.$message.warning(
-                   '你还未登录，请先登录',
-                   3,
-                 );
-                 setTimeout(()=>{
-                   this.$router.push({name:'login',query:{joinProject:true,projectName:this.projectName,projectId:this.projectId}});
-                 },5000)
-               }else{
-                 this.flag='001';
-               }
+                 this.projectName=res.data.projectName;
+               this.projectId=res.data.projectId;
+               this.flag='001'
              }
              else{
-               this.errorMsg=res.msg;
                this.flag='002';
-               this.$message.error(res.msg);
+               this.errorMsg=res.msg;
              }
-           });
-         }
+          })
 
-      }
+        }
+        else{
+          this.$message.error('错误');
+        }
+
+
+          }
+
+
     }
 </script>
 

@@ -4,7 +4,6 @@
      <div v-show="dataflag==='000'">
        <a-form-item >
          <a-input placeholder="请输入姓名"
-                  size="large"
                   v-decorator="[
            'username',
             {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['change','blur']}
@@ -13,7 +12,7 @@
          </a-input>
        </a-form-item>
        <a-form-item >
-         <a-input placeholder="请输入手机号" size="large"  v-decorator="['phoneNumber',
+         <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['change','blur'],validateFirst:true}
       ]">
            <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
@@ -22,7 +21,7 @@
        <a-form-item>
          <a-row :gutter="8">
            <a-col :span="15">
-             <a-input placeholder="请输入验证码" id="success" size="large"  v-decorator="[
+             <a-input placeholder="请输入验证码" id="success"   v-decorator="[
           'code',
             {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
         ]">
@@ -53,7 +52,7 @@
              </a-select-option>
            </template>
 
-           <a-input placeholder="请输入邮箱地址（选填）" size="large">
+           <a-input placeholder="请输入邮箱地址（选填）" >
              <img slot="prefix" src="../../assets/images/youxiang@2x.png" style="width:14px"/>
            </a-input>
          </a-auto-complete>
@@ -107,9 +106,9 @@
         </a-form-item>
       </div>
       <a-form-item >
-        <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit(0)"  v-if="dataflag==='000'">下一步</a-button>
+        <a-button  type="primary" style="width:100%"  @click="handleSubmit(0)"  v-if="dataflag==='000'">下一步</a-button>
       <div v-else style="margin-top:8.4%;">
-        <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit(1)" >注册</a-button>
+        <a-button  type="primary" style="width:100%"  @click="handleSubmit(1)" >注册</a-button>
          <div style="text-align:right;"> <a style="color:#1890ff;text-decoration: underline" @click="dataflag='000'">返回上一步</a></div>
       </div>
       </a-form-item>

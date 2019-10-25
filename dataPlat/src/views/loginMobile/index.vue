@@ -75,11 +75,11 @@
    }
   .login-box{
     width: 9.1rem;
-    height: 58.4%;
+    height: 64.4%;
     background-color: #ffffff;
     border-radius: 0.2rem;
     position:absolute;
-    bottom:3.6%;
+    bottom:3.5%;
     left:4.3%;
     padding:0.5rem;
   }

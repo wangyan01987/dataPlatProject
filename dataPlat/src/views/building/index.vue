@@ -27,7 +27,7 @@
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
           { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName' },
           { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
-          { title: '构件类型', dataIndex: 'cmpTypeName', key: 'cmpTypeName' },
+          { title: '构件类型', dataIndex: 'cmpTypeNameJoin', key: 'cmpTypeNameJoin' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];
@@ -131,9 +131,10 @@
                          item.cmptType.forEach(item1=>{
                           item.cmpTypeName.push( item1.component);
                          });
+                     item.cmpTypeNameJoin=item.cmpTypeName.join('，');
                          return item;
                     });
-
+                    console.log(obj1);
                 this.dataSource=obj1;
 
 

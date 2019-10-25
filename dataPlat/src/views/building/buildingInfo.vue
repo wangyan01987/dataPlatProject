@@ -88,12 +88,15 @@
     <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:''}"  class="buildingTable">
       <template slot="floors" slot-scope="text, record, index">
         <div key="floors">
-          <a-input
-            v-if="dataflag!=='000'"
-            style="margin: -5px 0; "
-            :value="text"
-            @change="e => handleChange(e.target.value, record.id,'floors')"
-          />
+           <div class="test-floor"  v-if="dataflag!=='000'">
+             <a-input
+
+               style="margin: -5px 0; "
+               :value="text"
+               placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
+               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"
+             />
+           </div>
           <template v-else>{{text}}</template>
         </div>
       </template>
@@ -188,6 +191,9 @@
           return  item.key!==key;
         });
       },
+      handleCancel(){
+
+      },
       handleSubmit(e) {
         e.preventDefault();
         this.form.validateFields((err, values) => {
@@ -241,8 +247,13 @@
 
         }
       },
-      handleChange(value, key, column) {
-
+      handleChange(value, key, column,target1) {
+        let str=/^[\d-]{1,10}$/;
+        if(!str.test(value)){
+            target1.style.borderColor='red';
+            return;
+        }
+          target1.style.borderColor='transparent';
         const newData = [...this.dataSource];
          const  target= newData.filter(item=>item.id===key)[0];
                if(target){

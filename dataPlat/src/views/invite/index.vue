@@ -1,5 +1,4 @@
 <template>
-
     <div class="content-box">
       <div v-if="isValid" class="box-item">
         <p class="title">{{title}}</p>
@@ -10,7 +9,6 @@
         <p><a-icon type="close-circle" theme="filled" style="color:#f5222d"/>邀请链接已经失效</p>
       </div>
     </div>
-
 </template>
 
 <script>
@@ -19,10 +17,11 @@
       data(){
 
           return{
-            userName:'杨乐乐',
-            projectName:'大数据第一期项目',
+            userName:'',
+            projectName:'',
             projectId:'',
             isValid:true,
+            code:'',
             bodyStyle:{height:500}
           }
       },
@@ -36,44 +35,41 @@
 
           },
         goInvite(){
-
-                this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:this.projectId}).then(res=>{
-                  if(res.data.code==='001'){
-                     //加入成功页面
-                      this.$router.push({name:'joinSuccess',query:{projectId:this.projectId,projectName:this.projectName}});
-                  }
-                  else if(res.data.code==='002'){
-                    this.$router.push({name:'joinSuccess',query:{projectId:this.projectId,projectName:this.projectName}});
+                  if(this.$store.state.isLogin){
+                    this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:this.projectId}).then(res=>{
+                      if(res.data.code==='001'){
+                        //加入成功页面
+                        this.$router.push({name:'joinSuccess',query:{joinSuccess:true}});
+                      }
+                      else{
+                        this.$message.error(res.data.msg);
+                      }
+                    });
                   }
                   else{
-                    this.$message.error(res.data.msg,5);
+                    this.$router.push({name:'joinSuccess',query:{code:this.code}});
                   }
-                })
           }
       },
       mounted(){
-          // this.$ajax('http://pstbj.com:6041/bomextract/buildmember/invitation/A46A907E0D76C62BC825B6EAFB1C00CCF51D28A084201035737E7B9419E0143A9F5D37FAEEF239EC6B60572A92777569','GET').then(res=>{
-          //   res=res.data;
-          //   if(res.code==='001'){
-          //         this.userName=res.data.userName;
-          //         this.projectName=res.data.projectName;
-          //        this.projectId=res.data.projectId;
-          //          this.isValid=true;
-          //   }
-          //   else if(res.code==='002'){
-          //     this.isValid=false;
-          //   }
-          //   else{
-          //     this.isValid=false;
-          //     this.$message.error(res.msg);
-          //   }
-          //
-          // })
-        this.userName=this.$route.query.userName;
-        this.projectName=this.$route.query.projectName;
-        this.projectId=this.$route.query.projectId;
-        this.isValid=this.$route.query.isValid;
-        let flag=this.document.body.clientWidth;
+        this.code=this.$route.query.code;
+        console.log(this.code)
+        if(this.code){
+          this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:this.code}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              this.isValid=true;
+              this.userName=res.data.userName;
+              this.projectName=res.data.projectName;
+              this.projectId=res.data.projectId;
+            }
+            else{
+              this.$message.error(res.msg);
+              this.isValid=true;
+            }
+          })
+        };
+        let flag=document.body.clientWidth;
         if(flag<750){
             this.$router.push({name:'/loginMobile',query:{userName:this.userName,projectName:this.projectName,projectId:this.projectId,isValid:this.isValid}});
         }

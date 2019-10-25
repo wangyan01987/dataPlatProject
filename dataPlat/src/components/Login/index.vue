@@ -66,7 +66,7 @@
       return {
         formTailLayout,
         formData:this.$form.createForm(this),
-        identifyCodes: '1234567890ABCDEFJKhfhg',
+        identifyCodes: '1234567890ABCDEFKsdefb',
         identifyCode:''
 
       }
@@ -136,12 +136,29 @@
                   this.$message.success('登录成功！');
                   this.$store.commit('setLogin',true);
                   this.$store.commit('setPhone',fieldsValue.username);
-
                   //判断是否需要跳到joinSuccess
-                  if(this.$route.query.joinProject){
-                    let projectName=this.$route.query.projectName;
-                    let projectId=this.$route.query.projectId;
-                    this.$router.push({name:'joinSuccess',query:{projectName:projectName,projectId:projectId,hasfinished:true}});
+                  let code=this.$route.query.code;
+                  if(code){
+                    //解析code
+                    this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
+                      res=res.data;
+                      if(res.code==='001'){
+                        let projectId=res.data.projectId;
+                        this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:projectId}).then(res=>{
+                          res=res.data;
+                          if(res.code==='001'){
+                            this.$message.success(res.msg);
+                            this.$router.push({name:'joinSuccess',query:{code:code}});
+                          }
+                          else{
+                            this.$message.error(res.msg);
+                            this.$router.push('/home');
+                          }
+                        });
+
+                      }
+
+                    });
                   }
                   else{
                     //跳转到主页

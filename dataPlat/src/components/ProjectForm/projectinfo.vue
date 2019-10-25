@@ -1,94 +1,100 @@
 <template>
 <div>
-  <a-form :form="formData">
-    <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="[ 'projectName', {rules: [{message:'项目名称'},{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
+  <a-spin :spinning="spinning">
+    <div class="spin-content">
+      <a-form :form="formData">
+        <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="[ 'projectName', {validateTrigger:['blur','change'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2" ></a-input>
-      <span v-show="dataflag===0">{{obj.projectName}}</span>
-    </a-form-item>
-    <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="['projectAbbr', {rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
-      <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
-    </a-form-item>
-    <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
-      <a-input v-decorator="[ 'projectCode', {rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
-      <span v-show="dataflag===0">{{obj.projectCode}}</span>
-    </a-form-item>
-    <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
-      <a-select placeholder="请选择项目类型" v-decorator="['protype']">
-        <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
-      </a-select>
-      <span v-show="dataflag===0">{{obj.protype}}</span>
-    </a-form-item>
+          <span v-show="dataflag===0">{{obj.projectName}}</span>
+        </a-form-item>
+        <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="['projectAbbr', {rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
+          <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
+        </a-form-item>
+        <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
+          <a-input v-decorator="[ 'projectCode', {validateTrigger:['blur','change'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
+          <span v-show="dataflag===0">{{obj.projectCode}}</span>
+        </a-form-item>
+        <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
+          <a-select placeholder="请选择项目类型" v-decorator="['protype']">
+            <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
+          </a-select>
+          <span v-show="dataflag===0">{{obj.protype}}</span>
+        </a-form-item>
 
-    <a-form-item label="项目所在地" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-row :gutter="4">
-        <a-col :span="8">
-          <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="provincehandleChange" placeholder="省市" v-decorator="['provinceId']">
-              <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
-            </a-select>
+        <a-form-item label="项目所在地" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-row :gutter="4">
+            <a-col :span="8">
+              <a-form-item v-show="dataflag===1||dataflag===2">
+                <a-select @change="provincehandleChange" placeholder="省市" v-decorator="['provinceId']">
+                  <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
+                </a-select>
+              </a-form-item>
+              <span v-show="dataflag===0">{{obj.provinceName}}</span>
+            </a-col>
+            <a-col :span="8">
+              <a-form-item v-show="dataflag===1||dataflag===2">
+                <a-select @change="handleChange" placeholder="城市" v-decorator="['cityId']" >
+                  <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
+                </a-select>
+              </a-form-item>
+              <span v-show="dataflag===0">{{obj.cityName}}</span>
+            </a-col>
+            <a-col :span="8">
+              <a-form-item v-show="dataflag===1||dataflag===2">
+                <a-select placeholder="区县" v-decorator="[ 'districtId']" >
+                  <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
+                </a-select>
+              </a-form-item>
+              <span v-show="dataflag===0">{{obj.districtName}}</span>
+            </a-col>
+          </a-row>
+          <a-form-item class="special">
+            <a-input placeholder="请输入详细地址，支持中英文字符，字数为6-20"  v-decorator="['proLocal', {rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
+            <span v-else>{{obj.proLocal}}</span>
           </a-form-item>
-          <span v-show="dataflag===0">{{obj.provinceName}}</span>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select @change="handleChange" placeholder="城市" v-decorator="['cityId']">
-              <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
-            </a-select>
-          </a-form-item>
-          <span v-show="dataflag===0">{{obj.cityName}}</span>
-        </a-col>
-        <a-col :span="8">
-          <a-form-item v-show="dataflag===1||dataflag===2">
-            <a-select placeholder="区县" v-decorator="[
-          'districtId']">
-              <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
-            </a-select>
-          </a-form-item>
-          <span v-show="dataflag===0">{{obj.districtName}}</span>
-        </a-col>
-      </a-row>
-      <a-form-item class="special">
-        <a-input placeholder="请输入详细地址，支持中英文字符，字数为6-20"  v-decorator="['proLocal', {rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
-        <span v-else>{{obj.proLocal}}</span>
-      </a-form-item>
-    </a-form-item>
-    <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-      <a-input placeholder="请输入项目公司，支持中英文字符，字数为6-20" v-decorator="['proCompany',{rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
-      <span v-else>{{obj.proCompany}}</span>
-    </a-form-item>
-    <a-form-item label="建设单位" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-      <a-input placeholder="请输入建设单位，支持中英文字符，字数为6-20" v-decorator="[
+        </a-form-item>
+        <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
+          <a-input placeholder="请输入项目公司，支持中英文字符，字数为6-20" v-decorator="['proCompany',{rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
+          <span v-else>{{obj.proCompany}}</span>
+        </a-form-item>
+        <a-form-item label="建设单位" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
+          <a-input placeholder="请输入建设单位，支持中英文字符，字数为6-20" v-decorator="[
           'developmentUnit',
             {rules: [{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2"></a-input>
-      <span v-show="dataflag===0">{{obj.developmentUnit}}</span>
-    </a-form-item>
-    <a-form-item v-bind="formItemLayout"
-                 label="立项时间"><a-date-picker v-decorator="['proTime']" placeholder="请选择日期" v-show="dataflag===1||dataflag===2"/>
-      <span v-show="dataflag===0">{{obj.proTime}}</span>
-    </a-form-item>
-    <a-form-item label="栋数" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-if="dataflag===1">
-      <a-input v-decorator="[ 'buildNum' ]" disabled></a-input>
-    </a-form-item>
-    <a-form-item label="项目简介" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"v-decorator="[ 'introduction',{rules: [{validator:checkName}]}]"/>
-      <span v-show="dataflag===0">{{obj.introduction}}</span>
-    </a-form-item>
-    <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
-                 :wrapper-col="formItemLayout.wrapperCol">
-      <a-input placeholder="请输入合同名称，支持中英文字符，字数为6-20" v-decorator="[
+          <span v-show="dataflag===0">{{obj.developmentUnit}}</span>
+        </a-form-item>
+        <a-form-item v-bind="formItemLayout"
+                     label="立项时间"><a-date-picker v-decorator="['proTime']" placeholder="请选择日期" v-show="dataflag===1||dataflag===2"/>
+          <span v-show="dataflag===0">{{obj.proTime}}</span>
+        </a-form-item>
+        <a-form-item label="栋数" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-if="dataflag===1">
+          <a-input v-decorator="[ 'buildNum' ]" disabled></a-input>
+        </a-form-item>
+        <a-form-item label="项目简介" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+          <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"
+                      :maxLength='400'
+                      v-decorator="[ 'introduction',{rules:[{max:399,message:'字数最多为400字'}]}]"/>
+          <span v-show="dataflag===0">{{obj.introduction}}</span>
+        </a-form-item>
+        <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
+                     :wrapper-col="formItemLayout.wrapperCol">
+          <a-input placeholder="请输入合同名称，支持中英文字符，字数为6-20" v-decorator="[
           'contractName',
             {rules: [{validator:checkName}]}
         ]" v-if="dataflag===1||dataflag===2"></a-input>
-      <span v-else>{{obj.contractName}}</span>
-    </a-form-item>
-  </a-form>
-  <div class="btn-box" v-if="dataflag!==0">
-    <a-button  @click="cancel">取消</a-button>
-    <a-button type="primary" style="margin-left:0.1rem" @click="submit">确定</a-button>
-  </div>
+          <span v-else>{{obj.contractName}}</span>
+        </a-form-item>
+      </a-form>
+      <div class="btn-box" v-if="dataflag!==0">
+        <a-button  @click="cancel">取消</a-button>
+        <a-button type="primary" style="margin-left:0.1rem" @click="submit">确定</a-button>
+      </div>
+    </div>
+  </a-spin>
+
 </div>
 </template>
 <script>
@@ -112,9 +118,10 @@
         formItemLayout,
         formTailLayout,
         formData: this.$form.createForm(this),
-        arr:[{label:'住宅',value:1},{label:'商业',value:2},
-          {label:'办公',value:3},{label:'教育',value:4},
-          {label:'其他',value:5}],
+        arr:[{label:'住宅',value:'1'},{label:'商业',value:'2'},
+          {label:'办公',value:'3'},{label:'教育',value:'4'},
+          {label:'其他',value:'5'}],
+        spinning:false,
         cityarr:[],
         districtarr:[],
       }
@@ -133,12 +140,12 @@
       checkName(rule, value, callback) {
         let str;
         switch(rule.field){
-          case 'nickname': str='项目简称' ;break;
-          case 'address':str='项目详细地址';break;
-          case 'company':str='项目公司';break;
-          case 'projectInfo':str='项目简介';break;
-          case 'developer':str='建设单位';break;
-          case 'assign':str='合同名称';break;
+
+          case 'projectAbbr': str='项目简称' ;break;
+          case 'proLocal':str='项目详细地址';break;
+          case 'proCompany':str='项目公司';break;
+          case 'developmentUnit':str='建设单位';break;
+          case 'contractName':str='合同名称';break;
           default :str='项目名称';
         };
         if (!value) {
@@ -190,21 +197,27 @@
       cancel(){
            this.$emit('cancel');
       },
-      provincehandleChange(val) {
-          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
+     async provincehandleChange(val) {
+        let flag;
+         await this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
             res=res.data;
             if(res.code==='001'){
               this.cityarr=res.data;
+              flag=true;
             }else{
               this.$message.error(res.msg);
             }
           });
+         return flag;
       },
       handleChange(val) {
             this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
               res=res.data;
               if(res.code==='001'){
                 this.districtarr=res.data;
+
+                  // this.formData.setFieldsValue('districtId', this.districtarr[0].id);
+
               }else{
                 this.$message.error(res.msg);
               }
@@ -229,28 +242,29 @@
               res=res.data;
               if(res.code==='001'){
                 this.provincearr=res.data;
+                if(obj.provinceId){
+                let state=this.provincehandleChange(obj.provinceId);
+                      this.handleChange(obj.cityId,1);
+                }
               }else{
                 this.$message.error(res.msg);
               }
             });
-            if(obj.provinceId){
-              this.provincehandleChange(obj.provinceId);
-              this.handleChange(obj.cityId);
-            }
             setTimeout(()=>{
               this.setMsg(obj)
-            },5);
+            },0);
           }
           }
         });
       },
       setMsg(obj) {
-
         if (obj instanceof Object&&this.dataflag!==0) {
          if(obj.proTime){
            obj.proTime=moment(obj.proTime,'YYYY-MM-DD HH:mm:ss');
          }
           this.formData.setFieldsValue(obj);
+          this.spinning=false;
+
         }
 
       },
@@ -266,6 +280,7 @@
     mounted() {
       //编辑信息 001 产看000
    if(this.dataflag===1||this.dataflag===0){
+     this.spinning=true;
      this.getProjectInfo();
    };
     if(this.dataflag===2){

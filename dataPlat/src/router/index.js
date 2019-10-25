@@ -32,7 +32,7 @@ const router= new Router({
       path:'/',
       name:'layout',
       component:()=>import('@/views/layout'),
-      redirect:'/home',
+      //redirect:'/home',
       children:[
         {
           path:'home',
@@ -91,21 +91,25 @@ const router= new Router({
     }
   ]
 });
+
 import  store from '../store';
-// router.beforeEach((to,from,next)=>{
-//   let client=document.body.clientWidth;
-//   if(client<750&&to.path!=='/loginMobile'){
-//     //next({path:'/loginMobile' });
-//   }
-//   else {
-//     // if (!store.state.isLogin && to.path !== '/login' && to.path !== '/invite' && to.name !== 'joinSuccess') {
-//     //   next('/login')
-//     // } else {
-//     //   next();
-//     // }
-//   }
-//
-//
-// });
+router.beforeEach((to,from,next)=>{
+  let client=document.body.clientWidth;
+  if(client<750&&to.path!=='/loginMobile'){
+    next({path:'/loginMobile' });
+  }
+  else if(to.path==='/loginMobile'){
+    next();
+  }
+  else {
+    if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess') {
+      next('/login')
+    } else {
+      next();
+    }
+  }
+
+
+});
 export default router;
 

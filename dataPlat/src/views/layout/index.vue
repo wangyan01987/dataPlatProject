@@ -14,7 +14,7 @@
           style="width: 268px"
           @search="onSearch"
         /></div>
-        <div>
+        <div class="top-item">
           <img src="../../assets/images/xiaoxi@2x.png">
           <img src="../../assets/images/youxiang@2x.png">
           <img src="../../assets/images/help@2x.png">
@@ -110,14 +110,11 @@
         logout(){
             this.$ajax('logout','POST').then(res=>{
               res=res.data;
-              if(res.code==='001'){
+              if(res.code==='999'){
                  this.$store.commit('setLogin',false);
-                this.$message.success('退出登录');
+                 //this.$message.success('退出登录');
                 this.$router.push('/login');
                  }
-              else{
-                this.$message.error(res.msg);
-              }
             });
         }
       },
@@ -143,13 +140,8 @@
     width:16px;
     cursor:pointer;
   }
-  .userIcon{
-    font-size:14px;
-    padding:5px;
-    background-color: #ecbc27;
-    color:#fff;
-    border-radius:50%;
-    cursor:pointer;
+  .top-item{
+    padding-right:15px;
   }
 
 </style>

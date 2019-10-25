@@ -9,7 +9,7 @@
                <img :src="item.img" style="width:100%;height:100%;"/>
                <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
              </div>
-             <p class="editor" >
+             <p class="editor" @click="$event.stopPropagation()" >
                <img src="../../assets/images/bianji@2x.png" alt="编辑" @click="editItem(item.projectId,$event)">
                <img src="../../assets/images/shanchu@2x.png" alt="删除" @click="deleteItem(item.projectId,$event)" v-show="item.isDelete">
              </p>

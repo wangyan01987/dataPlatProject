@@ -21,23 +21,23 @@
       },
       backgroundColorMin: {
         type: Number,
-        default: 180
+        default:150
       },
       backgroundColorMax: {
         type: Number,
-        default: 240
+        default:200
       },
       colorMin: {
         type: Number,
-        default: 50
+        default:50
       },
       colorMax: {
         type: Number,
-        default: 160
+        default:100
       },
       lineColorMin: {
         type: Number,
-        default: 40
+        default: 150
       },
       lineColorMax: {
         type: Number,
@@ -45,11 +45,11 @@
       },
       dotColorMin: {
         type: Number,
-        default: 0
+        default: 256
       },
       dotColorMax: {
         type: Number,
-        default: 255
+        default: 256
       },
       contentWidth: {
         type: Number,
