@@ -15,7 +15,7 @@
                slot-scope="text, record, index"
              >
                <div :key="col">
-                 <a-input-number :min="0" v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
+                 <a-input-number :min="0" :max="Math.pow(10,10)-1" v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
                  />
                  <template v-else>{{text}}</template>
                </div>
@@ -24,9 +24,8 @@
                <div class="editable-row-operations">
         <span v-if="record.editable">
           <a @click="() => save(record.sizeId,'001')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-          <a-popconfirm title="确定取消?" @confirm="() => cancel(record.sizeId,'001')">
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
-          </a-popconfirm>
+            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.sizeId,'001')"></a>
+
         </span><span v-else>
           <a @click="() => edit(record.sizeId,'001')"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
         </span>
@@ -65,6 +64,7 @@
           >
             <div>
               <a-input-number :min="0"
+                              :max="Math.pow(10,10)-1"
                               v-if="record.editable"
                               style="margin: -5px 0"
                               :value="text"
@@ -77,9 +77,9 @@
             <div class="editable-row-operations">
         <span v-if="record.editable">
           <a @click="() => save(record.key,'002')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-          <a-popconfirm title="确定取消?" @confirm="() => cancel(record.materialId,'002')">
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
-          </a-popconfirm>
+
+            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.materialId,'002')"></a>
+
         </span>
               <span v-else>
           <a @click="() => edit(record.key,'002')"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>

@@ -89,7 +89,6 @@
         <div key="floors">
            <div class="test-floor"  v-if="dataflag!=='000'">
              <a-input
-
                style="margin: -5px 0; "
                :value="text"
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
@@ -171,7 +170,7 @@
       },
       addBuilding(){
         let a=this.dataSource.length+1;
-        let obj={index:a++
+        let obj={id:a++
         };
         this.dataSource.push(obj)
       },
@@ -247,6 +246,7 @@
         }
       },
       handleChange(value, key, column,target1) {
+        console.log(key);
         let str=/^[\d-]{1,10}$/;
         if(!str.test(value)){
             target1.style.borderColor='red';

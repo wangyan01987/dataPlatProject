@@ -14,8 +14,10 @@
               validator: validPass,
             }],
           }
-        ]" type="password">
+        ]" :type="psdtype1">
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype1='password'"  v-show="psdtype1==='text'" />
+              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype1='text'"  v-show="psdtype1==='password'" />
             </a-input>
           </a-form-item>
           <a-form-item>
@@ -25,9 +27,11 @@
             }],
           }
         ]"
-              type="password"
+              :type="psdtype2"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype2='password'"  v-show="psdtype2==='text'" />
+              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype2='text'"  v-show="psdtype2==='password'" />
             </a-input>
             <p style="margin:0;line-height:0"><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
@@ -41,9 +45,11 @@
             }],
           }
         ]"
-              type="password"
+              :type="psdtype3"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype3='password'"  v-show="psdtype3==='text'" />
+              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype3='text'"  v-show="psdtype3==='password'" />
             </a-input>
           </a-form-item>
           <div class="action-box">
@@ -73,6 +79,9 @@
         wrapperCol: { span: 8, offset: 4 },
       };
       return{
+        psdtype1:'password',
+        psdtype2:'password',
+        psdtype3:'password',
         visible:false,
         formItemLayout: formItemLayout,
         formTailLayout,
@@ -131,7 +140,7 @@
                   // 更新数据
                   this.$message.success('修改成功！');
                   // 重新登录
-                  
+
 
                 }
                 else{

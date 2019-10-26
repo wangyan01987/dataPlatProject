@@ -2,10 +2,10 @@
     <div>
       <a-form :form="form">
               <a-form-item v-for="(k,index) in form.getFieldValue('keys')" :key="k" :required="false">
-                <a-input
+                <a-input v-if="flagName==='手机号'"
                 v-decorator="[`names[${k}]`,
               {
-                validateTrigger:['change','blur'],
+                validateTrigger:['blur'],
                 rules:[{
                 required:true,
                 whitespace:true,
@@ -18,6 +18,23 @@
                 :placeholder="`请输入${flagName}(*必填)`"
                 style="margin-right:8px;width:60%;"
                 />
+                <a-auto-complete  @search="handleSearch" placeholder="请输入邮箱" :max="30"
+                                 v-decorator="[`names[${k}]`,
+              {
+                validateTrigger:['change','blur'],
+                rules:[{
+                required:true,
+                whitespace:true,
+                message:`请输入${flagName}或者删除该字段`
+                },
+                {validator:checkMethods}
+                ]
+                }
+                ]" :placeholder="`请输入${flagName}(*必填)`" style="margin-right:8px;width:60%;" v-else>
+                  <template slot="dataSource">
+                    <a-select-option v-for="email in result" :key="email">{{email}}</a-select-option>
+                  </template>
+                </a-auto-complete>
                 <a-icon
                   v-if="form.getFieldValue('keys').length > 1"
                   class="dynamic-delete-button"
@@ -41,7 +58,8 @@
       data(){
         let id=1;
           return{
-               id
+               id,
+            result:[]
           }
       },
       computed:{
@@ -50,6 +68,15 @@
           }
       },
       methods:{
+        handleSearch(value) {
+          let result;
+          if (!value || value.indexOf('@') >= 0) {
+            result = [];
+          } else {
+            result = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}@${domain}`);
+          }
+          this.result = result;
+        },
           checkMethods(rule, value, callback){
                if(this.dataflag==='002'){
                  this.checkAccount(rule, value, callback);
@@ -64,7 +91,10 @@
           }else{
             if(!email(value)){
               callback('邮箱输入格式不正确')
-            }else{
+            }else if(value.length>255){
+               callback('超出字符限制255')
+            }
+            else{
               callback();
               this.initData();
             }
@@ -97,7 +127,7 @@
         add(){
           const {form}=this;   //form=this.form
            const keys=form.getFieldValue('keys');
-           if(keys.length>10){
+           if(keys.length>=10){
              this.$message.error(`当前页面有效${this.flagName}超出剩余额度`);
              return;
            }

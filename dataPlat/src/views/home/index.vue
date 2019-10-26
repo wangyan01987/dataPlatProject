@@ -158,7 +158,7 @@
         //获取项目列表
        this.getItem(1).then(res=>{
          this.itemList=res;
-         let arr5=res.slice(0,4);
+         let arr5=res.slice(0,5);
          this.$store.commit('setMenuList',arr5);
        });
         //滑动加载

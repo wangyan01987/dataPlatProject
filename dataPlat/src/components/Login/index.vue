@@ -31,6 +31,8 @@
       </a-form-item>
       <a-form-item>
         <a-input
+          ref="password"
+          :type="psdtype"
           placeholder="请输入密码"
           v-decorator="[
           'password',
@@ -39,12 +41,11 @@
               validator: validPass,
             }],
           }
-        ]"
-          type="password"
-        ref="phone" class="test">
+        ]" >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="show('psd')"  v-show="psdtype==='text'" />
+          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="show()"  v-show="psdtype==='password'" />
         </a-input>
-
       </a-form-item>
       <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
     </a-form>
@@ -64,6 +65,7 @@
         wrapperCol: { span: 8, offset: 4 },
       };
       return {
+        psdtype:'password',
         formTailLayout,
         formData:this.$form.createForm(this),
         identifyCodes: '1234567890ABCDEFKsdefb',
@@ -76,6 +78,14 @@
       SIdentify
     },
     methods:{
+      show(str){
+       if(!str){
+         this.psdtype='text'
+       }
+       else{
+         this.psdtype='password'
+       }
+      },
       randomNum (min, max) {
         return Math.floor(Math.random() * (max - min) + min)
       },

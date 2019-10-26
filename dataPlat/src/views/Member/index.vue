@@ -3,10 +3,19 @@
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember">+邀请新成员</a-button></p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="text,record" slot="icon">
-        <a-avatar :style="{color:'#fff',backgroundColor: setColor}">{{record.userName.substring(0,1)}}</a-avatar>
+        <a-avatar :style="{color:'#fff',backgroundColor: setColor}"><span v-if="record.userName">{{record.userName.substring(0,1)}}</span>
+       <span v-else> ---</span>
+        </a-avatar>
       </template>
+      <template v-for="item in ['userName','gender','phoneNumber','email','companyName','position']" >
+          <span slot-scope="text,record" :slot="item" :key="item">
+           <span v-show="!text">---</span>
+           <span v-show="text">{{text}}</span>
+      </span>
+      </template>
+
        <span slot="action" slot-scope="text,record,index" class="action" >
-         <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.userId)" v-if="record.isDelete"/>
+         <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.userId)" v-show="record.isDelete"/>
        </span>
     </a-table>
     <a-modal :destroyOnClose=true
@@ -28,12 +37,12 @@
     data(){
       const columns = [
         { title: '', dataIndex: 'icon', key: 'icon',scopedSlots: { customRender: 'icon' }},
-        { title: '姓名', dataIndex: 'userName', key: 'userName' },
-        { title: '性别', dataIndex: 'gender', key: 'gender' },
-        { title: '手机', dataIndex: 'phoneNumber', key: 'phoneNumber' },
-        { title: '邮箱', dataIndex: 'email', key: 'email' },
-        { title: '公司', dataIndex: 'companyName', key: 'companyName' },
-        { title: '职位', dataIndex: 'position', key: 'position' },
+        { title: '姓名', dataIndex: 'userName', key: 'userName',scopedSlots: { customRender: 'userName' } },
+        { title: '性别', dataIndex: 'gender', key: 'gender',scopedSlots: { customRender: 'gender' } },
+        { title: '手机', dataIndex: 'phoneNumber', key: ',phoneNumber',scopedSlots: { customRender: 'phoneNumber' } },
+        { title: '邮箱', dataIndex: 'email', key: 'email',scopedSlots: { customRender: 'email' } },
+        { title: '公司', dataIndex: 'companyName', key: 'companyName',scopedSlots: { customRender: 'companyName' } },
+        { title: '职位', dataIndex: 'position', key: 'position',scopedSlots: { customRender: 'position' } },
         { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
       ];
       return{
@@ -92,7 +101,7 @@
         this.loading = true;
        this.$ajax('bomextract/buildmember/getmember','POST',{projectId:projectId,pageNum:num,pageSize:size}).then((res) => {
                      res=res.data;
-                     let mapset=['男','女'];
+                     let mapset=['女','男'];
                if(res.code==='001'){
                  this.loading = false;
                  const pagination = { ...this.pagination };
@@ -101,7 +110,7 @@
                  pagination.onChange=this.changePage;
                  this.dataSource = res.data;
                  this.dataSource.map(item=>{
-                        item.gender=mapset[item['sex']];
+                        item.gender=mapset[item['sex']-1];
                         return item;
                    });
                  this.pagination = pagination;

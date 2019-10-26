@@ -32,9 +32,7 @@
              <div class="editable-row-operations">
         <span v-if="record.editable">
           <a @click="() => save(record.cmptId)"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-          <a-popconfirm title="确定取消?" @confirm="() => cancel(record.cmptId)">
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px"></a>
-          </a-popconfirm>
+            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.cmptId)"></a>
         </span>
                <span v-else>
                  <a @click="() => edit(record.cmptId)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>

@@ -36,9 +36,11 @@
             validateTrigger:['change','blur']
           }
         ]"
-          type="password"
+          :type="psdtype"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype='password'"  v-show="psdtype==='text'" />
+          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype='text'"  v-show="psdtype==='password'" />
         </a-input>
         <p><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
@@ -54,9 +56,11 @@
             validateTrigger:['change','blur']
           }
         ]"
-          type="password"
+          :type="psdtype1"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype1='password'"  v-show="psdtype1==='text'" />
+          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype1='text'"  v-show="psdtype1==='password'" />
         </a-input>
       </a-form-item>
       <a-form-item >
@@ -78,7 +82,9 @@
         btnabled:true,
         btnType:'default',
         autoCompleteResult:'',
-        mobile:''
+        mobile:'',
+        psdtype:'password',
+        psdtype1:'password',
       }
 
     },
