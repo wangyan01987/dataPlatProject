@@ -132,16 +132,18 @@
             if (err) {
               return;
             };
-            delete fieldsValue.repassword
+            delete fieldsValue.repassword;
             //提交表单
             this.$ajax('bomextract/user/modifypassword','POST',fieldsValue).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
                   // 更新数据
                   this.$message.success('修改成功！');
+                  this.$store.state.isLogin=false;
+                  this.$router.push('/login');
+                  this.$message.warning('请先登录');
+
                   // 重新登录
-
-
                 }
                 else{
                   this.$message.error(res.msg);

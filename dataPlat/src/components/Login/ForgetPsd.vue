@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
            'phoneNumber',
-            {rules: [{validator:checkAccount}],validateTrigger:['change','blur']}
+            {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -14,7 +14,7 @@
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'code',
-            {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
@@ -33,7 +33,7 @@
             rules: [{
               validator: validPass,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
           :type="psdtype"
@@ -53,7 +53,7 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
           :type="psdtype1"

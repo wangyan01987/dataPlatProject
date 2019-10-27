@@ -7,10 +7,10 @@
               版本号：<a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" >
                 <a-select-option v-for="item in versionArr" :value="item" :key="item">{{item}}</a-select-option>
               </a-select>
-              <a-input-search placeholder="搜索"  @search="onSearch"  style="width:25%" />
+              <a-input-search placeholder="请输入"  @search="onSearch"  style="width:25%" />
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey':pagination="pagination" :locale="{emptyText: '暂无数据'}">
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}">
            <template
              v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
@@ -31,15 +31,17 @@
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.cmptId)"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.cmptId)"></a>
+             <a @click="() => save(record.cmptId)"><i class="iconfont iconsave"  /></a>
+            <a><i class="iconfont iconcancel"  @click="cancel(record.cmptId)"/></a>
         </span>
                <span v-else>
-                 <a @click="() => edit(record.cmptId)"><img :src="require('@/assets/images/bianji@2x.png')"style="width:14px"></a>
-                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.cmptId)">
-                       <a> <img :src="require('@/assets/images/shanchu@2x.png')" alt="" style="width:14px"></a>
+                 <a @click="() => edit(record.cmptId)">
+                   <i class="iconfont iconbianji"  /></a>
+                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.cmptId)" okText="确定" cancelText="取消">
+                       <a>  <i class="iconfont iconshanchu"   /></a>
+                      <a-icon slot="icon" type="exclamation-circle" style="color: red" />
                  </a-popconfirm>
-                 <a > <a-icon type="copy"  @click="goDetail(record)"/></a>
+                 <a > <i class="iconfont iconxiangqing"  @click="goDetail(record)" /></a>
         </span>
              </div>
            </template>
@@ -48,7 +50,7 @@
       <a-drawer
         title="BOM详情"
         placement="right"
-        :width="1200"
+        :width="1300"
         @close="onClose"
         :visible="visible"
         :destroyOnClose="true"
@@ -83,7 +85,7 @@
     {
       title: '产品编号',
       dataIndex: 'prodId',
-      width: '15%',
+      width: '20%',
       scopedSlots: { customRender: 'prodId' },
 
     },
@@ -123,6 +125,7 @@
     },
     props:['objType','buildingid'],
     watch:{
+      //构件类型
        'objType':{
          handler(val){
          //获取bom数据
@@ -130,13 +133,16 @@
           this.getBom(1,20);
         }
            },
-         immediate:true
+         deep:true
        },
-      'buildingid'(val){
-         //楼栋号更新的话，将objType清空
-        // this.objType=null;
-        // this.getBom(1,20);
-      }
+      'buildingid'(val,oldval){
+         //楼栋号更新的话，并且构造类型有值
+        if(oldval&&this.objType){
+          this.getBom(1,20);
+        }else{
+          this.data=[];
+        }
+              }
     },
     computed:{
       bomprops(){
@@ -200,6 +206,7 @@
             pagination.total = res.count;
             pagination.pageSize=size;
             this.pagination=pagination;
+            pagination.onChange=this.changePage;
             res.data.forEach(item=>{
               item.cmptBaseInfo.bomList=item.bomList;
               item.cmptBaseInfo.sizeList=item.sizeList;
@@ -207,6 +214,9 @@
             });
           }
         })
+      },
+      changePage(page,size){
+         this.getBom(page,20);
       },
       deleteItem(record,key){
         //删除构件
@@ -304,5 +314,14 @@
 <style scoped>
   .bom-item-body{
     margin-top:0.16rem;
+  }
+  a i.iconfont{
+    color:#999;
+  }
+  a i.iconfont:hover{
+    color:#1890ff;
+  }
+  a i.iconshanchu:hover{
+    color:red;
   }
 </style>

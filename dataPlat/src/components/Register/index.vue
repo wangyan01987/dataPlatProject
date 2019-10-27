@@ -4,14 +4,14 @@
       <a-form-item >
         <a-input placeholder="请输入姓名"   v-decorator="[
            'username',
-            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['change','blur']}
+            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'},{pattern:/^[\w\*]+ $/,message:'姓名格式不正确'}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
-            {rules: [{validator:checkAccount}],validateTrigger:['change','blur'],validateFirst:true}
+            {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}
       ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -21,7 +21,7 @@
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'code',
-            {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
@@ -59,7 +59,7 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
           :type="psdtype1"
@@ -76,7 +76,7 @@
           'email',
           {rules: [{
               validator: validEmail,
-            }],validateTrigger:['change','blur']}
+            }],validateTrigger:['blur']}
         ]"
 
           @change="handleEmailChange"

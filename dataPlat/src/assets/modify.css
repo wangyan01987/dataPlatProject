@@ -42,7 +42,7 @@ body{
 .register .ant-form-item-control-wrapper{
   text-align:left;
 }
-.ant-tabs-bar.ant-tabs-top-bar{
+.main-container  .ant-tabs-bar.ant-tabs-top-bar{
   background-color:#fff;
   text-align: left;
   padding-left:70px;
@@ -87,4 +87,5 @@ display:none
 .sub-container .box-container{
   flex:auto;
 }
+
 

@@ -104,7 +104,7 @@
     {
       title: '类型',
       dataIndex: 'sizeId',
-      width: '15%',
+      width: '10%',
       customRender:(text, record, index)=>'整板信息'
     },
     {
@@ -187,7 +187,7 @@
     {
       title: '序号',
       dataIndex: 'index',
-      width: '10%',
+      width: '5%',
       customRender:(text, record, index)=>`${index+1}`
     },
     {
@@ -198,18 +198,18 @@
     {
       title: '名称',
       dataIndex: 'matlName',
-      width: '15%',
+      width: '10%',
     },
     {
       title: '规格',
       dataIndex: 'specification',
-      width: '30%',
+      width: '18%',
       scopedSlots: { customRender: 'specification' },
     },
     {
       title: '强度等级',
       dataIndex: 'barGrade',
-      width: '20%',
+      width: '15%',
       scopedSlots: { customRender: 'barGrade' },
     },
     {
@@ -220,23 +220,25 @@
     {
       title: '数量',
       dataIndex: 'amount',
-      width: '10%',
+      width: '5%',
       scopedSlots: { customRender: 'amount' },
     },
     {
       title: '总量',
       dataIndex: 'allweight',
-      width: '10%',
+      width: '5%',
+
     },
     {
       title: '图形',
       dataIndex: 'detailDrawing',
-      width: '15%',
+      width: '10%',
     },
     {
       title: '操作',
       dataIndex: 'operation',
       scopedSlots: { customRender: 'operation' },
+      width: '5%',
     },
   ];
   const data = [];
@@ -306,7 +308,6 @@
       edit(key,flag) {
        if(flag==='001'){
          const newData = [...this.data];
-         console.log(newData)
          const target = newData.filter(item => key === item.sizeId)[0];
          if (target) {
            target.editable = true;
@@ -428,7 +429,7 @@
       this.dataStatics=[this.propmsg];
       //物料信息
       this.dataSource=this.propmsg.bomList;
-      console.log(this.dataSource)
+
 
     }
   };

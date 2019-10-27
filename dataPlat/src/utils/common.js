@@ -155,13 +155,13 @@ export function isSocialCreditCode(val) {
 //项目名称校验 中英文字符6-20
 export function isName(val){
   let str=val.trim();
-  let reg= /^[\u4e00-\u9fa5\w]{6,20}$/;
+  let reg= /^[\u4e00-\u9fa5\w\']{1,50}$/;
   return reg.test(str);
 }
 //项目编号
 export function isNum(val){
   let str=val.trim();
-  let reg=/^[\w]{6,20}$/;
+  let reg=/^[\w\']{1,50}$/;
   return reg.test(str);
 }
 

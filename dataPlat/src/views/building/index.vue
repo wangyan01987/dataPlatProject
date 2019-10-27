@@ -107,6 +107,9 @@
               }
             }
         },
+        changePage(page,size){
+           this.fetch(page,20)
+        },
         fetch (num,size) {
             this.loading=true;
             let obj={
@@ -121,6 +124,7 @@
                 const pagination = { ...this.pagination };
                 pagination.total = res.count;
                 pagination.pageSize=size;
+                pagination.onChange=this.changePage;
                 this.loading = false;
                 let gradeMap=['一级','二级','三级','四级'];
                 let obj=res.data;
@@ -134,11 +138,9 @@
                      item.cmpTypeNameJoin=item.cmpTypeName.join('，');
                          return item;
                     });
-                    console.log(obj1);
                 this.dataSource=obj1;
-
-
                 this.pagination = pagination;
+
               }
 
           });

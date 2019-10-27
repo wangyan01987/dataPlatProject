@@ -1,0 +1,47 @@
+
+@font-face {
+  font-family: 'iconfont';  /* project id 1472328 */
+  src: url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.eot');
+  src: url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.woff') format('woff'),
+  url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_1472328_cer4k40jbpf.svg#iconfont') format('svg');
+}
+
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: 14px;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.iconbianji:before {
+  content: "\e609";
+}
+
+.iconxiangqing:before {
+  content: "\e639";
+}
+
+.iconshanchu:before {
+  content: "\e600";
+}
+
+.icondakai:before {
+  content: "\e607";
+}
+
+.iconguanbi:before {
+  content: "\e601";
+}
+.iconcancel:before{
+  content:"\e63e"
+}
+.iconsave:before{
+  content:"\e60a"
+}
+
+

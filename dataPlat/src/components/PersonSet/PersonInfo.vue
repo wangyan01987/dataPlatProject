@@ -3,13 +3,13 @@
     <div class="info-item">
       <p class="title"><span>基本信息</span><span class="editor" @click="editor" v-show="!isEditor">编辑</span></p>
        <div class="info-box">
-         <a-form :form="form" >
+         <a-form :form="form" :hideRequiredMark="!isEditor" >
            <a-form-item  label="姓名" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
              <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',
-{rules: [,{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'}]}
+{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{pattern:/^[\w\*]+$/,message:'姓名输入格式不正确'}]}
         ]">
              </a-input>
-             <span v-show="!isEditor">{{personInfo.name?personInfo.name:'未设置'}}</span>
+             <span v-show="!isEditor">{{personInfo.userName?personInfo.userName:'未设置'}}</span>
            </a-form-item>
            <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="性别" >
                <a-radio-group v-decorator="['sex']" v-show="isEditor">
@@ -32,7 +32,7 @@
         ]"
              >
              </a-input>
-             <span  v-show="!isEditor">{{personInfo.company?personInfo.company:'未设置'}}</span>
+             <span  v-show="!isEditor">{{personInfo.companyName?personInfo.companyName:'未设置'}}</span>
            </a-form-item>
            <a-form-item label="职位" :label-col="formItemLayout.labelCol"
                         :wrapper-col="formItemLayout.wrapperCol">
@@ -56,11 +56,11 @@
          <a-form-item  label="手机号" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol1">
            <a-row :gutter="4">
              <a-col :span="18">
-               <span v-show="!isEditPhone">{{personInfo.phone}}</span>
+               <span v-show="!isEditPhone">{{personInfo.phoneNumber}}</span>
                <span class="action"  v-show="!isEditPhone" @click="changePhone">修改</span>
              </a-col>
              <a-col :span="6">
-               <a-modal title="重置手机号" v-model="visible" @ok="handleOk" okText="确认" cancelText="取消"  :destroyOnClose="true">
+               <a-modal title="重置手机号" v-model="visible" @ok="handleOk" okText="确认" cancelText="取消"  :destroyOnClose="true" centered>
                  <reset-phone ref="resetphone"></reset-phone>
                </a-modal>
              </a-col>
@@ -69,8 +69,29 @@
          <a-form-item  label="邮箱" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol1">
            <a-row :gutter="4">
              <a-col :span="18">
-               <a-input placeholder="请输入您的邮箱"   v-decorator="[ 'email', {rules: [{validator:checkEmail}]} ]"  v-if="isEditEmail">
-               </a-input>
+               <a-auto-complete
+                 v-if="isEditEmail"
+                 v-decorator="[
+          'email',
+          {rules: [{
+              validator: checkEmail,
+            }],validateTrigger:['blur']}
+        ]"
+
+                 @change="handleEmailChange"
+               >
+                 <template slot="dataSource">
+                   <a-select-option
+                     v-for="email in autoCompleteResult"
+                     :key="email">
+                     {{ email }}
+                   </a-select-option>
+                 </template>
+
+                 <a-input placeholder="请输入邮箱地址">
+                   <img slot="prefix" src="../../assets/images/youxiang@2x.png" style="width:14px"/>
+                 </a-input>
+               </a-auto-complete>
                <span  v-show="!isEditEmail" >{{personInfo.email?personInfo.email:'未绑定'}}</span>
                <span class="action" v-show="!isEditEmail"  @click="isEditEmail=true">修改</span>
              </a-col>
@@ -108,16 +129,17 @@
           formTailLayout,
           form: this.$form.createForm(this),
           personInfo:{
-            name:'',
+            userName:'',
             emial:'',
-            phone:'',
+            phoneNumber:'',
             gender:'',
-            company:'',
+            companyName:'',
             position:'',
           },
           isEditPhone:false,
           isEditEmail:false,
-          isEditor:false
+          isEditor:false,
+          autoCompleteResult:[]
         }
 
       },
@@ -127,16 +149,15 @@
                 res=res.data;
                 if(res.code==='001'){
                   // 更新数据
-                  this.personInfo.name = res.data.userName;
-                  this.personInfo.email = res.data.email;
-                  this.personInfo.phone = res.data.phoneNumber;
+                  this.form.setFieldsValue(res.data);
+                  this.personInfo=res.data;
+
                   if (res.data.sex === "1"){
                     this.personInfo.gender = "女";
                   }else if(res.data.sex === "2"){
                     this.personInfo.gender = "男";
                   }
-                  this.personInfo.company = res.data.companyName;
-                  this.personInfo.position = res.data.position;
+                  t
                   // 返回
                   this.isEditEmail=false;
                 }
@@ -146,11 +167,21 @@
           })
       },
       methods:{
+        handleEmailChange  (value) {
+          let autoCompleteResult;
+          if (!value) {
+            autoCompleteResult = [];
+          } else {
+            autoCompleteResult = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}${domain}`);
+          }
+          this.autoCompleteResult = autoCompleteResult;
+        },
         modifyEmail(){
              let email=this.form.getFieldValue('email');
         },
           editor(){
-            this.isEditor=true
+            this.isEditor=true;
+          //  this.form.set
           },
           checkName(){
 
@@ -181,14 +212,14 @@
                   this.$message.error(res.msg);
                 }
           })
-          
+
         },
         changePhone(){
           this.visible=true;
         },
         handleOk(){
               this.$refs.resetphone.handleSubmit();
-          
+
         },
         submit(){
            this.form.validateFields((err, fieldsValue) => {
@@ -202,10 +233,10 @@
                   // 更新数据
                   this.$message.success('修改成功！');
                   this.form.setFieldsValue(fieldsValue);
-                  this.personInfo.name = fieldsValue.userName;
-                  this.personInfo.company = fieldsValue.companyName;
+                  this.personInfo.userName = fieldsValue.userName;
+                  this.personInfo.companyName = fieldsValue.companyName;
                   this.personInfo.position = fieldsValue.position;
-                  this.$store.commit('setUserName',this.personInfo.name);
+                  this.$store.commit('setUserName',this.personInfo.userName);
                   if (fieldsValue.sex === "1"){
                     this.personInfo.gender = "女";
                   }else if(fieldsValue.sex === "2"){
@@ -222,8 +253,16 @@
           })
         },
         cancel(){
-                 this.form.resetFields();
+                 //this.form.resetFields();
                  this.isEditor=false;
+        let obj={
+        userName:  this.personInfo.userName,
+        companyName:  this.personInfo.companyName,
+         position: this.personInfo.position,
+          sex:this.personInfo.sex
+        };
+
+                 this.form.setFieldsValue(obj)
            }
       }
     }

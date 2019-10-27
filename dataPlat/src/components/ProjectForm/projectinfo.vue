@@ -4,16 +4,16 @@
     <div class="spin-content">
       <a-form :form="formData">
         <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="[ 'projectName', {validateTrigger:['blur','change'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
+          <a-input placeholder="请输入项目名称，支持中英文字符，字数为1-50" v-decorator="[ 'projectName', {validateTrigger:['blur','change'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2" ></a-input>
           <span v-show="dataflag===0">{{obj.projectName}}</span>
         </a-form-item>
         <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-decorator="['projectAbbr', {rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
+          <a-input placeholder="请输入项目名称，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['projectAbbr', {rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
           <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
         </a-form-item>
         <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
-          <a-input v-decorator="[ 'projectCode', {validateTrigger:['blur','change'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]" placeholder="请输入项目名称，支持中英文字符，字数为6-20" v-show="dataflag===1||dataflag===2"/>
+          <a-input maxlength="50" v-decorator="[ 'projectCode', {validateTrigger:['blur','change'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]"   placeholder="请输入项目名称，支持中英文字符，字数为1-50" v-show="dataflag===1||dataflag===2"/>
           <span v-show="dataflag===0">{{obj.projectCode}}</span>
         </a-form-item>
         <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
@@ -51,16 +51,16 @@
             </a-col>
           </a-row>
           <a-form-item class="special">
-            <a-input placeholder="请输入详细地址，支持中英文字符，字数为6-20"  v-decorator="['proLocal', {rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
+            <a-input placeholder="请输入详细地址，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['proLocal', {rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
             <span v-else>{{obj.proLocal}}</span>
           </a-form-item>
         </a-form-item>
         <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目公司，支持中英文字符，字数为6-20" v-decorator="['proCompany',{rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
+          <a-input placeholder="请输入项目公司，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['proCompany',{rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
           <span v-else>{{obj.proCompany}}</span>
         </a-form-item>
         <a-form-item label="建设单位" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入建设单位，支持中英文字符，字数为6-20" v-decorator="[
+          <a-input placeholder="请输入建设单位，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="[
           'developmentUnit',
             {rules: [{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2"></a-input>
@@ -81,7 +81,7 @@
         </a-form-item>
         <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
                      :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入合同名称，支持中英文字符，字数为6-20" v-decorator="[
+          <a-input placeholder="请输入合同名称，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="[
           'contractName',
             {rules: [{validator:checkName}]}
         ]" v-if="dataflag===1||dataflag===2"></a-input>
@@ -131,10 +131,16 @@
     methods: {
       checkNumber(rule, value, callback){
             if(value&&!isNum(value)){
-              callback('项目编号不符合规范，请重新输入');
+              if(value.length>=50){
+                callback("超出字符限制50");
+              }
+              else{
+                callback('项目编号不符合规范，请重新输入');
+              }
+
             }
             else{
-              callback();
+              callback()
             }
       },
       checkName(rule, value, callback) {
@@ -153,7 +159,12 @@
         }
         else {
           if (!isName(value)) {
-            callback(str+"不符合规范，请重新输入")
+            if(value.length>=50){
+              callback(str+"超出字符限制50");
+            }
+            else{
+              callback(str+"不符合规范，请重新输入")
+            }
           } else {
             callback();
           }

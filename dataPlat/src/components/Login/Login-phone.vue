@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
            'phoneNumber',
-            {rules: [{validator:checkName}]}
+            {rules: [{validator:checkName}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -13,7 +13,7 @@
         <a-row :gutter="8">
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="['code',
-            {rules: [{validator:assignCode}]}]">
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
@@ -151,10 +151,27 @@
                         this.$message.success('登录成功',5);
                         this.$store.commit('setLogin',true);
                         this.$store.commit('setPhone',fieldsValue.phoneNumber);
-                        if(this.$route.query.joinProject){
-                          let projectName=this.$route.query.projectName;
-                          let projectId=this.$route.query.projectId;
-                          this.$router.push({name:'joinSuccess',query:{projectName:projectName,projectId:projectId,hasfinished:true}});
+                        let code=this.$route.query.code;
+                        if(code){
+                          //解析code
+                          this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
+                            res=res.data;
+                            if(res.code==='001'){
+                              let projectId=res.data.projectId;
+                              this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:projectId}).then(res=>{
+                                res=res.data;
+                                if(res.code==='001'){
+                                  this.$message.success(res.msg);
+                                  this.$router.push({name:'joinSuccess',query:{code:code}});
+                                }
+                                else{
+                                  this.$message.error(res.msg);
+                                  this.$router.push({name:'joinSuccess',query:{code:code}});
+                                }
+                              });
+                            }
+
+                          });
                         }
                         else{
                           //跳转到主页
@@ -163,9 +180,9 @@
                       }
                       else{
                         this.$message.error(res.msg);
-                        this.errorMsg='手机号或验证码错误';
-                        document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
-                        document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
+                        // this.errorMsg='手机号或验证码错误';
+                        // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
+                        // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
                       }
           });
 

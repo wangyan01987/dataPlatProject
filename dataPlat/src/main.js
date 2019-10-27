@@ -9,6 +9,7 @@ import 'babel-polyfill';
 import  store from './store'
 import './assets/modify.css'
 import './assets/mobile.css'
+import './assets/css/iconfont.css'
 import  $ajax from './ajax/ajax.js';
 import 'lib-flexible';
 Vue.prototype.$ajax=$ajax;

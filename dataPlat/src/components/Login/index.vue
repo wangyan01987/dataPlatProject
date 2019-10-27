@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
            'username',
-            {rules: [{validator:checkName}]}
+            {rules: [{validator:checkName}],validateTrigger:['blur']}
         ]"  class="test">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -15,7 +15,7 @@
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'assignCode',
-            {rules: [{validator:assignCode}]}
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
