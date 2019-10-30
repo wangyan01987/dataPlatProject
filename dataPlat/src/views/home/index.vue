@@ -3,28 +3,30 @@
    <p class="changeItem"><img src="../../assets/images/zhanshi@2x.png" alt=""><img src="../../assets/images/suolue@2x.png" alt=""></p>
     <a-spin size="large"  v-if="loaded"/>
     <div class="box">
-          <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
-           <div class="box-item">
-             <div class="item-img" >
-               <img :src="item.img" style="width:100%;height:100%;" />
-               <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
-             </div>
-            <div class="editor-box">
-              <p class="editor" @click="$event.stopPropagation()" >
-                <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)" /></a>
-                <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)" v-show="item.isDelete" /></a>
-              </p>
+          <div class="box-container">
+            <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
+              <div class="box-item">
+                <div class="item-img" >
+                  <img :src="item.img" style="width:100%;height:100%;" />
+                  <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
+                </div>
+                <div class="editor-box">
+                  <p class="editor" @click="$event.stopPropagation()" >
+                    <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)" /></a>
+                    <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)" v-show="item.isDelete" /></a>
+                  </p>
+                </div>
+              </div>
             </div>
-           </div>
-         </div>
-          <div class="box-wrapper">
-         <div class="box-item ">
-           <div class="add-item"  @click="addItem" >
-             <a-icon type="plus" class="icon"/>
-             <p>创建新项目</p>
-           </div>
-         </div>
-       </div>
+            <div class="box-wrapper">
+              <div class="box-item ">
+                <div class="add-item"  @click="addItem" >
+                  <a-icon type="plus" class="icon"/>
+                  <p style="margin-top:10px;">创建新项目</p>
+                </div>
+              </div>
+            </div>
+          </div>
     </div>
     <div class="slide-item" @click='loadItem'>
       <p>加载更多</p>
@@ -229,9 +231,7 @@
 
   }
   .box{
-    padding:0 1.3rem;
-    display:flex;
-    flex-wrap: wrap;
+
   }
   .box-item:hover{
   cursor:pointer;
@@ -271,6 +271,7 @@
     background-color: #ebebeb;
     border-radius: 4px;
     padding-top:0.6rem;
+    color: rgba(0, 0, 0, 0.45);
   }
   .add-item .icon{
     font-size:0.32rem;
@@ -291,5 +292,11 @@
   .changeItem img{
 cursor:pointer;
     width:0.32rem;
+  }
+  .box-container{
+    display:flex;
+    flex-wrap: wrap;
+    margin:0 auto;
+    width:80%;
   }
 </style>

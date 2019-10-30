@@ -156,7 +156,7 @@
 </template>
 
 <script>
-  let count=1;
+
   function validatePrimeNumber(number) {
 
      if(typeof number==='number'){
@@ -176,6 +176,7 @@
   export default {
     props:['dataflag','floorId'],
     data () {
+      let count=0;
       const formItemLayout = {
         labelCol: { span: 6 },
         wrapperCol: { span: 12},
@@ -195,11 +196,12 @@
         formLayout: 'horizontal',
         formItemLayout,
         form: this.$form.createForm(this),
-        relationfloor1:[{key:0}],
+        relationfloor1:[],
         columns,
         dataSource,
         isSubmit:false,
         projectId,
+        count,
         number:{
 
         },
@@ -215,11 +217,21 @@
       assignReFloor(rule,value,callback){
         //判断输入是否重复
         let arr=this.form.getFieldValue('relationfloor');
-          let singleArr=[...new Set(arr)];
-        if(arr.length>singleArr.length){
+         let arr1=arr.filter(item=>{
+           return item.length>0;
+         });
+        if(arr1.length>1){
+          arr1=arr1.filter(item=>{
+            return item.length!==0;
+          });
+          let singleArr=[...arr1];
+          singleArr.pop();
+        console.log(singleArr)
+          if(singleArr.indexOf(value)!==-1){
             callback('该单体号已存在')
-        }else if(value.toString().length>10){
-          callback('最大为10位数字')
+          }else if(value.toString().length>10){
+            callback('最大为10位数字')
+          }
         }
         else{
           callback();
@@ -263,8 +275,8 @@
        }
       },
       addAssociateNum(){
-         if(count<=30){
-           this.relationfloor1.push({key:count++});
+         if(this.count<=30){
+           this.relationfloor1.push({key:this.count++});
          }else{
            this.$message.error('已超过添加上限30');
            return;
@@ -316,9 +328,7 @@
         return record.id;
       },
       deleteInput(key){
-        if(this.relationfloor1.length===1){
-          return;
-        }
+        this.count--;
         this.relationfloor1=this.relationfloor1.filter(item=>{
           return  item.key!==key;
         });
@@ -416,7 +426,7 @@
            arr.forEach((item,index)=>{
              arr1.push({val:item,key:index});
            });
-           count=arr.length;
+          this.count=arr.length;
           this.relationfloor1=arr1;
         }
         this.buildingInfo={...record};

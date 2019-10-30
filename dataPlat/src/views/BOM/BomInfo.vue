@@ -167,20 +167,20 @@
       width: '15%',
     },
     {
-      title: '长度',
+      title: '长度(mm)',
       dataIndex: 'length',
       width: '15%',
       scopedSlots: { customRender: 'length' },
     },
     {
-      title: '宽度',
+      title: '宽度(mm)',
       dataIndex: 'width',
       width: '15%',
       scopedSlots: { customRender: 'width' },
 
     },
     {
-      title: '厚度',
+      title: '厚度(mm)',
       dataIndex: 'height',
       width: '20%',
       scopedSlots: { customRender: 'height' },

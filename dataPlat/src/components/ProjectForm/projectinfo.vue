@@ -230,13 +230,12 @@
               this.$message.error(res.msg);
             }
           });
-
         })
       },
       cancel(){
            this.$emit('cancel');
       },
-      provincehandleChange(val,flag) {
+      provincehandleChange(val,flag){
         this.cityarr=[];
           this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
             res=res.data;
