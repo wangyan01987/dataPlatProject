@@ -12,7 +12,7 @@
 
       <a-form-item>
         <a-row :gutter="8">
-          <a-col :span="16">
+          <a-col :span="14">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'assignCode',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
@@ -21,10 +21,10 @@
             </a-input>
 
           </a-col>
-             <a-col :span="6">
+             <a-col :span="8" style="lne-height:20px;">
                <s-identify :identifyCode="identifyCode"></s-identify>
              </a-col>
-          <a-col :span="2">
+          <a-col :span="2" style="line-height:40px">
             <span><a-icon type="redo" @click="refreshCode"  /></span>
           </a-col>
         </a-row>
@@ -43,8 +43,8 @@
           }
         ]" >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="show('psd')"  v-show="psdtype==='text'" />
-          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="show()"  v-show="psdtype==='password'" />
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconguanbi"    @click="show()"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont icondakai"    @click="show('psd')" /></a>
         </a-input>
       </a-form-item>
       <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
@@ -68,7 +68,7 @@
         psdtype:'password',
         formTailLayout,
         formData:this.$form.createForm(this),
-        identifyCodes: '1234567890ABCDEFKsdefb',
+        identifyCodes: '123456789ABCDEFKsdefb',
         identifyCode:''
 
       }

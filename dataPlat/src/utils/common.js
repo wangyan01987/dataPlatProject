@@ -108,9 +108,9 @@ export function isPhone(val){
 
 export function isPassword(val) {
   let str = val.trim();
-  let reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?![_]+$).{6,16}$/;
+ // let reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?![_]+$).{6,16}$/;
   let reg1 = /^[a-zA-Z0-9_]{6,16}$/
-  if (reg.test(str) & reg1.test(str)) {
+  if (reg1.test(str)) {
     return true;
   } else {
     return false;

@@ -10,37 +10,36 @@
               <a-input-search placeholder="请输入"  @search="onSearch"  style="width:25%" />
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}">
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}" >
            <template
              v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
              slot-scope="text, record, index"
            >
              <div :key="col">
-               <a-input
-                 v-if="record.editable"
+             <div  v-if="record.editable"><a-input
                  style="margin: -5px 0"
                  :value="text"
-                 @change="e => handleChange(e.target.value, record.cmptId, col)"
-               />
+                 maxlength="31"
+                 @change="e => handleChange(e.target.value, record.cmptId, col,e.target,record)"
+               /><p class="has-error"></p>
+             </div>
                <template v-else
-               >{{text}}</template
-               >
+               >{{text?text:'---'}}</template>
              </div>
            </template>
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
         <span v-if="record.editable">
-             <a @click="() => save(record.cmptId)"><i class="iconfont iconsave"  /></a>
+             <a @click="() => save(record.cmptId,record)"><i class="iconfont iconsave"  /></a>
             <a><i class="iconfont iconcancel"  @click="cancel(record.cmptId)"/></a>
         </span>
                <span v-else>
-                 <a @click="() => edit(record.cmptId)">
+                 <a @click="() => edit(record.cmptId,record)">
                    <i class="iconfont iconbianji"  /></a>
-                 <a-popconfirm title="确定删除?" @confirm="() => deleteItem(record,record.cmptId)" okText="确定" cancelText="取消">
-                       <a>  <i class="iconfont iconshanchu"   /></a>
-                      <a-icon slot="icon" type="exclamation-circle" style="color: red" />
-                 </a-popconfirm>
+
+                       <a>  <i class="iconfont iconshanchu"  @click=" deleteItem(record,record.cmptId)" /></a>
+
                  <a > <i class="iconfont iconxiangqing"  @click="goDetail(record)" /></a>
         </span>
              </div>
@@ -63,52 +62,51 @@
 
 <script>
   import BomInfo from './BomInfo'
-  const columns = [
-    {
-      title: '序号',
-      dataIndex: 'index',
-      width: '10%',
-    customRender:(text, record, index)=>`${index+1}`
-    },
-    {
-      title: '版本',
-      dataIndex: 'version',
-      width: '15%',
-      scopedSlots: { customRender: 'version' },
-    },
-    {
-      title: '楼层',
-      dataIndex: 'floor',
-      width: '15%',
-      scopedSlots: { customRender: 'floor' },
-    },
-    {
-      title: '产品编号',
-      dataIndex: 'prodId',
-      width: '20%',
-      scopedSlots: { customRender: 'prodId' },
+  import $ from 'jquery'
 
-    },
-    {
-      title: '备注',
-      dataIndex: 'remark',
-      width: '20%',
-      scopedSlots: { customRender: 'remark' },
-
-    },
-
-    {
-      title: '操作',
-      dataIndex: 'operation',
-      scopedSlots: { customRender: 'operation' },
-    },
-  ];
 
   const data =[];
   export default {
     components:{BomInfo},
     data() {
-      this.cacheData = data.map(item => ({ ...item }));
+      const columns = [
+        { title: '序号',
+          dataIndex: 'index',
+          width:'10%',
+          customRender:(text, record, index)=>`${this.pagination.pageSize * (this.current - 1) + index + 1}`
+        },
+        {
+          title: '版本',
+          dataIndex: 'version',
+          width: '15%',
+          scopedSlots: { customRender: 'version' },
+        },
+        {
+          title: '楼层',
+          dataIndex: 'floor',
+          width: '15%',
+          scopedSlots: { customRender: 'floor' },
+        },
+        {
+          title: '产品编号',
+          dataIndex: 'prodId',
+          width: '20%',
+          scopedSlots: { customRender: 'prodId' },
+        },
+        {
+          title: '备注',
+          dataIndex: 'remark',
+          width: '20%',
+          scopedSlots: { customRender: 'remark' },
+
+        },
+
+        {
+          title: '操作',
+          dataIndex: 'operation',
+          scopedSlots: { customRender: 'operation' },
+        },
+      ];
       return {
         data,
         columns,
@@ -117,10 +115,14 @@
         propmsg:'12345ddd',
         floorArr:[],
         versionArr:[],
-        pagination:{},
+        pagination:{
+          pageSize:1
+        },
         floor:'',
         version:'',
-        prodid:'11'
+        prodid:'11',
+        cacheData:'',
+        current:1,
       };
     },
     props:['objType','buildingid'],
@@ -151,7 +153,8 @@
           buildingid:this.buildingid,
           };
           return obj;
-      }
+      },
+
     },
     methods: {
       getKey(record){
@@ -189,7 +192,6 @@
       getBom(num,size){
         this.loading=true;
         this.data=[];
-        size=20;
         let obj={};
         obj.pageNum=num;
         obj.pageSize=size;
@@ -212,26 +214,39 @@
               item.cmptBaseInfo.sizeList=item.sizeList;
               this.data.push(item.cmptBaseInfo);
             });
+           this.cacheData=this.data.map(item => ({ ...item }));
           }
         })
       },
       changePage(page,size){
+        this.current=page;
          this.getBom(page,20);
       },
       deleteItem(record,key){
         //删除构件
-        this.$ajax('bomextract/bom/deletecomponent','POST',{buildingId:this.buildingid,data:[record.cmptId]}).then(res=>{
-          res=res.data;
-          if(res.code==='001'){
-               this.$message.success('删除成功',2);
-               this.data.filter(item=>item.key!==key);
-            let newData= this.data.filter(item=>item.key!==key);
-            this.data=newData;
-          }
-          else{
-            this.$message.error(res.msg);
+        this.$confirm({
+          icon:'close-circle',
+          title: '删除构件',
+          content: '确认删除构件',
+          okText: '确认',
+          cancelText: '取消',
+          onOk:()=>{
+            //删除
+            this.$ajax('bomextract/bom/deletecomponent','POST',{buildingId:this.buildingid,data:[record.cmptId]}).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                this.$message.success('删除成功',2);
+                this.data.filter(item=>item.cmptId!==key);
+                let newData= this.data.filter(item=>item.cmptId!==key);
+                this.data=newData;
+              }
+              else{
+                this.$message.error(res.msg);
+              }
+            });
           }
         });
+
       },
       onSearch(val){
         this.prodid=val;
@@ -245,51 +260,125 @@
         this.propmsg=record;
         this.visible=true;
       },
-      handleChange(value, key, column) {
-        const newData = [...this.data];
-        const target = newData.filter(item => key === item.cmptId)[0];
-        if (target) {
-          target[column] = value;
-          this.data = newData;
-        }
+      getDom(target1,msg){
+        target1.style.border='1px solid red';
+        target1.parentNode.nextSibling.style.display='block';
+        $(target1).parent().siblings('.has-error').text(msg);
+        $(target1).parents('td').css('padding-bottom',0);
       },
-      edit(key) {
+     async handleChange(value, key, column,target1,record) {
+        record.save=true;
+        if(value.length>30){
+             this.getDom(target1,'最大字符长度为30');
+          record.save=false;
+            return;
+        }else{
+          target1.style.border='1px solid #d9d9d9';
+          $(target1).parents('td').css('padding-bottom',16);
+          target1.parentNode.nextSibling.style.display='none';
+          record.save=true;
+        };
+       if(column!=='remark') {
+          if (!/^[\w\-]+$/.test(value)) {
+            this.getDom(target1, '输入格式不正确');
+            record.save=false;
+          }else{
+            target1.style.border='1px solid #d9d9d9';
+            $(target1).parents('td').css('padding-bottom',16);
+            target1.parentNode.nextSibling.style.display='none';
+            record.save=true;
+          }
+        };
+       // if(column==='prodId'){
+       //   let proFlag= await  new Promise((resolve,reject)=>{
+       //     this.$ajax('bomextract/bom/proidexist','GET',{buildingid:this.buildingid, floor:record.floor ,proId: record.prodId,cmptId:record.cmptId
+       //     }).then(res=>{
+       //       res=res.data;
+       //       if(res.code==='001'){
+       //         if(res.data==='true'){
+       //           this.$message.error('产品编号已存在');
+       //           record.save=false;
+       //           this.getDom(target1, '产品编号已存在');
+       //           resolve(false)
+       //         }else{
+       //           record.save=true;
+       //           target1.style.border='1px solid #d9d9d9';
+       //           $(target1).parents('td').css('padding-bottom',16);
+       //           target1.parentNode.nextSibling.style.display='none';
+       //           record.save=true;
+       //           resolve(true);
+       //         }
+       //       }else{
+       //         reject();
+       //       }
+       //     });
+       //   });
+       // }
+       if(record.save){
+         const newData = [...this.data];
+         const target = newData.filter(item => key === item.cmptId)[0];
+         if (target) {
+           target[column] = value;
+           this.data = newData;
+         }
+       }
+
+      },
+      edit(key,record) {
+        record.save=true;
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
+
         if (target) {
           target.editable = true;
           this.data = newData;
         }
       },
-     async save(key) {
+     async save(key,record) {
+        console.log(record.save)
+       if(!record.save){
+         return;
+       }
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
         const newtarget={...target};
         if (target) {
           let bomList=newtarget.bomList;
           let sizeList=newtarget.sizeList;
-          delete target.editable;
-          delete target.bomList;
-          delete target.sizeList;
-          let obj={cmptBaseInfo:target, bomList:bomList, sizeList:sizeList};
-          this.data = newData;
-          this.cacheData = newData.map(item => ({ ...item }));
-           //服务器保存
-          //没有校验编号唯一
+           delete newtarget.editable;
+          delete newtarget.bomList;
+          delete newtarget.sizeList;
+          let obj={cmptBaseInfo:newtarget, bomList:bomList, sizeList:sizeList};
 
-          // let proFlag=  await  this.$ajax('bomextract/bom/proidexist','GET',{
-          // }).then(res=>{
-          //   res=res.data;
-          //   if(res.code!=='001'){
-          //     this.$message.error('产品编号已存在');
-          //     return false;
-          //   }
-          // });
-          if(true){
+          //服务器保存
+          //没有校验编号唯一
+          let proFlag= await  new Promise((resolve,reject)=>{
+            this.$ajax('bomextract/bom/proidexist','GET',{buildingid:this.buildingid, floor:record.floor ,proId: record.prodId,cmptId:record.cmptId
+            }).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                if(res.data==='true'){
+                  this.$message.error('产品编号已存在');
+                  resolve(false)
+                }else{
+                  resolve(true);
+                }
+              }else{
+                reject();
+              }
+            });
+          });
+          if(proFlag){
             this.$ajax('bomextract/bom/modifycmpt','POST',obj).then(res=>{
               res=res.data;
               if(res.code==='001'){
+                this.data = newData;
+                delete target.editable;
+                this.cacheData = newData.map(item => ({ ...item }));
                 this.$message.success('修改成功！',2);
+              }
+              else{
+                this.$message.error(res.msg);
               }
             });
           }
@@ -306,8 +395,26 @@
       },
     },
     mounted(){
+      //监听esc事件
+      let self=this;
+      if(navigator.userAgent.indexOf("MSIE")>0)  {
+
+        document.onkeydown=function(){
+          if(27 == event.keyCode){
+           self.visible=false;
+          }
+        }  }
+
+        else{
+        window.onkeydown=function(){
+          if(27 == event.keyCode){
+        self.onClose();
+          }
+
+        }  }
 
     }
+
   };
 </script>
 

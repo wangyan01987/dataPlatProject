@@ -3,9 +3,13 @@
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
+       <template v-for="item in ['relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
+         <span v-show="text">{{text}}</span>
+         <span v-show="!text">---</span>
+       </template>
        <span slot="action" slot-scope="record,index" class="action">
-         <img :src="require('../../assets/images/bianji@2x.png')" alt="" @click="editBuilding(record,$event,index)" class="item-edit"/>
-         <img :src="require('../../assets/images/shanchu@2x.png')" alt="" @click="deleteBuilding($event,record.floorId,index)"  class="item-delete"/>
+         <a style="margin-right:30px"> <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)" /></a>
+         <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"  /></a>
        </span>
      </a-table>
      <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc'></info-form>
@@ -19,15 +23,15 @@
        components:{InfoForm},
       data(){
         const columns = [
-          { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}`},
+          { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${this.pagination.pageSize*(this.current-1)+index+1}`},
           { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName' },
           { title: '楼栋号', dataIndex: 'floorCode', key: 'floorCode' },
-          { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor' },
-          { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum' },
-          { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum' },
-          { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName' },
-          { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea' },
-          { title: '构件类型', dataIndex: 'cmpTypeNameJoin', key: 'cmpTypeNameJoin' },
+          { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor',scopedSlots: { customRender: 'relationfloor' } },
+          { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum',scopedSlots: { customRender: 'floorNum' } },
+          { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum',scopedSlots: { customRender: 'preFloorNum' } },
+          { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName',scopedSlots: { customRender: 'quakeGradeName' } },
+          { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea',scopedSlots: { customRender: 'monolayerArea' } },
+          { title: '构件类型', dataIndex: 'cmpTypeNameJoin', key: 'cmpTypeNameJoin',scopedSlots: { customRender: 'cmpTypeNameJoin' } },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];
@@ -59,6 +63,7 @@
             content: '确认删除此单体？一旦将单体删除，所有与此单体相关信息、文件将会被清除。',
             okText: '确认',
             cancelText: '取消',
+            okButtonProps:{},
             onOk:()=>{
               this.$ajax('bomextract/build/delmonomer','GET',{'floorId':floorId}).then((res) => {
               res=res.data;
@@ -108,6 +113,7 @@
             }
         },
         changePage(page,size){
+          this.current=page;
            this.fetch(page,20)
         },
         fetch (num,size) {
@@ -130,12 +136,12 @@
                 let obj=res.data;
                    let obj1= obj.map(item=>{
                       item.quakeGradeName= gradeMap[item.quakeGrade-1];
-                     item.relationfloor=item.relationfloor.join('，');
+                     item.relationfloor=item.relationfloor.join('、');
                      item.cmpTypeName=[];
                          item.cmptType.forEach(item1=>{
                           item.cmpTypeName.push( item1.component);
                          });
-                     item.cmpTypeNameJoin=item.cmpTypeName.join('，');
+                     item.cmpTypeNameJoin=[...new Set(item.cmpTypeName)].join('、');
                          return item;
                     });
                 this.dataSource=obj1;
@@ -177,4 +183,5 @@
     cursor:pointer;
     margin-left:0.1rem;
   }
+
 </style>

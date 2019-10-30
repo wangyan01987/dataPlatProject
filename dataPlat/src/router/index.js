@@ -9,6 +9,11 @@ Router.prototype.push = function push(location) {
 const router= new Router({
   routes: [
     {
+      path:'/joinSuccessMobile',
+      name:'joinSuccessMobile',
+      component:()=>import('@/views/invite/joinSuccessMobile.vue')
+    },
+    {
        path:'/joinSuccess',
       name:'joinSuccess',
      component:()=>import('@/views/invite/joinSuccess.vue')
@@ -93,23 +98,33 @@ const router= new Router({
 });
 
 import  store from '../store';
-router.beforeEach((to,from,next)=>{
+  router.beforeEach((to,from,next)=>{
   let client=document.body.clientWidth;
-  if(client<750&&to.path!=='/loginMobile'){
-    next({path:'/loginMobile' });
-  }
-  else if(to.path==='/loginMobile'){
-    next();
-  }
-  else {
-    if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess') {
-      next('/login')
-    } else {
-      next();
-    }
-  }
+  // if(client<750&&to.path!=='/loginMobile'){
+  //   next({path:'/loginMobile' });
+  // }
+  // else if(to.path==='/loginMobile'){
+  //   next();
+  // }
+  // else {
+  //   if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess') {
+  //     next('/login')
+  //   } else {
+  //     next();
+  //   }
+  // }
 
-
+  if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile') {
+    console.log(to.path)
+         if(client<750){
+           next({path:'/loginMobile' })
+         }
+         else{
+           next('/login');
+         }
+      } else {
+        next();
+      }
 });
 export default router;
 

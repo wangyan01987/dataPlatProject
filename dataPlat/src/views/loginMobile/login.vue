@@ -29,8 +29,6 @@
        <a-button @click='submit' type="primary" style="width:100%;margin-top:20px;" size="large">登录</a-button>
      </a-form-item>
     </a-form>
-
-
   </div>
 </template>
 
@@ -96,7 +94,6 @@
           if (err) {
             return;
           };
-
           //提交表单
           let obj=fieldsValue;
           delete obj.assignCode;
@@ -106,8 +103,33 @@
               this.$message.success('登录成功！');
               this.$store.commit('setLogin',true);
               this.$store.commit('setPhone',fieldsValue.username);
-              //跳转到主页
-              this.$router.push('/home');
+              //判断是否需要跳到joinSuccess
+              let code=this.$route.query.code;
+              if(code){
+                //解析code
+                this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
+                  res=res.data;
+                  if(res.code==='001'){
+                    let projectId=res.data.projectId;
+                    this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:projectId}).then(res=>{
+                      res=res.data;
+                      if(res.code==='001'){
+                        this.$message.success(res.msg);
+                        this.$router.push({name:'joinSuccessMobile',query:{code:code}});
+                      }
+                      else{
+                        this.$message.error(res.msg);
+                        this.$router.push({name:'joinSuccessMobile',query:{code:code}});
+                      }
+                    });
+                  }
+
+                });
+              }
+              else{
+                //跳转到主页
+                this.$router.push('/home');
+              }
             }
             else{
               this.$message.error(res.msg);

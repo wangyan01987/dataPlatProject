@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入姓名"   v-decorator="[
            'username',
-            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'},{pattern:/^[\w\*]+ $/,message:'姓名格式不正确'}],validateTrigger:['blur']}
+            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'},{pattern:/^[\u4e00-\u9fa5\w\']{1,50}$/,message:'姓名支持1-50位中英文字符数字_'}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
         </a-input>
@@ -20,8 +20,7 @@
         <a-row :gutter="8">
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
-          'code',
-            {rules: [{validator:assignCode}],validateTrigger:['blur']}
+          'code', {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
@@ -45,8 +44,8 @@
           :type="psdtype"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype='password'"  v-show="psdtype==='text'" />
-          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype='text'"  v-show="psdtype==='password'" />
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype='text'"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype='password'"  /></a>
         </a-input>
         <p><a-icon type="exclamation-circle" style="color:#1890ff" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
@@ -65,8 +64,8 @@
           :type="psdtype1"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype1='password'"  v-show="psdtype1==='text'" />
-          <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype1='text'"  v-show="psdtype1==='password'" />
+          <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype1='text'"  /></a>
+          <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype1='password'"  /></a>
         </a-input>
 
       </a-form-item>
@@ -135,6 +134,11 @@
 
     },
     methods:{
+      setColor(){
+        let colors=['#ecbc27','#ced182',' #f39798','#58b788','#f48e46','#5a91c9','#fb91bd','#5bbefc','#5ae0ca'];
+        let key= Math.round(Math.random()*10);
+        return colors[key];
+      },
       initData(){
         this.codeText='获取验证码';
         this.btnabled = false;
@@ -196,11 +200,13 @@
           };
           //提交表单
          let obj=fieldsValue;
+         obj.personImage=this.setColor();
           delete obj.repassword;
           delete obj.agreement;
           this.$ajax('register','POST',obj).then(res=>{
                   res=res.data;
                   if(res.code==='001'){
+
                     this.$message.success('注册成功，请登录');
                     this.formData.resetFields();
                   }

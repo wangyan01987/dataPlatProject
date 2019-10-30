@@ -149,17 +149,45 @@
           };
           //提交表单
           let obj=fieldsValue;
-          this.$ajax('loginbycaptcha','POST',obj).then(res=>{
+          this.$ajax('loginbycaptcha','POST',obj,'form').then(res=>{
             res=res.data;
+            if(res.code==='001'){
+              this.$message.success('登录成功',5);
+              this.$store.commit('setLogin',true);
+              this.$store.commit('setPhone',fieldsValue.phoneNumber);
+              let code=this.$route.query.code;
+              if(code){
+                //解析code
+                this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
+                  res=res.data;
+                  if(res.code==='001'){
+                    let projectId=res.data.projectId;
+                    this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:projectId}).then(res=>{
+                      res=res.data;
                       if(res.code==='001'){
-                        this.$message.success('登录成功',5)
+                        this.$message.success(res.msg);
+                        this.$router.push({name:'joinSuccessMobile',query:{code:code}});
                       }
                       else{
-                        this.$message.error(res.msg)
-                        this.errorMsg='手机号或验证码错误';
-                        document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
-                        document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
+                        this.$message.error(res.msg);
+                        this.$router.push({name:'joinSuccessMobile',query:{code:code}});
                       }
+                    });
+                  }
+
+                });
+              }
+              else{
+                //跳转到主页
+                this.$router.push('/home');
+              }
+            }
+            else{
+              this.$message.error(res.msg);
+              // this.errorMsg='手机号或验证码错误';
+              // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
+              // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
+            }
           });
 
         })
@@ -193,7 +221,7 @@
   }
   .error-msg{
     text-align: left;
-    height: 17px;
+    /*height: 17px;*/
     font-family: PingFangSC-Regular;
     font-size: 12px;
     color: #f5222d;

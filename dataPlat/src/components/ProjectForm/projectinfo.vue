@@ -4,16 +4,16 @@
     <div class="spin-content">
       <a-form :form="formData">
         <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目名称，支持中英文字符，字数为1-50" v-decorator="[ 'projectName', {validateTrigger:['blur','change'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
+          <a-input maxlength="51"  placeholder="请输入项目名称，支持英文、数字、符号，字数小于50" v-decorator="[ 'projectName', {validateTrigger:['blur'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2" ></a-input>
           <span v-show="dataflag===0">{{obj.projectName}}</span>
         </a-form-item>
         <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目名称，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['projectAbbr', {rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
+          <a-input placeholder="请输入项目简称，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['projectAbbr', {validateTrigger:['blur'],rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
           <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
         </a-form-item>
         <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
-          <a-input maxlength="50" v-decorator="[ 'projectCode', {validateTrigger:['blur','change'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]"   placeholder="请输入项目名称，支持中英文字符，字数为1-50" v-show="dataflag===1||dataflag===2"/>
+          <a-input maxlength="51" v-decorator="[ 'projectCode', {validateTrigger:['blur'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]"   placeholder="请输入项目编号，支持英文、数字、符号，字数小于50" v-show="dataflag===1||dataflag===2"/>
           <span v-show="dataflag===0">{{obj.projectCode}}</span>
         </a-form-item>
         <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
@@ -27,7 +27,9 @@
           <a-row :gutter="4">
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select @change="provincehandleChange" placeholder="省市" v-decorator="['provinceId']">
+                <a-select @select="(e)=>{
+                provincehandleChange(e,'001')
+                }" placeholder="省市" v-decorator="['provinceId']">
                   <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -35,7 +37,7 @@
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select @change="handleChange" placeholder="城市" v-decorator="['cityId']" >
+                <a-select @select="(value)=>{handleChange(value,'001')}" placeholder="城市" v-decorator="['cityId']" >
                   <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -43,7 +45,7 @@
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select placeholder="区县" v-decorator="[ 'districtId']" >
+                <a-select placeholder="区县" v-decorator="[ 'districtId']"  >
                   <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -51,18 +53,18 @@
             </a-col>
           </a-row>
           <a-form-item class="special">
-            <a-input placeholder="请输入详细地址，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['proLocal', {rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
+            <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
             <span v-else>{{obj.proLocal}}</span>
           </a-form-item>
         </a-form-item>
         <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入项目公司，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="['proCompany',{rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
+          <a-input placeholder="请输入项目公司，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['proCompany',{validateTrigger:['blur'],rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
           <span v-else>{{obj.proCompany}}</span>
         </a-form-item>
         <a-form-item label="建设单位" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入建设单位，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="[
+          <a-input placeholder="请输入建设单位，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="[
           'developmentUnit',
-            {rules: [{validator:checkName}]}
+            {validateTrigger:['blur'],rules: [{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2"></a-input>
           <span v-show="dataflag===0">{{obj.developmentUnit}}</span>
         </a-form-item>
@@ -75,13 +77,13 @@
         </a-form-item>
         <a-form-item label="项目简介" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"
-                      :maxLength='400'
-                      v-decorator="[ 'introduction',{rules:[{max:399,message:'字数最多为400字'}]}]"/>
+                      :maxLength='401'
+                      v-decorator="[ 'introduction',{validateTrigger:['blur'],rules:[{max:400,message:'字数最多为400字'}]}]"/>
           <span v-show="dataflag===0">{{obj.introduction}}</span>
         </a-form-item>
         <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
                      :wrapper-col="formItemLayout.wrapperCol">
-          <a-input placeholder="请输入合同名称，支持中英文字符，字数为1-50"  maxlength="51"  v-decorator="[
+          <a-input placeholder="请输入合同名称，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="[
           'contractName',
             {rules: [{validator:checkName}]}
         ]" v-if="dataflag===1||dataflag===2"></a-input>
@@ -124,6 +126,23 @@
         spinning:false,
         cityarr:[],
         districtarr:[],
+        imgList:[{
+          src:require('../../assets/projectImg/001.jpg')
+        },{
+          src:require('../../assets/projectImg/002.jpg')
+        },
+          {
+            src:require('../../assets/projectImg/003.jpg')
+          },{
+            src:require('../../assets/projectImg/004.jpg')
+          },
+          {
+            src:require('../../assets/projectImg/005.jpg')
+          },
+          {
+            src:require('../../assets/projectImg/003.jpg')
+          },
+        ],
       }
 
     },
@@ -170,6 +189,12 @@
           }
         }
       },
+      randomImg(item){
+        //产生随机数
+        let key= Math.floor(Math.random()*5);
+        item.image=key;
+        return item;
+      },
       submit() {
         this.formData.validateFields((err, fieldsValue) => {
           if (err) {
@@ -191,91 +216,108 @@
           };
          if(fieldsValue['proTime']){
            obj.proTime=fieldsValue['proTime'].format('YYYY-MM-DD');
-         }
+         };
+         //设置随机图片
+          this.randomImg(obj);
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
               this.$message.success(`${msg}成功`, 5);
               this.formData.resetFields();
               this.$store.commit("setProjectName", obj.projectName);
+              this.$emit('save');
             }else{
               this.$message.error(res.msg);
             }
           });
-          this.$emit('save');
+
         })
       },
       cancel(){
            this.$emit('cancel');
       },
-     async provincehandleChange(val) {
-        let flag;
-         await this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
+      provincehandleChange(val,flag) {
+        this.cityarr=[];
+          this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
             res=res.data;
             if(res.code==='001'){
               this.cityarr=res.data;
-              flag=true;
+            if(flag){
+              this.formData.setFieldsValue({'cityId':this.cityarr[0].id});
+              this.handleChange(this.cityarr[0].id,'001');
+             }
             }else{
               this.$message.error(res.msg);
             }
           });
-         return flag;
       },
-      handleChange(val) {
+      handleChange(val,flag) {
             this.$ajax("bomextract/project/getprovandcity",'GET',{"parentId":val}).then(res=>{
               res=res.data;
               if(res.code==='001'){
                 this.districtarr=res.data;
-
-                  // this.formData.setFieldsValue('districtId', this.districtarr[0].id);
-
-              }else{
-                this.$message.error(res.msg);
-              }
-            });
-      },
-      getProjectInfo(){
-        let id=this.projectId;
-        let flag=this.dataflag;  //0查看 1编辑
-        this.$ajax('bomextract/project/getprojectbyprojid','GET',{projectId:id}).then(res=>{
-          res=res.data;
-          if(res.code==='001'){
-            let obj=res.data;
-            delete obj.projectId;
-            this.obj=Object.assign({},obj);
-            //编辑时获取值
-          if(flag===1){
-             delete obj.provinceName;
-             delete obj.cityName;
-             delete obj.districtName;
-             //获取联动值
-            this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
-              res=res.data;
-              if(res.code==='001'){
-                this.provincearr=res.data;
-                if(obj.provinceId){
-                let state=this.provincehandleChange(obj.provinceId);
-                      this.handleChange(obj.cityId,1);
+                if(flag){
+                   this.formData.setFieldsValue({'districtId':this.districtarr[0].id});
                 }
               }else{
                 this.$message.error(res.msg);
               }
             });
-            setTimeout(()=>{
-              this.setMsg(obj)
-            },0);
-          }
+      },
+      getProvince(){
+        this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            this.provincearr=res.data;
+          }else{
+            this.$message.error(res.msg);
           }
         });
       },
-      setMsg(obj) {
+     async getProjectInfo(){
+       this.spinning=true;
+        let id=this.projectId;
+        let flag=this.dataflag;  //0查看 1编辑
+       let obj= await new Promise((reslove,reject)=>{
+         this.$ajax('bomextract/project/getprojectbyprojid','GET',{projectId:id}).then(res=>{
+           res=res.data;
+              if(res.code==='001'){
+                reslove(res.data);
+              }
+         });
+       });
+         delete obj.projectId;
+         if(flag===0){
+           this.obj=Object.assign({},obj);
+           this.spinning=false;
+         }
+         //编辑时获取值
+         if(flag===1){
+           delete obj.provinceName;
+           delete obj.cityName;
+           delete obj.districtName;
+           //获取联动值
+           //获取省
+          await  this.getProvince();
+           if(obj.provinceId){
+             //获取市
+            await this.provincehandleChange(obj.provinceId);
+            await  this.handleChange(obj.cityId,1);
+           };
+           setTimeout(()=>{
+             this.setMsg(obj)
+           },100);
+         }
+      },
+     async setMsg(obj) {
         if (obj instanceof Object&&this.dataflag!==0) {
          if(obj.proTime){
            obj.proTime=moment(obj.proTime,'YYYY-MM-DD HH:mm:ss');
          }
           this.formData.setFieldsValue(obj);
-          this.spinning=false;
-
+          setTimeout(()=>{
+            this.spinning=false;
+          },1000);
         }
 
       },
@@ -291,18 +333,11 @@
     mounted() {
       //编辑信息 001 产看000
    if(this.dataflag===1||this.dataflag===0){
-     this.spinning=true;
      this.getProjectInfo();
    };
     if(this.dataflag===2){
-      this.$ajax("bomextract/project/getprovandcity",'GET').then(res=>{
-        res=res.data;
-        if(res.code==='001'){
-          this.provincearr=res.data;
-        }else{
-          this.$message.error(res.msg);
-        }
-      });
+      //新建
+      this.getProvince();
     }
 
     }

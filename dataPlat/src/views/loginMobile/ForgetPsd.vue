@@ -143,8 +143,8 @@
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
-                this.$message.success('修改成功',5);
-                this.visible=false;
+               // this.$message.success('修改成功',5);
+                this.$emit('changePsd',true);
             }
             else{
               this.$message.error(res.msg);

@@ -6,17 +6,17 @@
          <a-form :form="form" :hideRequiredMark="!isEditor" >
            <a-form-item  label="姓名" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
              <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',
-{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{pattern:/^[\w\*]+$/,message:'姓名输入格式不正确'}]}
+{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{pattern:/^[\u4e00-\u9fa5\w\']{1,50}$/,message:'姓名输入格式为1-50位中英文字符_'}]}
         ]">
              </a-input>
              <span v-show="!isEditor">{{personInfo.userName?personInfo.userName:'未设置'}}</span>
            </a-form-item>
            <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="性别" >
                <a-radio-group v-decorator="['sex']" v-show="isEditor">
-                 <a-radio value="1">
+                 <a-radio value="0">
                    女
                  </a-radio>
-                 <a-radio value="2">
+                 <a-radio value="1">
                    男
                  </a-radio>
                </a-radio-group>
@@ -27,7 +27,7 @@
                placeholder="请输入所属公司"
                v-decorator="[
           'companyName',
-          {rules: [{max:20,message:'最大长度为40个字符'}],
+          {rules: [{max:40,message:'最大长度为40个字符'}],
           }
         ]"
              >
@@ -153,11 +153,10 @@
                   this.personInfo=res.data;
 
                   if (res.data.sex === "1"){
-                    this.personInfo.gender = "女";
-                  }else if(res.data.sex === "2"){
                     this.personInfo.gender = "男";
+                  }else if(res.data.sex === "0"){
+                    this.personInfo.gender = "女";
                   }
-                  t
                   // 返回
                   this.isEditEmail=false;
                 }
@@ -172,7 +171,7 @@
           if (!value) {
             autoCompleteResult = [];
           } else {
-            autoCompleteResult = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}${domain}`);
+            autoCompleteResult = ['@163.com', '@126.com', '@qq.com', '@gmail.com','@sina.com','@sohu.com','@live.com','@msn.com','@hotmail.com','@googlemail.com'].map(domain => `${value}${domain}`);
           }
           this.autoCompleteResult = autoCompleteResult;
         },
@@ -237,9 +236,9 @@
                   this.personInfo.companyName = fieldsValue.companyName;
                   this.personInfo.position = fieldsValue.position;
                   this.$store.commit('setUserName',this.personInfo.userName);
-                  if (fieldsValue.sex === "1"){
+                  if (fieldsValue.sex === "0"){
                     this.personInfo.gender = "女";
-                  }else if(fieldsValue.sex === "2"){
+                  }else if(fieldsValue.sex === "1"){
                     this.personInfo.gender = "男";
                   }
                   // 返回

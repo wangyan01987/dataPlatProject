@@ -1,12 +1,12 @@
 <template>
 <div class="container mobile">
   <div class="login-box box-body " v-show="login">
-    <a-tabs defaultActiveKey="1" @change="callback" >
-      <a-tab-pane tab="登录" key="1">
+    <a-tabs defaultActiveKey="1" @change="callback" :activeKey="key">
+      <a-tab-pane tab="登录" key="1" >
          <login v-show="loginType==='001'"></login>
         <loginmobile v-show="loginType==='002'"></loginmobile>
       </a-tab-pane>
-      <a-tab-pane tab="注册" key="2" forceRender><register></register></a-tab-pane>
+      <a-tab-pane tab="注册" key="2" forceRender><register @registerSuccess="registerSuccess"></register></a-tab-pane>
     </a-tabs>
     <div class="action-box" v-if="loginType==='001'||loginType==='002'">
       <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
@@ -15,11 +15,23 @@
       <span @click="loginType='001'"  v-show="loginType==='002'" >账号密码登录</span>
     </div>
   </div>
-    <div class="login-box box-body" v-show="!login">
+    <div class="login-box box-body" v-show="!login&&!registered&&!repassworded">
       <P class="repsd"><span>重置密码</span></P>
-      <forgetpsd ></forgetpsd>
+      <forgetpsd  @changePsd="changePsd"></forgetpsd>
          <p style="text-align:right"><a @click="login=true">返回登录页</a></p>
     </div>
+  <div class="login-box box-body" v-show="repassworded">
+    <div class="registerSuccess " >
+      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;margin-right:10px;"/>重置密码成功</p>
+      <a-button  type="primary" style="width:100%"  @click="goLogin('001')" >登录</a-button>
+    </div>
+  </div>
+  <div class="login-box box-body" v-show="registered">
+    <div class="registerSuccess " >
+      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;margin-right:10px;"/>注册成功</p>
+      <a-button  type="primary" style="width:100%"  @click="goLogin('002')" >登录</a-button>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -38,7 +50,10 @@
         //000 注册
         loginType:'001',
         visible:false,
-        login:true
+        login:true,
+        registered:false,
+        key:'1',
+        repassworded:false
       }
     },
     mounted(){
@@ -48,9 +63,19 @@
     methods:{
       callback(val){
         if(val==='2'){
+          this.key='2';
           this.loginType='000'
         }else{
+          this.key='1';
           this.loginType='001';
+        }
+      },
+      registerSuccess(val){
+        if(val){
+         this.registered=true;
+         this.login=false;
+        }else{
+          this.registered=false;
         }
       },
       forgetPsd(){
@@ -59,6 +84,25 @@
       loginMobile(){
         this.loginType='002'
       },
+      changePsd(val){
+        this.repassworded=true;
+        this.login=false;
+      },
+
+      goLogin(flag){
+        this.login=true;
+        this.loginType='001';
+        if(flag==='001'){
+          this. repassworded=false;
+          this.key='1';
+        }
+        else{
+          this.registered=false;
+          this.key='1';
+        }
+
+
+      }
     }
   }
 
@@ -125,4 +169,11 @@
     margin:0 auto;
 
   }
+  .registerSuccess{
+    margin-top:27%;
+  }
+   .registerSuccess .title{
+         font-size:18px;
+     margin-bottom: 11.8%;
+   }
 </style>

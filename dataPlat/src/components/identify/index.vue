@@ -13,23 +13,23 @@
       },
       fontSizeMin: {
         type: Number,
-        default: 20
+        default: 25
       },
       fontSizeMax: {
         type: Number,
-        default: 40
+        default: 35
       },
       backgroundColorMin: {
         type: Number,
-        default:150
+        default:200
       },
       backgroundColorMax: {
         type: Number,
-        default:200
+        default:220
       },
       colorMin: {
         type: Number,
-        default:50
+        default:60
       },
       colorMax: {
         type: Number,
@@ -37,19 +37,19 @@
       },
       lineColorMin: {
         type: Number,
-        default: 150
+        default: 120
       },
       lineColorMax: {
         type: Number,
-        default: 180
+        default: 150
       },
       dotColorMin: {
         type: Number,
-        default: 256
+        default:100
       },
       dotColorMax: {
         type: Number,
-        default: 256
+        default: 120
       },
       contentWidth: {
         type: Number,
@@ -93,7 +93,7 @@
         let y = this.randomNum(this.fontSizeMax, this.contentHeight - 5)
         var deg = this.randomNum(-45, 45)
         // 修改坐标原点和旋转角度
-        ctx.translate(x, y)
+        ctx.translate(x, y);
         ctx.rotate(deg * Math.PI / 180)
         ctx.fillText(txt, 0, 0)
         // 恢复坐标原点和旋转角度

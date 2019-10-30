@@ -6,6 +6,7 @@
         <a-form :form="form" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-form-item>
             <a-input
+              maxlength="17"
               placeholder="请输入旧密码"
               v-decorator="[
           'oldPassword',
@@ -16,12 +17,12 @@
           }
         ]" :type="psdtype1">
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype1='password'"  v-show="psdtype1==='text'" />
-              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype1='text'"  v-show="psdtype1==='password'" />
+              <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype1='text'"  /></a>
+              <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype1='password'"  /></a>
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-input placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
+            <a-input   maxlength="17"  placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
             rules: [{
               validator: validnewPass,
             }],
@@ -30,13 +31,13 @@
               :type="psdtype2"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype2='password'"  v-show="psdtype2==='text'" />
-              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype2='text'"  v-show="psdtype2==='password'" />
+              <a v-show="psdtype2==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype2='text'"  /></a>
+              <a  v-show="psdtype2==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype2='password'"  /></a>
             </a-input>
             <p style="margin:0;line-height:0"><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
           <a-form-item>
-            <a-input
+            <a-input   maxlength="17"
               placeholder="请再次输入密码"
               v-decorator="['repassword',
           {
@@ -48,8 +49,8 @@
               :type="psdtype3"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a-icon type="eye"  slot="suffix"  style="cursor: pointer" @click="psdtype3='password'"  v-show="psdtype3==='text'" />
-              <a-icon type="eye-invisible"  slot="suffix" style="cursor: pointer"  @click="psdtype3='text'"  v-show="psdtype3==='password'" />
+              <a v-show="psdtype3==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype3='text'"  /></a>
+              <a  v-show="psdtype3==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype3='password'"  /></a>
             </a-input>
           </a-form-item>
           <div class="action-box">
@@ -94,6 +95,9 @@
         if(!value){
           callback('请输入新密码')
         }
+        else if(value.length>16){
+          callback('密码最大为16位');
+        }
         else if(!isPassword(value)){
           callback('密码格式不正确');
         }
@@ -105,9 +109,13 @@
         if(!value){
           callback('请输入密码')
         }
+        else if(value.length>16){
+          callback('密码最大为16位');
+        }
         else if(!isPassword(value)){
           callback('密码格式不正确');
         }
+
         else{
           callback();
         }

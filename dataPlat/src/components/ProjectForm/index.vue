@@ -1,7 +1,7 @@
 <template>
   <div class="form-container">
     <!--查看-->
-    <a-modal :destroyOnClose=true :title='title' v-model="visible" @cancel="cancel" :footer="null">
+    <a-modal :destroyOnClose=true :title='title' v-model="visible" @cancel="cancel" :footer="null" :width="550">
       <span class="blue" @click="currentDataflag=1" v-if="currentDataflag===0">编辑信息</span>
      <projectinfo ref="projectInfo" :dataflag="currentDataflag" :projectId="propMsg.projectId" @cancel="cancel" @save="save"></projectinfo>
     </a-modal>

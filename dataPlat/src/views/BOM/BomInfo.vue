@@ -17,17 +17,16 @@
                <div :key="col">
                  <a-input-number :min="0" :max="Math.pow(10,10)-1" v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
                  />
-                 <template v-else>{{text}}</template>
+                 <template v-else>{{text?text:'---'}}</template>
                </div>
              </template>
              <template slot="operation" slot-scope="text, record, index">
                <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.sizeId,'001')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.sizeId,'001')"></a>
-
+          <a @click="() => save(record.sizeId,'001')"><i class="iconfont iconsave"></i></a>
+            <a @click="cancel(record.sizeId,'001')"> <i class="iconfont iconcancel"></i></a>
         </span><span v-else>
-          <a @click="() => edit(record.sizeId,'001')"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
+          <a @click="() => edit(record.sizeId,'001')"><i class="iconfont iconbianji"></i></a>
         </span>
                </div>
              </template>
@@ -40,49 +39,61 @@
 
           </a-table>
           </div>
-      <!--尺寸信息 另有组件见BomList-->
+      <!--物料信息-->
       <div class="body-item">
         <p class="title">物料信息</p>
-        <a-table :columns="columsSource" :pagination="false" :dataSource="dataSource" :rowKey="record=>{record.materialId}">
+        <a-table :columns="columsSource" :pagination="false" :dataSource="dataSource" :rowKey="record=>{record.matlId}">
           <template slot="barGrade" slot-scope="text,record,index">
             <div >
-              <a-select width="80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.sizeId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
+              <a-select width="80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.matlId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
                   <a-select-option  v-for="item in barGradeArr " :key="item" :value="item">{{item}}</a-select-option>
               </a-select>
-              <template v-else>{{text}}</template>
+              <template v-else>{{text?text:'---'}}</template>
             </div>
+          </template>
+          <template slot="detailDrawing" slot-scope="text,record,index">
+            <div >
+              <img :src="`data:image/png;base64,${text}`" alt="图片" v-show="text" style="width:100px;">
+              <span v-show="!text">---</span>
+            </div>
+
           </template>
           <template slot="specification" slot-scope="text,record,index">
             <div >
-              <a-select   @focus="handleChangeSize(record)"  v-if="record.editable" placeholder="请选择" :value="text"  @change="value => handleChange(value, record.sizeId,'specification','002')">
+              <a-select   @focus="handleChangeSize(record)"  v-if="record.editable" placeholder="请选择" :value="text"  @change="value => handleChange(value, record.matlId,'specification','002')">
                 <a-select-option v-for="item in specificationArr" :key="item.specification" :value="item.specification">{{item.specification}}</a-select-option>
               </a-select>
-              <template v-else>{{text}}</template>
+              <template v-else>{{text?text:'---'}}</template>
             </div>
           </template>
-          <template slot="amount" slot-scope="text, record, index"
-          >
+          <template slot="length" slot-scope="text, record, index">
+            {{text?text:'---'}}
+          </template>
+          <template slot="allweight" slot-scope="text, record, index">
+            {{text?text:'---'}}
+          </template>
+          <template slot="amount" slot-scope="text, record, index">
             <div>
               <a-input-number :min="0"
                               :max="Math.pow(10,10)-1"
                               v-if="record.editable"
                               style="margin: -5px 0"
                               :value="text"
-                              @change="value => handleChange(value, record.materialId,'amount','002')"
+                              @change="value => handleChange(value, record.matlId,'amount','002')"
               />
-              <template v-else>{{text}}</template>
+              <template v-else>{{text?text:'---'}}</template>
             </div>
           </template>
           <template slot="operation" slot-scope="text, record, index">
             <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.key,'002')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
+          <a @click="() => save(record.matlId,'002')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
 
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.materialId,'002')"></a>
+            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.matlId,'002')"></a>
 
         </span>
               <span v-else>
-          <a @click="() => edit(record.key,'002')"><img :src="require('@/assets/images/bianji@2x.png')"alt="" style="width:14px"></a>
+          <a @click="() => edit(record.matlId,'002')"><i class="iconfont iconbianji"/></a>
         </span>
             </div>
           </template>
@@ -192,7 +203,7 @@
     },
     {
       title: '类型',
-      dataIndex: 'matl1st',
+      dataIndex: 'matl1stName',
       width: '10%',
     },
     {
@@ -216,6 +227,7 @@
       title: '长度/面积',
       dataIndex: 'length',
       width: '10%',
+      scopedSlots: { customRender: 'length' },
     },
     {
       title: '数量',
@@ -227,11 +239,13 @@
       title: '总量',
       dataIndex: 'allweight',
       width: '5%',
+      scopedSlots: { customRender: 'allweight' },
 
     },
     {
       title: '图形',
       dataIndex: 'detailDrawing',
+      scopedSlots: { customRender: 'detailDrawing' },
       width: '10%',
     },
     {
@@ -254,7 +268,7 @@
   };
   export default {
     data() {
-      this.cacheData = data.map(item => ({ ...item }));
+
       const dataSource=[];
       return {
         data,
@@ -266,7 +280,9 @@
         dataSource,
         columsSource,
         barGradeArr:[],
-        specificationArr:[]
+        specificationArr:[],
+        cacheData1:'',
+        cacheData2:''
       };
     },
     props:['propmsg'],
@@ -297,7 +313,7 @@
         }
           else if(flag==='002'){
           const newData = [...this.dataSource];
-          const target = newData.filter(item => key === item.materialId)[0];
+          const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
             target[column] = value;
             this.dataSource = newData;
@@ -316,7 +332,7 @@
        }else if(flag=='002'){
          //修改物料信息
          const newData = [...this.dataSource];
-         const target = newData.filter(item => key === item.materialId)[0];
+         const target = newData.filter(item => key === item.matlId)[0];
          if (target) {
            target.editable = true;
            this.dataSource = newData;
@@ -330,7 +346,7 @@
           if (target) {
             delete target.editable;
             this.data = newData;
-            this.cacheData = newData.map(item => ({ ...item }));
+            this.cacheData1 = newData.map(item => ({ ...item }));
             //保存尺寸信息
             let target1={...target};
             target1.cmptSizeId=target.sizeId;
@@ -353,17 +369,18 @@
         }
         else if(flag==='002'){
           const newData = [...this.dataSource];
-          const target = newData.filter(item => key === item.key)[0];
+          const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
             delete target.editable;
             this.dataSource = newData;
-            this.cacheData = newData.map(item => ({ ...item }));
+            this.cacheData2 = newData.map(item => ({ ...item }));
             //保存物料信息
             let obj={
               materialId:target.matlId,
               amount:target.amount,
               specification:target.specification,
               barGrade:target.barGrade,
+              length:target.length
             };
             this.$ajax('bomextract/bom/modifymaterial','POST',obj).then(res=>{
               res=res.data;
@@ -382,7 +399,8 @@
       handleChangeSize(record){
            //获取规格列表
               let obj={};
-                obj.firsttype=typeMap[record.matl1st];
+
+                obj.firsttype=record.matl1st;
                 obj.matlname=record.matlName;
                 this.$ajax('bomextract/bom/getspecifications','GET',obj).then(res=> {
                   res = res.data;
@@ -406,31 +424,31 @@
           const newData = [...this.data];
           const target = newData.filter(item => key === item.sizeId)[0];
           if (target) {
-            Object.assign(target, this.cacheData.filter(item => key === item.sizeId)[0]);
+            Object.assign(target, this.cacheData1.filter(item => key === item.sizeId)[0]);
             delete target.editable;
             this.data = newData;
           }
         }
         else if(flag==='002'){
           const newData = [...this.dataSource];
-          const target = newData.filter(item => key === item.key)[0];
+          const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
-            Object.assign(target, this.cacheData.filter(item => key === item.key)[0]);
+            Object.assign(target, this.cacheData2.filter(item => key === item.matlId)[0]);
             delete target.editable;
             this.dataSource = newData;
           }
         }
       },
     },
-    mounted(){
+    mounted() {
       //尺寸信息
-      this.data=this.propmsg.sizeList;
+      this.data = this.propmsg.sizeList;
+      this.cacheData1 = this.data.map(item => ({...item}));
       //统计信息数组
-      this.dataStatics=[this.propmsg];
+      this.dataStatics = [this.propmsg];
       //物料信息
-      this.dataSource=this.propmsg.bomList;
-
-
+      this.dataSource = this.propmsg.bomList;
+      this.cacheData2 = this.dataSource.map(item => ({...item}));
     }
   };
 </script>

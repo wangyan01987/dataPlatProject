@@ -47,7 +47,14 @@
                     });
                   }
                   else{
-                    this.$router.push({name:'joinSuccess',query:{code:this.code}});
+                    let flag=document.body.clientWidth;
+                    if(flag<750){
+                      this.$message.error('您还未登录，请先登录');
+                      this.$router.push({name:'loginMobile',query:{code:this.code}});
+                    }else{
+                      this.$router.push({name:'joinSuccess',query:{code:this.code}});
+                    }
+
                   }
           }
       },
@@ -67,10 +74,7 @@
             }
           })
         };
-        let flag=document.body.clientWidth;
-        if(flag<750){
-            this.$router.push({name:'/loginMobile',query:{userName:this.userName,projectName:this.projectName,projectId:this.projectId,isValid:this.isValid}});
-        }
+
       }
 
     }
@@ -106,6 +110,19 @@
     padding-bottom: 0.48rem;
     border: solid 1px rgba(0, 0, 0, 0.25);
     background-color:#fff;
+  }
+  @media screen and (max-width: 750px) {
+    .box-item{
+      margin-top:20%;
+      width:90%;
+      border:none;
+    }
+    .project-content{
+      margin-bottom: 80px;
+    }
+    .content-box{
+      background-color:#fff;
+    }
   }
 
 </style>

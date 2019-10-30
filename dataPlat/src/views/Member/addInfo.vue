@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="member">
       <a-form :form="form">
               <a-form-item v-for="(k,index) in form.getFieldValue('keys')" :key="k" :required="false">
                 <a-input v-if="flagName==='手机号'"
@@ -73,7 +73,9 @@
           if (!value || value.indexOf('@') >= 0) {
             result = [];
           } else {
-            result = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}@${domain}`);
+            result = ['@163.com', '@126.com', '@qq.com',
+              '@gmail.com','@sina.com','@sohu.com','@live.com','@msn.com','@hotmail.com','@googlemail.com'
+            ].map(domain => `${value}${domain}`);
           }
           this.result = result;
         },
@@ -119,7 +121,7 @@
             if(keys.length===1){
               return;
             }
-            this.id--;
+           // this.id--;
             form.setFieldsValue({
               keys:keys.filter(item=>item!==k)
             })
@@ -132,6 +134,7 @@
              return;
            }
            const nextKeys=keys.concat(++this.id);
+           console.log(nextKeys)
            form.setFieldsValue({
              keys:nextKeys
            });
@@ -171,7 +174,7 @@
       },
       beforeCreate(){
         this.form = this.$form.createForm(this);
-        this.form.getFieldDecorator('keys', { initialValue: [1], preserve: true });
+        this.form.getFieldDecorator('keys', {initialValue: [1], preserve: true });
       }
     }
 </script>

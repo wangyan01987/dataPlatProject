@@ -6,13 +6,15 @@
           <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
            <div class="box-item">
              <div class="item-img" >
-               <img :src="item.img" style="width:100%;height:100%;"/>
+               <img :src="item.img" style="width:100%;height:100%;" />
                <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
              </div>
-             <p class="editor" @click="$event.stopPropagation()" >
-               <img src="../../assets/images/bianji@2x.png" alt="编辑" @click="editItem(item.projectId,$event)">
-               <img src="../../assets/images/shanchu@2x.png" alt="删除" @click="deleteItem(item.projectId,$event)" v-show="item.isDelete">
-             </p>
+            <div class="editor-box">
+              <p class="editor" @click="$event.stopPropagation()" >
+                <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)" /></a>
+                <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)" v-show="item.isDelete" /></a>
+              </p>
+            </div>
            </div>
          </div>
           <div class="box-wrapper">
@@ -21,7 +23,6 @@
              <a-icon type="plus" class="icon"/>
              <p>创建新项目</p>
            </div>
-           <p class="editor"></p>
          </div>
        </div>
     </div>
@@ -58,7 +59,10 @@
             },
             {
               src:require('../../assets/projectImg/005.jpg')
-            }
+            },
+            {
+              src:require('../../assets/projectImg/004.jpg')
+            },
             ],
           itemList: [],
           addItemList: []
@@ -74,7 +78,7 @@
         loadItem() {
           //获取新的数据
           this.getItem(count++).then(res=>{
-            this.addItemList= res. map(this.randomImg);
+            this.addItemList= res.data;
             this.itemList=this.itemList.concat(this.addItemList);
           });
 
@@ -91,14 +95,16 @@
         deleteItem(id,e){
          e.stopPropagation();
          let self=this;
+
           this.$confirm({
             title: '删除项目',
+            icon:'close-circle',
             content: '确认删除此项目？',
             okText: '确认',
             cancelText: '取消',
-            okButtonProps: {
-              props: {type:'danger'},
-            },
+            // okButtonProps: {
+            //   props: {type:'danger'},
+            // },
             onOk(){
                   //删除信息操作
               self.$ajax('bomextract/project/deleteproject','POST',{'projectId':id}).then(res=>{
@@ -128,7 +134,12 @@
             if(res.code==='001'){
               this.loaded=false;
               if(res.data.length!==0){
-                storeList=res.data.map(this.randomImg);
+                storeList=res.data.map(item=>{
+                 if(item.image){
+                   item.img=this.imgList[item.image].src;
+                 }
+                  return item;
+                });
                 if(flag){
                   this.itemList=storeList;
                 }
@@ -145,12 +156,12 @@
           this.propMsg.dataflag=2;
           this.$refs.projectform.visible=true;
         },
-        randomImg(item){
-            //产生随机数
-            let key= Math.floor(Math.random()*5);
-            item.img=this.imgList[key].src;
-            return item;
-        }
+        // randomImg(item){
+        //     //产生随机数
+        //     let key= Math.floor(Math.random()*6);
+        //     item.img=this.imgList[key].src;
+        //     return item;
+        // }
       },
       mounted() {
         //项目名称清零
@@ -181,24 +192,23 @@
      width:100%;
       height: 1.8rem;
       background-color: #fafafa;
-      box-shadow: 0 2px 6px 0
-      #c8cacc;
+      box-shadow: 0 2px 6px 0 #c8cacc;
       border-radius: 4px;
+      position:relative;
 
     }
     .box-wrapper{
-      width:2.2rem;
+      width:20%;
       padding-right:20px;
       padding-bottom:20px;
      }
   .item-title{
-
       width: 100%;
       height: 48px;
       letter-spacing: 0;
       color: #ffffff;
       position:absolute;
-    top:0;
+        top:0;
        overflow: hidden;
     text-overflow: ellipsis;
     text-align:left;
@@ -207,12 +217,12 @@
     -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   background-color:rgba(100,100,100,0.5);
-
+    z-index:99;
   }
   .item-img{
 
       width:100%;
-      height: 1.4rem;
+      height: 100%;
       background-color: rgba(229, 229, 229, 0.64);
       border-radius: 4px;
     position:relative;
@@ -226,16 +236,28 @@
   .box-item:hover{
   cursor:pointer;
   }
+  .editor-box{
+    height:100%;
+    width:100%;
+    position:absolute;
+    bottom: 0;
+    background-color:transparent;
+    opacity:0;
+  }
   .editor{
+    position:absolute;
+    bottom: 0;
     height:0.4rem;
     display:flex;
     justify-content: space-between;
     align-items: center;
     padding:0 16px;
-    opacity:0;
+    margin:0;
     transition:all 500ms ease-in-out;
+    background-color:#fff;
+    width:100%;
   }
-  .editor:hover{
+  .editor-box:hover{
     opacity:1;
   }
   .editor img{
@@ -245,10 +267,10 @@
   }
   .box-item .add-item{
     width: 100%;
-    height: 1.4rem;
+    height: 100%;
     background-color: #ebebeb;
     border-radius: 4px;
-    padding-top:0.3rem;
+    padding-top:0.6rem;
   }
   .add-item .icon{
     font-size:0.32rem;

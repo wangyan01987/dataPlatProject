@@ -2,20 +2,19 @@
   <div class="box-container">
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember">+邀请新成员</a-button></p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
-      <template slot-scope="text,record" slot="icon">
-        <a-avatar :style="{color:'#fff',backgroundColor: setColor}"><span v-if="record.userName">{{record.userName.substring(0,1)}}</span>
+      <template slot-scope="text,record" slot="personImage">
+        <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1)}}</span>
        <span v-else> ---</span>
         </a-avatar>
       </template>
-      <template v-for="item in ['userName','gender','phoneNumber','email','companyName','position']" >
-          <span slot-scope="text,record" :slot="item" :key="item">
-           <span v-show="!text">---</span>
-           <span v-show="text">{{text}}</span>
-      </span>
-      </template>
-
+          <template  v-for="item in arr"   slot-scope="text,record" :slot="item"  @click="handle(text)" style="cursor: pointer">
+             <div :key="item">
+               <span v-show="!text">---</span>
+               <span v-show="text">{{text}}</span>
+             </div>
+          </template>
        <span slot="action" slot-scope="text,record,index" class="action" >
-         <img :src="require('../../assets/images/shanchu@2x.png')"  alt="" @click="deleteMember($event,record.userId)" v-show="record.isDelete"/>
+         <a> <i class="iconfont iconshanchu" @click="deleteMember($event,record.userId)" v-show="record.isDelete"/></a>
        </span>
     </a-table>
     <a-modal :destroyOnClose=true
@@ -36,7 +35,7 @@
     components:{ModalInfo},
     data(){
       const columns = [
-        { title: '', dataIndex: 'icon', key: 'icon',scopedSlots: { customRender: 'icon' }},
+        { title: '', dataIndex: 'personImage', key: 'personImage',scopedSlots: { customRender: 'personImage' }},
         { title: '姓名', dataIndex: 'userName', key: 'userName',scopedSlots: { customRender: 'userName' } },
         { title: '性别', dataIndex: 'gender', key: 'gender',scopedSlots: { customRender: 'gender' } },
         { title: '手机', dataIndex: 'phoneNumber', key: ',phoneNumber',scopedSlots: { customRender: 'phoneNumber' } },
@@ -47,13 +46,14 @@
       ];
       return{
         visible:false,
-        dataSource:[],
+        dataSource:[{}],
         columns,
         pagination:{},
         dataflag:'000',
         loading:false,
         title:'邀请新成员',
-        projectId:''
+        projectId:'',
+        arr:['userName','gender','phoneNumber','email','companyName','position']
       }
     },
     methods:{
@@ -62,6 +62,9 @@
         this.visible=true;
       },
       cancel(){
+
+      },
+      handle(val){
 
       },
       //单体操作
@@ -113,6 +116,7 @@
                         item.gender=mapset[item['sex']-1];
                         return item;
                    });
+
                  this.pagination = pagination;
                }
         });
@@ -128,7 +132,7 @@
     computed:{
        setColor(){
          let colors=['#ecbc27','#ced182',' #f39798','#58b788','#f48e46','#5a91c9','#fb91bd','#5bbefc','#5ae0ca'];
-         let key= Math.round(Math.random()*10);
+         let key= Math.floor(Math.random()*9);
          return colors[key];
        }
     },
@@ -143,7 +147,6 @@
 <style scoped>
   .box-container{
     width: 82%;
-    height: 5.77rem;
     background-color: #ffffff;
     border: solid 1px #d9d9d9;
     margin:0.2rem auto;

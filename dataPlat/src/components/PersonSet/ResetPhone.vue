@@ -3,7 +3,7 @@
     <a-form :form="formData">
 
       <a-form-item >
-        <a-input placeholder="请输入手机号"   v-decorator="[ 'phoneNumber',
+        <a-input placeholder="请输入手机号"  autocomplete="off"  v-decorator="[ 'phoneNumber',
             {rules: [{validator:checkAccount}]}
         ]">
           <img slot="prefix" :src='require("../../assets/images/iphone@2x.png")' style="width:14px"/>
@@ -11,21 +11,17 @@
       </a-form-item>
       <a-form-item>
         <a-row :gutter="8">
-          <a-col :span="16">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}]}]">
+          <a-col :span="18">
+            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}]}]" autocomplete="off">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
-          <a-col :span="8">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled">{{codeText}}</a-button>
+          <a-col :span="6">
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="width:100%">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
 
-      <!--<div class="action-box">-->
-        <!--<a-button  type="default"  @click="cancel" >取消</a-button>-->
-        <!--<a-button  type="primary"   @click="handleSubmit" >确定</a-button>-->
-      <!--</div>-->
     </a-form>
 
   </div>
@@ -102,7 +98,7 @@
                 else{
                   this.$message.error(res.msg);
                 }
-      
+
         })
         })
       },

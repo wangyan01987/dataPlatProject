@@ -191,6 +191,7 @@
         }
       },
       handleSubmit(val) {
+
          if(!val){
            this.formData.validateFields(['username','phoneNumber','code','email','agreement'],{firstFields:['phoneNumber']},(err, fieldsValue) => {
              if (err) {
@@ -212,7 +213,10 @@
                this.$ajax('register','POST',obj).then(res=>{
                  res=res.data;
                  if(res.code==='001'){
-                   this.$message.success('注册成功，请登录');
+                  // this.$message.success('注册成功，请登录');
+                   this.dataflag='000';
+                   this.$emit('registerSuccess',true);
+
                    this.formData.resetFields();
                  }
                  else{

@@ -50,13 +50,14 @@
           return {
 
             colorArr:['#ecbc27','#ced182',' #f39798','#58b788','#f48e46','#5a91c9','#fb91bd','#5bbefc','#5ae0ca'],
+            iconColor:''
           }
       },
       computed:{
-        iconColor(){
-                  let flag=Math.floor(Math.random()*9);
-                  return this.colorArr[flag];
-        },
+        // iconColor(){
+        //           let flag=Math.floor(Math.random()*9);
+        //           return this.colorArr[flag];
+        // },
           menuList(){
             return this.$store.state.menuList;
           },
@@ -96,6 +97,13 @@
                 if(res.code==='001'){
                   // 更新数据
                  // this.userName = res.data.userName;
+                   if(res.data.personImage){
+                     this.iconColor=res.data.personImage;
+                   }
+                   else{
+                     let flag=Math.floor(Math.random()*9);
+                           this.iconColor= this.colorArr[flag];
+                   }
                  this.$store.commit('setUserName',res.data.userName);
                 }
                 else{
