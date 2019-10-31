@@ -7,6 +7,7 @@
       :confirmLoading="confirmLoading"
       @cancel="handleCancel"
       :destroyOnClose=true>
+      <a><span class="blue" @click="editInfo" v-if="dataflag==='000'">编辑</span></a>
       <template slot="footer" >
         <a-button type="default"  v-show="dataflag!=='000'" @click="handleCancel">取消</a-button>
         <a-button type="primary" v-show="dataflag!=='000'" @click="handleOk">确定</a-button>
@@ -47,6 +48,9 @@
       },
       handleCancel(e) {
         this.visible = false
+      },
+      editInfo(){
+        this.$emit('edit');
       },
     }
   }

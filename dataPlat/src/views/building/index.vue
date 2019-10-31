@@ -20,7 +20,7 @@
          <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"  /></a>
        </span>
      </a-table>
-     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc'></info-form>
+     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc' @edit='lookEditBuilding'></info-form>
    </div>
 </template>
 
@@ -96,6 +96,12 @@
           this.dataflag='001';
           this.floorId=record.floorId;
           this.$store.commit("setRecord", record)
+        },
+        lookEditBuilding(){
+          console.log(this.$store.state.record);
+          this.$refs.infoform.visible=true;
+          this.dataflag='001';
+          this.floorId=this.$store.state.record.floorId;
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

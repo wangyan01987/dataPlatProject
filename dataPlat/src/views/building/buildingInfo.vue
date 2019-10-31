@@ -18,7 +18,13 @@
       :wrapper-col="formItemLayout.wrapperCol"
       :validate-status="floornumber.validateStatus"
       :help="floornumber.errorMsg">
-      <a-input-number  @change="handleNumberChange" v-decorator="['floorNum',]" v-if="dataflag!=='000' "/>
+      <a-input @change="handleNumberChange"
+      maxlength="15"
+        placeholder="请输入建筑层数"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'floorNum', {rules:
+         [{message:'请输入建筑层数'},{pattern:/^[1-9][0-9]{0,14}$/,message:'建筑层数输入格式为1-15位数字'}]}
+        ]"/>
       <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -28,8 +34,13 @@
       :validate-status="prenumber.validateStatus"
       :help="prenumber.errorMsg"
     >
-      <a-input-number :min="1"   v-decorator="[
-        ]"  v-if="dataflag!=='000'"  @change="handleNumberChange"/>
+      <a-input @change="handleNumberChange"
+        maxlength="15"
+        placeholder="请输入预制层数"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'preFloorNum', {rules:
+         [{message:'请输入预制层数'},{pattern:/^[1-9][0-9]{0,14}$/,message:'预制层数输入格式为1-15位数字'}]}
+        ]"/>
       <span v-else>{{buildingInfo.preFloorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -65,8 +76,13 @@
       :help="number.errorMsg"
     >
      <div v-if="dataflag!=='000'">
-       <a-input-number v-decorator="[ 'monolayerArea' ]" :min="0.01" :step="0.01"  @change="e=>handleNumberChange(e,'003')"  :formatter='limitDecimals'
-       />m²</div>
+       <a-input @change="e=>handleNumberChange(e,'003')"  :formatter='limitDecimals'
+       maxlength="18"
+        placeholder="单层建筑面积"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'monolayerArea', {rules:
+         [{message:'请输入单层建筑面积'},{pattern:/^([1-9][0-9]{0,14})|([1-9][0-9]{0,14}[\.][0-9]{1,2})|([0][\.][0-9]{0,2})$/,message:'单层建筑面积输入格式为1-15位数字,小数点后两位'}]}
+        ]"/>m²</div>
       <span v-else>{{buildingInfo.monolayerArea}}m²</span>
     </a-form-item>
     <a-form-item
