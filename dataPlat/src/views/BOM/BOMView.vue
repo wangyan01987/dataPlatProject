@@ -25,7 +25,15 @@
                /><p class="has-error"></p>
              </div>
                <template v-else
-               >{{text?text:'---'}}</template>
+               >
+                 <a-tooltip>
+                   <template slot="title">
+                     <span v-show="text">{{text}}</span>
+                   </template>
+                   <span >  {{text?text:'---'}}</span>
+                 </a-tooltip>
+
+               </template>
              </div>
            </template>
            <template slot="operation" slot-scope="text, record, index">
@@ -421,14 +429,13 @@
 <style scoped>
   .bom-item-body{
     margin-top:0.16rem;
+    flex:auto;
   }
-  a i.iconfont{
-    color:#999;
+  .bom-item-container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
-  a i.iconfont:hover{
-    color:#1890ff;
-  }
-  a i.iconshanchu:hover{
-    color:red;
-  }
+
+
 </style>

@@ -70,7 +70,7 @@
             {{text?text:'---'}}
           </template>
           <template slot="allweight" slot-scope="text, record, index">
-            {{text?text:'---'}}
+            {{text?text:'---'}}kg
           </template>
           <template slot="amount" slot-scope="text, record, index">
             <div>
@@ -81,7 +81,7 @@
                               :value="text"
                               @change="value => handleChange(value, record.matlId,'amount','002')"
               />
-              <template v-else>{{text?text:'---'}}</template>
+              <template v-else>{{text?text:'---'}}</template>根
             </div>
           </template>
           <template slot="operation" slot-scope="text, record, index">
@@ -224,15 +224,15 @@
       scopedSlots: { customRender: 'barGrade' },
     },
     {
-      title: '长度/面积',
+      title: '长度/面积(mm/m²)',
       dataIndex: 'length',
-      width: '10%',
+      width: '15%',
       scopedSlots: { customRender: 'length' },
     },
     {
       title: '数量',
       dataIndex: 'amount',
-      width: '5%',
+      width: '10%',
       scopedSlots: { customRender: 'amount' },
     },
     {

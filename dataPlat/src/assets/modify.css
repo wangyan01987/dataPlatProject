@@ -78,9 +78,9 @@ display:none
 /*.ant-modal-body{*/
   /*padding:0;*/
 /*}*/
-.ant-table-body td{
-  max-width:380px;
-  overflow: hidden;
+ .ant-table-body td>div:not(.bom-item-body div){
+  max-width:250px;
+  overflow-x: hidden;
  white-space: nowrap;
   text-overflow: ellipsis;
 }
@@ -90,14 +90,14 @@ display:none
 a .iconfont{
   color: #999;
 }
-a .iconbianji:hover{
+a .iconbianji:hover,a .iconsave:hover{
   color:dodgerblue;
 }
-a .iconshanchu:hover{
+a .iconshanchu:hover, a i.iconcancel:hover{
   color:red;
 }
 .ant-input-number{
-  width:130px;
+  width:138px;
 }
 p.has-error{
  display:none;
@@ -131,3 +131,45 @@ p.has-error{
 .ant-modal-header,.ant-modal-footer{
   border:none;
 }
+.bom-item-body .ant-table-wrapper{
+  height:100%;
+}
+.bom-item-body .ant-spin-nested-loading{
+  height:100%;
+}
+.bom-item-body .ant-spin-container{
+  height:100%;
+  display:flex;
+  flex-direction: column;
+}
+.ant-spin-container .ant-table-default{
+  flex:auto;
+}
+.box .box-container{
+  flex-direction: row;
+}
+ .box-container{
+  display:flex;
+  flex-direction: column;
+}
+.box-container .ant-table-wrapper{
+  flex:auto;
+  display: flex;
+  flex-direction: column;
+}
+.box-container .ant-spin-container{
+  flex:auto;
+  display:flex;
+  flex-direction:column;
+}
+.box-container .ant-spin-nested-loading{
+  flex:auto;
+  display:flex;
+  flex-direction:column;
+}
+.ant-table-thead > tr > th{
+  font-weight:bold;
+}
+/*.ant-layout-content{*/
+  /*display: flex;*/
+/*}*/

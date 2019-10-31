@@ -4,16 +4,15 @@
      <div v-show="dataflag==='000'">
        <a-form-item >
          <a-input placeholder="请输入姓名"
-                  v-decorator="[
-           'username',
-            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['change','blur']}
+                  v-decorator="[ 'username',
+            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['blur']}
         ]">
            <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
          </a-input>
        </a-form-item>
        <a-form-item >
          <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
-            {rules: [{validator:checkAccount}],validateTrigger:['change','blur'],validateFirst:true}
+            {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}
       ]">
            <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
          </a-input>
@@ -23,7 +22,7 @@
            <a-col :span="15">
              <a-input placeholder="请输入验证码" id="success"   v-decorator="[
           'code',
-            {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
                <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
              </a-input>
@@ -39,10 +38,8 @@
           'email',
           {rules: [{
               validator: validEmail,
-            }],validateTrigger:['change','blur']}
-        ]"
-
-           @change="handleEmailChange"
+            }],validateTrigger:['blur']}
+        ]" @change="handleEmailChange"
          >
            <template slot="dataSource">
              <a-select-option
@@ -62,7 +59,7 @@
               validator: checkAgreeMent,
             }]}]">
            已阅读并同意
-           <a href="/static" target="_blank">
+           <a href="/static/aggrementMobile.html" target="_blank">
              PST及平台服务协议
            </a>
          </a-checkbox>
@@ -78,11 +75,14 @@
             rules: [{
               validator: validPass,
             }],
+             validateTrigger:['blur']
           }
         ]"
             type="password"
           >
             <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+            <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype1='text'"  /></a>
+            <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype1='password'"  /></a>
           </a-input>
           <p><a-icon type="exclamation-circle" style="color:#1890ff" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
         </a-form-item>
@@ -95,12 +95,14 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
             type="password"
           >
             <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+            <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype2='text'"  /></a>
+            <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype2='password'"  /></a>
           </a-input>
 
         </a-form-item>
@@ -128,7 +130,9 @@
         btnType:'default',
         autoCompleteResult:'',
         mobile:'',
-        dataflag:'000'
+        dataflag:'000',
+        psdtype1:'password',
+        psdtype2:'password',
       }
 
     },
@@ -232,7 +236,8 @@
         if (!value) {
           autoCompleteResult = [];
         } else {
-          autoCompleteResult = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}${domain}`);
+          autoCompleteResult = ['@163.com', '@126.com', '@qq.com',
+            '@gmail.com','@sina.com','@sohu.com','@live.com','@msn.com','@hotmail.com','@googlemail.com'].map(domain => `${value}${domain}`);
         }
         this.autoCompleteResult = autoCompleteResult;
       },

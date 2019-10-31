@@ -109,7 +109,7 @@ export function isPhone(val){
 export function isPassword(val) {
   let str = val.trim();
  // let reg = /^(?![0-9]+$)(?![a-z]+$)(?![A-Z]+$)(?![_]+$).{6,16}$/;
-  let reg1 = /^[a-zA-Z0-9_]{6,16}$/
+  let reg1 = /^[a-zA-Z0-9_\*\-\.+]{6,16}$/
   if (reg1.test(str)) {
     return true;
   } else {
@@ -155,7 +155,7 @@ export function isSocialCreditCode(val) {
 //项目名称校验 中英文字符6-20
 export function isName(val){
   let str=val.trim();
-  let reg= /^[\u4e00-\u9fa5\w\']{1,50}$/;
+  let reg= /^[\u4e00-\u9fa5\w]{1,50}$/;
   return reg.test(str);
 }
 //项目编号

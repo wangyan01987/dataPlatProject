@@ -3,9 +3,17 @@
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
-       <template v-for="item in ['relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
-         <span v-show="text">{{text}}</span>
-         <span v-show="!text">---</span>
+
+       <template v-for="item in ['floorCode','floorName','relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
+
+          <a-tooltip>
+            <template slot="title">
+              <span v-show="text">{{text}}</span>
+            </template>
+            <span v-show="text">{{text}}</span>
+            <span v-show="!text">---</span>
+          </a-tooltip>
+
        </template>
        <span slot="action" slot-scope="record,index" class="action">
          <a style="margin-right:30px"> <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)" /></a>
@@ -24,9 +32,9 @@
       data(){
         const columns = [
           { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${this.pagination.pageSize*(this.current-1)+index+1}`},
-          { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName' },
-          { title: '楼栋号', dataIndex: 'floorCode', key: 'floorCode' },
-          { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor',scopedSlots: { customRender: 'relationfloor' } },
+          { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName',scopedSlots: { customRender: 'floorName' } },
+          // { title: '楼栋号', dataIndex: 'floorCode', key: 'floorCode',scopedSlots: { customRender: 'floorCode' } },
+          // { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor',scopedSlots: { customRender: 'relationfloor' } },
           { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum',scopedSlots: { customRender: 'floorNum' } },
           { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum',scopedSlots: { customRender: 'preFloorNum' } },
           { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName',scopedSlots: { customRender: 'quakeGradeName' } },
@@ -58,9 +66,9 @@
         deleteBuilding(e,floorId,index){
             e.stopPropagation();
           this.$confirm({
-            title: '删除单体',
+            title: '确认删除此单体？',
             icon:'close-circle',
-            content: '确认删除此单体？一旦将单体删除，所有与此单体相关信息、文件将会被清除。',
+            content: '一旦将单体删除，所有与此单体相关信息、文件将会被清除。',
             okText: '确认',
             cancelText: '取消',
             okButtonProps:{},
@@ -136,7 +144,7 @@
                 let obj=res.data;
                    let obj1= obj.map(item=>{
                       item.quakeGradeName= gradeMap[item.quakeGrade-1];
-                     item.relationfloor=item.relationfloor.join('、');
+                    // item.relationfloor=item.relationfloor.join('、');
                      item.cmpTypeName=[];
                          item.cmptType.forEach(item1=>{
                           item.cmpTypeName.push( item1.component);

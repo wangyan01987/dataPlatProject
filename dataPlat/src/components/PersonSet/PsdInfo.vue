@@ -22,7 +22,7 @@
             </a-input>
           </a-form-item>
           <a-form-item>
-            <a-input   maxlength="17"  placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
+            <a-input   maxlength="16"  placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
             rules: [{
               validator: validnewPass,
             }],
@@ -37,7 +37,7 @@
             <p style="margin:0;line-height:0"><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
           <a-form-item>
-            <a-input   maxlength="17"
+            <a-input   maxlength="16"
               placeholder="请再次输入密码"
               v-decorator="['repassword',
           {

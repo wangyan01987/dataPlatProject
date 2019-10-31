@@ -9,12 +9,18 @@
       </template>
           <template  v-for="item in arr"   slot-scope="text,record" :slot="item"  @click="handle(text)" style="cursor: pointer">
              <div :key="item">
-               <span v-show="!text">---</span>
-               <span v-show="text">{{text}}</span>
+               <a-tooltip>
+                 <template slot="title">
+                   <span v-show="text">{{text}}</span>
+                 </template>
+                 <span v-show="text">{{text}}</span>
+                 <span v-show="!text">---</span>
+               </a-tooltip>
              </div>
           </template>
        <span slot="action" slot-scope="text,record,index" class="action" >
          <a> <i class="iconfont iconshanchu" @click="deleteMember($event,record.userId)" v-show="record.isDelete"/></a>
+            <i class="iconfont iconshanchu"   v-show="!record.isDelete"/>
        </span>
     </a-table>
     <a-modal :destroyOnClose=true
@@ -156,8 +162,6 @@
   }
   .action img{
     width:14px;
-    cursor:pointer;
-    margin-left:0.1rem;
   }
   .userIcon{
     text-align:center;

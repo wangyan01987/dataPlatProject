@@ -221,7 +221,8 @@
         if (!value) {
           autoCompleteResult = [];
         } else {
-          autoCompleteResult = ['@163.com', '@126.com', '@qq.com'].map(domain => `${value}${domain}`);
+          autoCompleteResult = ['@163.com', '@126.com', '@qq.com',
+            '@gmail.com','@sina.com','@sohu.com','@live.com','@msn.com','@hotmail.com','@googlemail.com'].map(domain => `${value}${domain}`);
         }
         this.autoCompleteResult = autoCompleteResult;
       },

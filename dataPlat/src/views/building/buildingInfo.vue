@@ -1,41 +1,16 @@
 <template>
   <a-form :form="form"
   >
-    <a-form-item label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+    <a-form-item label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" :hideRequiredMark="dataflag==='000'" >
       <a-input
-        maxlength="21"
+        maxlength="20"
+        placeholder="请输入楼栋名称"
         v-if="dataflag!=='000'"
-        v-decorator="[ 'floorName', {rules: [{ max:20,message:'最大长度为20个字符' }],validateTrigger:['blur']}
+        v-decorator="[ 'floorName', {rules:
+         [{required:true,message:'请输入楼栋名称'},{pattern:/^[\u4e00-\u9fa5\w]{1,20}$/,message:'楼栋号输入格式为1-20位中英文数字及下划线'}, {validator:assignFloor}],validateTrigger:['blur']}
         ]"
       />
       <span v-else>{{buildingInfo.floorName}}</span>
-    </a-form-item>
-    <a-form-item label="楼栋号" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-      <a-input v-if="dataflag!=='000'"  maxlength="16"
-               v-decorator="['floorCode',
-          {rules: [{ required: true, message: '请输入楼栋号' },{pattern:/^[\w]+$/,message:'楼栋号输入格式不正确'},
-            {validator:assignFloor}],validateTrigger:['blur'],
-          }
-        ]"
-        placeholder="请输入楼栋号">
-      </a-input>
-      <span v-else>{{buildingInfo.floorCode}}</span>
-    </a-form-item>
-    <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="关联栋号">
-      <a-row :gutter="16">
-        <a-col :span="12" v-for="(item,index) in relationfloor1" :key="item.key" v-if="dataflag!=='000'" >
-          <a-form-item>
-            <a-input-number :min="1"  :max="Math.pow(10,15)-1"     style="width:90px"
-                            v-decorator="[`relationfloor[${item.key}]`,
-          {rules: [ {validator:assignReFloor}],validateTrigger:['blur'],
-          }
-        ]"/>
-            <a-icon type="minus-circle" @click="deleteInput(item.key)" style="margin-left:1px;"/>
-          </a-form-item>
-        </a-col>
-      </a-row>
-      <span v-if="dataflag==='000'" :title="buildingInfo.relationfloor">{{buildingInfo.relationfloor}}</span>
-      <span @click="addAssociateNum" v-if="dataflag!=='000'" class="add-item">+添加</span>
     </a-form-item>
     <a-form-item
       label="建筑层数"
@@ -43,7 +18,7 @@
       :wrapper-col="formItemLayout.wrapperCol"
       :validate-status="floornumber.validateStatus"
       :help="floornumber.errorMsg">
-      <a-input-number  @change="e=>handleNumberChange(e,'001')" v-decorator="['floorNum',]" v-if="dataflag!=='000' "/>
+      <a-input-number  @change="handleNumberChange" v-decorator="['floorNum',]" v-if="dataflag!=='000' "/>
       <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -53,9 +28,8 @@
       :validate-status="prenumber.validateStatus"
       :help="prenumber.errorMsg"
     >
-      <a-input-number :min="0"   v-decorator="[
-          'preFloorNum'
-        ]"  v-if="dataflag!=='000'"  @change="e=>handleNumberChange(e,'002')"/>
+      <a-input-number :min="1"   v-decorator="[
+        ]"  v-if="dataflag!=='000'"  @change="handleNumberChange"/>
       <span v-else>{{buildingInfo.preFloorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -100,17 +74,17 @@
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
       <a-textarea  v-decorator="[
-          'remark',{rules: [{max:399,message:'最大长度为400'}]}
+          'remark',{rules: [{max:400,message:'最大长度为400'}]}
         ]" v-if="dataflag!=='000'" :maxLength='400'/>
       <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
     <p>构件类型</p>
-    <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:''}"  class="buildingTable">
+    <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:'暂无数据'}"  class="buildingTable">
       <template slot="floors" slot-scope="text, record, index">
         <div key="floors">
            <div class="test-floor"  v-if="dataflag!=='000'">
              <a-input
-               maxlength="11"
+               maxlength="10"
                style="margin: -5px 0; "
                :value="text"
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
@@ -157,22 +131,6 @@
 
 <script>
 
-  function validatePrimeNumber(number) {
-
-     if(typeof number==='number'){
-       if (number<=Math.pow(10,15)-1) {
-         return {
-           validateStatus: 'success',
-           errorMsg: null,
-         };
-       }else{
-         return {
-           validateStatus: 'error',
-           errorMsg: '最大为15位数字',
-         };
-       }
-     }
-  }
   export default {
     props:['dataflag','floorId'],
     data () {
@@ -199,7 +157,7 @@
         relationfloor1:[],
         columns,
         dataSource,
-        isSubmit:false,
+        isSubmit:true,
         projectId,
         count,
         number:{
@@ -214,31 +172,6 @@
       };
     },
     methods: {
-      assignReFloor(rule,value,callback){
-        //判断输入是否重复
-        let arr=this.form.getFieldValue('relationfloor');
-         let arr1=arr.filter(item=>{
-           return item.length>0;
-         });
-        if(arr1.length>1){
-          arr1=arr1.filter(item=>{
-            return item.length!==0;
-          });
-          let singleArr=[...arr1];
-          singleArr.pop();
-        console.log(singleArr)
-          if(singleArr.indexOf(value)!==-1){
-            callback('该单体号已存在')
-          }else if(value.toString().length>10){
-            callback('最大为10位数字')
-          }
-        }
-        else{
-          callback();
-        }
-
-
-      },
       limitDecimals(value){
         const reg = /^(\-)*(\d+)\.(\d\d).*$/;
         if(typeof value === 'string') {
@@ -250,50 +183,25 @@
         }
       },
       handleNumberChange(value,flag) {
-
-       if(flag==='003'){
-         this.number = {
-           ...validatePrimeNumber(value),
-           value,
-         };
-
-        if(value&&value.toString().length>15){
-          return;
+        if(flag==='003'){
+          value=value.toString().split('.')[0];
         }
-       }
-       else if(flag==='001'){
-         this.floornumber = {
-           ...validatePrimeNumber(value),
-           value,
-         };
-       }
-       else{
-         this.prenumber = {
-           ...validatePrimeNumber(value),
-           value,
-         };
-       }
-      },
-      addAssociateNum(){
-         if(this.count<=30){
-           this.relationfloor1.push({key:this.count++});
-         }else{
-           this.$message.error('已超过添加上限30');
-           return;
-         }
+        if(value&&value.toString().length>15){
+        // value=this.form.getFieldValue('preFloorNum');
+       //  console.log(value);
+         return;
+          // value=value.slice(0,15);
+        };
       },
       assignFloor(rule,value,callback){
             if(!value){
              callback();
             }
-            else if(!/^[\w]+$/.test(value)){
+            else if(!/^[\u4e00-\u9fa5\w]{1,20}$/.test(value)){
               callback()
             }
-            else if(value.length>15){
-              callback('最大字符长度为15')
-            }
             else{
-              //新建单体
+              //新建单体校验楼栋名称
                 if(this.dataflag==='002'){
                   this.$ajax('bomextract/build/buildnumexist','GET',{projectId:this.projectId,buildNum:value}).then(res=>{
                     res=res.data;
@@ -327,20 +235,12 @@
       getKey(record) {
         return record.id;
       },
-      deleteInput(key){
-        this.count--;
-        this.relationfloor1=this.relationfloor1.filter(item=>{
-          return  item.key!==key;
-        });
-      },
-      handleCancel(){
 
-      },
       handleSubmit(e) {
         e.preventDefault();
         this.form.validateFields((err, values) => {
-          if (!err) {
-            this.isSubmit=true;
+          console.log(this.isSubmit)
+          if (!err&&this.isSubmit===true) {
             let obj=Object.assign({},values);
               obj.projectId=this.$route.params.projectId;
               let data=JSON.parse(JSON.stringify(this.dataSource));
@@ -360,21 +260,13 @@
                 obj.floorId=this.floorId;
                 delete obj.projectId;
               };
-              //关联楼栋
-            obj.relationfloor=obj.relationfloor.filter(item=>{
-             return item.length!==0;
-            });
-            //obj.relationfloor=[];
-                  // this.relationfloor1.forEach((item,index)=>{
-                  //   obj.relationfloor.push(item.val);
-                  // });
                   let params=obj;
               this.$ajax(url,'POST',obj).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
                   this.$message.success(msg,5);
                   this.$emit('success',true);
-                  params.relationfloor=params.relationfloor.join('、');
+                 // params.relationfloor=params.relationfloor.join('、');
                   this.$store.commit("setRecord",params);
                 }else{
                   this.$message.error(res.msg);
@@ -393,14 +285,19 @@
         }
       },
       handleChange(value, key, column,target1) {
-        let str=/^[\d\-]{0,10}$/;
+        let str=/^(\d{1,15}-\d{0,15})|(\d{0,15}-\d{1,15})$/;
         if(!str.test(value)){
             target1.style.border='solid 1px red';
-          target1.parentElement.nextSibling.style.display='block';
-            return;
+            target1.parentElement.nextSibling.style.display='block';
+            this.isSubmit=false;
+          //  return false;
         }
-        target1.parentElement.nextSibling.style.display='none';
-          target1.style.borderColor='#d9d9d9';
+        else{
+          this.isSubmit=true;
+          target1.parentElement.nextSibling.style.display='none';
+            target1.style.borderColor='#d9d9d9';
+        }
+
         const newData = [...this.dataSource];
          const  target= newData.filter(item=>item.id===key)[0];
                if(target){
@@ -420,15 +317,15 @@
       buildingDetails(record){
         // 单体详情
         let arr;
-        if(record.relationfloor){
-          arr= record.relationfloor.split('、');
-         let arr1=[];
-           arr.forEach((item,index)=>{
-             arr1.push({val:item,key:index});
-           });
-          this.count=arr.length;
-          this.relationfloor1=arr1;
-        }
+        // if(record.relationfloor){
+        //   arr= record.relationfloor.split('、');
+        //  let arr1=[];
+        //    arr.forEach((item,index)=>{
+        //      arr1.push({val:item,key:index});
+        //    });
+        //   this.count=arr.length;
+        //   this.relationfloor1=arr1;
+        // }
         this.buildingInfo={...record};
         for(let item in this.buildingInfo){
              if(!this.buildingInfo[item]){
@@ -436,7 +333,7 @@
              }
         };
         let copyRecord={
-          relationfloor:arr,
+         // relationfloor:arr,
           floorName:record.floorName,
           floorCode:record.floorCode,
           floorNum:record.floorNum,

@@ -12,8 +12,7 @@
       <a-form-item>
         <a-row :gutter="8">
           <a-col :span="16">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="[
-          'code',
+            <a-input placeholder="请输入验证码,300秒后失效" id="success"  v-decorator="[ 'code',
             {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
