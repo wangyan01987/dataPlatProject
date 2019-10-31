@@ -20,7 +20,7 @@
          <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"  /></a>
        </span>
      </a-table>
-     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc'></info-form>
+     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc' ></info-form>
    </div>
 </template>
 

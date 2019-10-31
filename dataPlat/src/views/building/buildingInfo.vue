@@ -88,7 +88,8 @@
                style="margin: -5px 0; "
                :value="text"
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
-               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/><p class="has-error">输入格式错误</p>
+               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/>
+             <p class="has-error">输入格式错误</p>
            </div>
           <template v-else>{{text}}</template>
         </div>
@@ -316,16 +317,6 @@
        },
       buildingDetails(record){
         // 单体详情
-        let arr;
-        // if(record.relationfloor){
-        //   arr= record.relationfloor.split('、');
-        //  let arr1=[];
-        //    arr.forEach((item,index)=>{
-        //      arr1.push({val:item,key:index});
-        //    });
-        //   this.count=arr.length;
-        //   this.relationfloor1=arr1;
-        // }
         this.buildingInfo={...record};
         for(let item in this.buildingInfo){
              if(!this.buildingInfo[item]){

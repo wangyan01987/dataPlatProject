@@ -8,17 +8,19 @@
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
           <span v-else>{{topTitle}}</span>
         </div>
-        <div>
-          <a-input-search
-          placeholder="请输入搜索内容"
-          style="width: 268px"
-          @search="onSearch"
-        /></div>
+        <!--<div>-->
+          <!--<a-input-search-->
+          <!--placeholder="请输入搜索内容"-->
+          <!--style="width: 268px"-->
+          <!--@search="onSearch"-->
+        <!--/></div>-->
         <div class="top-item">
+          <a href="#" style="margin-right: 10px;">客户端下载</a>
+          <img src="../../assets/images/zengjia.png" >
           <img src="../../assets/images/xiaoxi@2x.png">
           <img src="../../assets/images/youxiang@2x.png">
           <img src="../../assets/images/help@2x.png">
-          <a-dropdown>
+          <a-dropdown :trigger="['click']">
       <a class="ant-dropdown-link" href="javascript:void(0)">
         <a-avatar :style="{color:'#fff',backgroundColor: iconColor}">{{userIcon}}</a-avatar>
       </a>

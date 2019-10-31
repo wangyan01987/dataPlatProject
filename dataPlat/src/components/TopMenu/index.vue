@@ -1,5 +1,5 @@
 <template>
-  <a-dropdown>
+  <a-dropdown :trigger="['click']">
     <a class="ant-dropdown-link" href="javascript:void(0)">
      {{projectName}} <a-icon type="down" />
     </a>

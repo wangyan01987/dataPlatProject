@@ -153,6 +153,9 @@
    width: 200px;
    margin-right:5px;
  }
+ .item-footer{
+   margin-top:32px;
+ }
  .item-footer div{
    display:flex;
  }
@@ -164,5 +167,6 @@
  }
   #qrCode{
     height:120px;
+    margin-left:20px;
   }
 </style>
