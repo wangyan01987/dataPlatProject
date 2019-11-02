@@ -20,7 +20,7 @@
         <router-link :to="{name:'member'}">成员</router-link>
       </a-menu-item>
     </a-menu>
-    <span class="blue" @click="showProjectInfo">查看项目信息</span>
+    <span class="blue" @click="showProjectInfo" style="margin-right:50px">查看项目信息</span>
     <projectform  :propMsg='propMsg' ref="projectform" ></projectform>
     <router-view></router-view>
   </div>

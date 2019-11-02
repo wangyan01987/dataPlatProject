@@ -14,12 +14,14 @@
     </a-form-item>
     <a-form-item
       label="建筑层数"
+
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol"
       :validate-status="floornumber.validateStatus"
       :help="floornumber.errorMsg">
       <a-input @change="handleNumberChange"
       maxlength="15"
+               style="width:150px;"
         placeholder="请输入建筑层数"
         v-if="dataflag!=='000'"
         v-decorator="[ 'floorNum', {rules:
@@ -36,6 +38,7 @@
     >
       <a-input @change="handleNumberChange"
         maxlength="15"
+               style="width:150px;"
         placeholder="请输入预制层数"
         v-if="dataflag!=='000'"
         v-decorator="[ 'preFloorNum', {rules:
@@ -48,8 +51,10 @@
       :label-col="formItemLayout.labelCol"
       :wrapper-col="formItemLayout.wrapperCol">
       <a-select
+        style="width:150px;"
         v-if="dataflag!=='000'"
         v-decorator="['quakeGrade']"
+        @blur="handleBlur($event.target.value)"
         placeholder="请选择抗震等级"
         @change="handleSelectChange"
       >
@@ -96,7 +101,7 @@
         ]" v-if="dataflag!=='000'" :maxLength='400'/>
       <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
-    <p>构件类型</p>
+    <p class="title">构件类型</p>
     <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:'暂无数据'}"  class="buildingTable">
       <template slot="floors" slot-scope="text, record, index">
         <div key="floors">
@@ -105,25 +110,31 @@
                maxlength="10"
                style="margin: -5px 0; "
                :value="text"
+               @blur="onblur($event.target.value,record.id)"
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
-               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/><p class="has-error">输入格式错误</p>
+               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/>
+             <!--1为空2错误-->
+             <p class="has-error" v-show="record.errorInputType">{{record.errorInputType===1?'不能为空':'格式有错误'}}</p>
            </div>
           <template v-else>{{text}}</template>
         </div>
       </template>
       <template slot="cmpttypeId" slot-scope="text, record, index">
         <div key="cmpttypeId" >
-          <a-select
-            v-if="dataflag!=='000'"
-            :value="text"
-            style="margin: -5px 0"
-            @change="value=> handleSelectChange(value,record.id,'cmpttypeId')"
-            placeholder="请选择"
-          >
-            <a-select-option v-for="item in typeList" :value="item.typeId" :key="item.typeId">
-              {{item.typeName}}
-            </a-select-option>
-          </a-select>
+          <div  v-if="dataflag!=='000'">
+            <a-select
+              :value="text"
+              style="margin: -5px 0"
+
+              @change="value=> handleSelectChange(value,record.id,'cmpttypeId')"
+              placeholder="请选择"
+            >
+              <a-select-option v-for="item in typeList" :value="item.typeId" :key="item.typeId">
+                {{item.typeName}}
+              </a-select-option>
+            </a-select>
+            <p class="has-error" v-show="record.errorTypeSelect===0">{{'请选择构件类型'}}</p>
+          </div>
           <template v-else>{{record.component}}</template>
         </div>
       </template>
@@ -155,7 +166,7 @@
       let count=0;
       const formItemLayout = {
         labelCol: { span: 6 },
-        wrapperCol: { span: 12},
+        wrapperCol: { span: 16},
       };
       const columns = [
         { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}` },
@@ -200,6 +211,28 @@
           return ''
         }
       },
+      onblur(val,key){
+        const newData = [...this.dataSource];
+        const target = newData.filter(item => key === item.id)[0];
+        let exg=/^([1-9]{1,8}[\-]?[1-9]{0,8})$/;
+        if (target) {
+          if(val===''){
+            target.errorInputType=1;
+
+          }else if(!exg.test(val)){
+            target.errorInputType=2;
+          }
+          else{
+            target.errorInputType=0;
+          }
+          this.dataSource = newData;
+        }
+
+      },
+      handleBlur(val){
+        console.log('-----')
+        console.log(val)
+      },
       handleNumberChange(value,flag) {
         if(flag==='003'){
           value=value.toString().split('.')[0];
@@ -226,7 +259,7 @@
                     res=res.data;
                     if(res.code==='001'){
                       if(res.data){
-                        callback('楼栋号已存在，请重新输入');
+                        callback('楼栋名称已存在，请重新输入');
                       }
                       else{
                         callback()
@@ -257,42 +290,15 @@
 
       handleSubmit(e) {
         e.preventDefault();
-        this.form.validateFields((err, values) => {
-          //console.log(this.isSubmit)
-          if (!err&&this.isSubmit===true) {
-            let obj=Object.assign({},values);
-              obj.projectId=this.$route.params.projectId;
-              let data=JSON.parse(JSON.stringify(this.dataSource));
-                let newArr=data.map(item=>{
-                  delete item.index;
-                  delete item.component;
-                    return item;
-                });
-              obj.cmptType=newArr;
-              var url = "";let msg;
-              if(this.dataflag==='002'){
-                msg='添加成功';
-                url='bomextract/build/addmonomer'
-              }else if(this.dataflag==='001'){
-                msg='修改成功';
-                url='bomextract/build/modifymonomer';
-                obj.floorId=this.floorId;
-                delete obj.projectId;
-              };
-                  let params=obj;
-              this.$ajax(url,'POST',obj).then(res=>{
-                res=res.data;
-                if(res.code==='001'){
-                  this.$message.success(msg,5);
-                  this.$emit('success',true);
-                 // params.relationfloor=params.relationfloor.join('、');
-                  this.$store.commit("setRecord",params);
-                }else{
-                  this.$message.error(res.msg);
-                }
-              })
-          }
+        //循环数组
+      //   console.log(this.dataSource)
+      this.dataSource=  this.dataSource.map(item=>{
+        console.log(item)
+          // if(!item.floors){
+          //   item.errorInputType=1;
+          // }
         });
+
       },
       handleSelectChange(value,key,column){
         const newData = [...this.dataSource];
@@ -304,18 +310,6 @@
         }
       },
       handleChange(value, key, column,target1) {
-        console.log('111')
-        let str=/^(\d{1,15}-\d{0,15})|(\d{0,15}-\d{1,15})$/;
-        if(!str.test(value)){
-            target1.style.border='solid 1px red';
-            target1.parentElement.nextSibling.style.display='block';
-            this.isSubmit=false;
-        }
-        else{
-          this.isSubmit=true;
-          target1.parentElement.nextSibling.style.display='none';
-            target1.style.borderColor='#d9d9d9';
-        }
 
         const newData = [...this.dataSource];
          const  target= newData.filter(item=>item.id===key)[0];
@@ -403,9 +397,7 @@
   p.has-error{
     text-align:center;
     color: #f5222d;
-    line-height:0;
     margin-top:11px;
-    display:none;
     margin-bottom: 0;
   }
   .add-item{
@@ -415,5 +407,10 @@
     border:1px dashed #999;
     line-height:30px;
     width:60px;
+  }
+  .title{
+    font-weight:bold;
+    color: rgba(0, 0, 0, 0.85);
+
   }
 </style>

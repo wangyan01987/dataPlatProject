@@ -1,14 +1,20 @@
 <template>
   <div class="container">
-   <p class="changeItem"><img src="../../assets/images/zhanshi@2x.png" alt=""><img src="../../assets/images/suolue@2x.png" alt=""></p>
+   <p class="changeItem"></p>
     <a-spin size="large"  v-if="loaded"/>
     <div class="box">
           <div class="box-container">
             <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
               <div class="box-item">
                 <div class="item-img" >
-                  <img :src="item.img" style="width:100%;height:100%;" />
-                  <p class="item-title" :title="item.projectName">{{item.projectName}}</p>
+                  <img :src="item.img" style="width:100%;height:100%;"  v-if="item.img"/>
+                  <a-tooltip>
+                    <template slot="title">
+                      {{item.projectName}}
+                    </template>
+                    <p class="item-title" >{{item.projectName}}</p>
+                  </a-tooltip>
+
                 </div>
                 <div class="editor-box">
                   <p class="editor" @click="$event.stopPropagation()" >
@@ -99,9 +105,9 @@
          let self=this;
 
           this.$confirm({
-            title: '删除项目',
+            title: '确认删除此项目？',
             icon:'close-circle',
-            content: '确认删除此项目？',
+            content: '一旦将项目删除，所有与当前项目有关的信息、文件，以及项目成员组将会被清除。',
             okText: '确认',
             cancelText: '取消',
             // okButtonProps: {
@@ -147,8 +153,8 @@
                 }
               }
               else{
-                this.$message.loading('没有更多数据了',1);
-              }
+                this.$message.info('没有更多数据了',5);
+            }
             }
           });
            return storeList;
@@ -174,16 +180,16 @@
          let arr5=res.slice(0,5);
          this.$store.commit('setMenuList',arr5);
        });
-        //滑动加载
-        var that = this;
-        window.addEventListener("scroll", function () {
-          if (document.body.scrollHeight <= window.screen.height + document.body.scrollTop) {
-          //  that.loadItem();
-          }
-          else{
-
-          }
-        })
+        // //滑动加载
+        // var that = this;
+        // window.addEventListener("scroll", function () {
+        //   if (document.body.scrollHeight <= window.screen.height + document.body.scrollTop) {
+        //   //  that.loadItem();
+        //   }
+        //   else{
+        //
+        //   }
+        // })
 
       }
     }
@@ -203,10 +209,12 @@
       width:20%;
       padding-right:20px;
       padding-bottom:20px;
+      border-radius: 50%;
      }
   .item-title{
+    border-radius:4px 4px 0 0;
       width: 100%;
-      height: 48px;
+      height: 40px;
       letter-spacing: 0;
       color: #ffffff;
       position:absolute;
@@ -229,6 +237,9 @@
       border-radius: 4px;
     position:relative;
 
+  }
+  .item-img img{
+    border-radius: 4px;
   }
   .box{
 
@@ -287,7 +298,7 @@
   .changeItem{
     text-align:right;
     margin-top:24px;
-    margin-bottom: 24px;
+    margin-bottom: 80px;
     padding-right:0.24rem;
   }
   .changeItem img{

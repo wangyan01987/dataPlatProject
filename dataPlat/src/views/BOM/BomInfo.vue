@@ -23,8 +23,8 @@
              <template slot="operation" slot-scope="text, record, index">
                <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.sizeId,'001')"><i class="iconfont iconsave"></i></a>
-            <a @click="cancel(record.sizeId,'001')"> <i class="iconfont iconcancel"></i></a>
+          <a @click="() => save(record.sizeId,'001')"><i class="iconfont iconbaocun"></i></a>
+            <a @click="cancel(record.sizeId,'001')"> <i class="iconfont iconjianqu"></i></a>
         </span><span v-else>
           <a @click="() => edit(record.sizeId,'001')"><i class="iconfont iconbianji"></i></a>
         </span>
@@ -87,9 +87,9 @@
           <template slot="operation" slot-scope="text, record, index">
             <div class="editable-row-operations">
         <span v-if="record.editable">
-          <a @click="() => save(record.matlId,'002')"><img :src="require('@/assets/images/baocun@2x.png')"alt="" style="width:14px"></a>
+          <a @click="() => save(record.matlId,'002')"><i class="iconfont iconbaocun"></i></a>
 
-            <a><img :src="require('@/assets/images/jianqu@2x.png')"alt="" style="width:14px" @click="cancel(record.matlId,'002')"></a>
+          <a><i class="iconfont iconjianqu" @click="cancel(record.matlId,'002')"></i></a>
 
         </span>
               <span v-else>
@@ -226,7 +226,7 @@
     {
       title: '长度/面积(mm/m²)',
       dataIndex: 'length',
-      width: '15%',
+      width: '12%',
       scopedSlots: { customRender: 'length' },
     },
     {

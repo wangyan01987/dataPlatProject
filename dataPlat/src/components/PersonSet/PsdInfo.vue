@@ -18,8 +18,8 @@
           }
         ]" :type="psdtype1">
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype1='text'"  /></a>
-              <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype1='password'"  /></a>
+              <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype1='text'"  /></a>
+              <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype1='password'"  /></a>
             </a-input>
           </a-form-item>
           <a-form-item>
@@ -33,8 +33,8 @@
               :type="psdtype2"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a v-show="psdtype2==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype2='text'"  /></a>
-              <a  v-show="psdtype2==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype2='password'"  /></a>
+              <a v-show="psdtype2==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype2='text'"  /></a>
+              <a  v-show="psdtype2==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype2='password'"  /></a>
             </a-input>
             <p style="margin:0;line-height:0"><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
@@ -53,8 +53,8 @@
               :type="psdtype3"
             >
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-              <a v-show="psdtype3==='password'" slot="suffix"  ><i class="iconfont iconguanbi"  @click="psdtype3='text'"  /></a>
-              <a  v-show="psdtype3==='text'"  slot="suffix"  ><i class="iconfont icondakai"   @click="psdtype3='password'"  /></a>
+              <a v-show="psdtype3==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype3='text'"  /></a>
+              <a  v-show="psdtype3==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype3='password'"  /></a>
             </a-input>
           </a-form-item>
           <div class="action-box">

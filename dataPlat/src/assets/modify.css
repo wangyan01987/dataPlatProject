@@ -64,7 +64,7 @@ body{
   text-align: center;
 }
 .ant-form-item{
-  margin-bottom: 10px;
+  /*margin-bottom: 17px;*/
 }
 .buildingTable .ant-table-placeholder{
 display:none
@@ -100,7 +100,6 @@ a .iconshanchu:hover, a i.iconjianqu:hover{
   width:138px;
 }
 p.has-error{
- display:none;
   margin-top:2px;
   margin-bottom: 0;
   color:red;
@@ -187,6 +186,15 @@ p.has-error{
   font-weight:bold ;
   color: #1e1e1e;
   cursor: pointer;
+}
+.ant-modal-title,.ant-form-item-label label{
+  font-weight: bold;
+}
+.ant-modal-confirm-body .ant-modal-confirm-title{
+  font-weight:bold;
+}
+.ant-dropdown{
+top:50px !important;
 }
 /*.ant-layout-content{*/
   /*display: flex;*/

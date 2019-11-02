@@ -10,7 +10,7 @@
         </a-form-item>
         <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-input placeholder="请输入项目简称，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['projectAbbr', {validateTrigger:['blur'],rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
-          <span v-show="dataflag===0">{{obj.projectAbbr}}</span>
+          <span v-show="dataflag===0">{{obj.projectAbbr?obj.projectAbbr:'---'}}</span>
         </a-form-item>
         <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
           <a-input maxlength="51" v-decorator="[ 'projectCode', {validateTrigger:['blur'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]"   placeholder="请输入项目编号，支持英文、数字、符号，字数小于50" v-show="dataflag===1||dataflag===2"/>

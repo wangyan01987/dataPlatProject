@@ -5,13 +5,13 @@
        <div class="info-box">
          <a-form :form="form" :hideRequiredMark="!isEditor" >
            <a-form-item  label="姓名" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{validator: checkName}]}
+             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',{validateTrigger:['blur'],rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{validator: checkName}]}
         ]">
              </a-input>
              <span v-show="!isEditor">{{personInfo.userName?personInfo.userName:'未设置'}}</span>
            </a-form-item>
            <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="性别" >
-               <a-radio-group v-decorator="['sex']" v-show="isEditor">
+               <a-radio-group v-decorator="['sex',{validateTrigger:['blur']}]" v-show="isEditor">
                  <a-radio value="0">
                    女
                  </a-radio>
@@ -26,7 +26,7 @@
                placeholder="请输入所属公司"
                v-decorator="[
           'companyName',
-          {rules: [{max:40,message:'最大长度为40个字符'}],
+          {rules: [{max:40,message:'最大长度为40个字符'}],validateTrigger:['blur']
           }
         ]"
              >
@@ -36,7 +36,7 @@
            <a-form-item label="职位" :label-col="formItemLayout.labelCol"
                         :wrapper-col="formItemLayout.wrapperCol">
              <a-input placeholder="请输入职位" v-show="isEditor"
-                      v-decorator="[ 'position',{rules: [{max:20,message:'最大长度为20个字符'}], }  ]">
+                      v-decorator="[ 'position',{rules: [{max:20,message:'最大长度为20个字符'}],validateTrigger:['blur'] }  ]">
              </a-input>
              <span  v-show="!isEditor">{{personInfo.position?personInfo.position:'未设置'}}</span>
            </a-form-item>

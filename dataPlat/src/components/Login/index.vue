@@ -43,8 +43,8 @@
           }
         ]" >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconguanbi"    @click="show()"  /></a>
-          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont icondakai"    @click="show('psd')" /></a>
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>
       </a-form-item>
       <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
@@ -117,8 +117,6 @@
           //验证码验证
         }
         else if(value.toLowerCase()!==this.identifyCode.toLowerCase()){
-          console.log(value.toLowerCase());
-          console.log(this.identifyCode.toLowerCase());
           callback('验证码不正确');
         }
         else {

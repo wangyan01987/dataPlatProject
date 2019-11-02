@@ -3,7 +3,7 @@
     <a-form :form="formData">
       <a-form-item >
         <a-input placeholder="请输入手机号"  autocomplete="off"  v-decorator="[ 'phoneNumber',
-            {rules: [{validator:checkAccount}]}
+            {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" :src='require("../../assets/images/iphone@2x.png")' style="width:14px"/>
         </a-input>
@@ -11,7 +11,7 @@
       <a-form-item>
         <a-row :gutter="8">
           <a-col :span="18">
-            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}]}]" autocomplete="off">
+            <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}],validateTrigger:['blur']}]" autocomplete="off">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>

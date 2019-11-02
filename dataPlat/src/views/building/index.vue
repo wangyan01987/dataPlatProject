@@ -1,6 +1,6 @@
 <template>
    <div class="box-container">
-     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding">+新建单体</a-button></p>
+     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding" icon="plus">新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
      :loading="loading" :current='current' style="cursor: pointer">
 

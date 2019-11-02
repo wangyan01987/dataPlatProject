@@ -1,14 +1,15 @@
 <template>
     <div class="bom-item-container">
         <div class="bom-item-top">
-          <span class="title">楼层：</span><a-select  style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择">
+          <span class="title">楼层：</span><a-select
+          style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择楼层" v-model="floor">
               <a-select-option v-for="item in floorArr" :value="item" :key="item">{{item}}</a-select-option>
             </a-select>
-          <span class="title"> 版本号：</span><a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" >
+          <span class="title"> 版本号：</span><a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" v-model="version">
                 <a-select-option v-for="item in versionArr" :value="item" :key="item">{{item}}</a-select-option>
               </a-select>
               <a-input-search placeholder="请输入"  @search="onSearch"  style="width:25%" />
-              <a-button type="primary" style="margin-left:57px">刷新BOM</a-button>
+              <a-button type="primary" style="margin-left:57px" @click="updateBom">刷新BOM</a-button>
         </div>
        <div class="bom-item-body">
          <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}" >
@@ -85,6 +86,18 @@
           customRender:(text, record, index)=>`${this.pagination.pageSize * (this.current - 1) + index + 1}`
         },
         {
+          title: '产品编号',
+          dataIndex:'prodId',
+          width: '15%',
+          scopedSlots: { customRender: 'prodId' },
+        },
+        {
+          title: '产品编码',
+          dataIndex: 'prodCode',
+          width: '15%',
+         // scopedSlots: { customRender: 'prodCode' },
+        },
+        {
           title: '版本',
           dataIndex: 'version',
           width: '15%',
@@ -96,12 +109,7 @@
           width: '15%',
           scopedSlots: { customRender: 'floor' },
         },
-        {
-          title: '产品编号',
-          dataIndex: 'prodId',
-          width: '20%',
-          scopedSlots: { customRender: 'prodId' },
-        },
+
         {
           title: '备注',
           dataIndex: 'remark',
@@ -109,7 +117,6 @@
           scopedSlots: { customRender: 'remark' },
 
         },
-
         {
           title: '操作',
           dataIndex: 'operation',
@@ -129,7 +136,7 @@
         },
         floor:'',
         version:'',
-        prodid:'11',
+        prodId:'11',
         cacheData:'',
         current:1,
       };
@@ -166,6 +173,12 @@
 
     },
     methods: {
+      updateBom(){
+        this.version='';
+        this.version='';
+        this.floor='';
+        this.getBom(1,20);
+      },
       getKey(record){
            return  record.cmptId;
       },
@@ -208,7 +221,7 @@
         obj.cmptType=this.objType;
         obj.version=this.version;
         obj.floor=this.floor;
-        obj.prodid=this.prodid;
+        obj.prodId=this.prodId;
         this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
           res=res.data;
           if(res.code==='001'||res.state=='success'){
@@ -258,7 +271,7 @@
 
       },
       onSearch(val){
-        this.prodid=val;
+        this.prodId=val;
          this.getBom(1,20);
       },
       onClose(){
@@ -298,31 +311,6 @@
             record.save=true;
           }
         };
-       // if(column==='prodId'){
-       //   let proFlag= await  new Promise((resolve,reject)=>{
-       //     this.$ajax('bomextract/bom/proidexist','GET',{buildingid:this.buildingid, floor:record.floor ,proId: record.prodId,cmptId:record.cmptId
-       //     }).then(res=>{
-       //       res=res.data;
-       //       if(res.code==='001'){
-       //         if(res.data==='true'){
-       //           this.$message.error('产品编号已存在');
-       //           record.save=false;
-       //           this.getDom(target1, '产品编号已存在');
-       //           resolve(false)
-       //         }else{
-       //           record.save=true;
-       //           target1.style.border='1px solid #d9d9d9';
-       //           $(target1).parents('td').css('padding-bottom',16);
-       //           target1.parentNode.nextSibling.style.display='none';
-       //           record.save=true;
-       //           resolve(true);
-       //         }
-       //       }else{
-       //         reject();
-       //       }
-       //     });
-       //   });
-       // }
        if(record.save){
          const newData = [...this.data];
          const target = newData.filter(item => key === item.cmptId)[0];

@@ -6,7 +6,12 @@
         <div style="margin-left:28px;">
            <a href="#/home"  >
              <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
-             <img :src="headerImg"  v-else style="width:24px"/>
+               <a-tooltip v-else>
+                 <template slot="title">
+                 返回首页
+                 </template>
+                 <img :src="headerImg"   style="width:24px" @mouseover="showhome=true" @mouseout="showhome=false"/>
+               </a-tooltip>
           </a>
           <a-icon   type="right"  v-show="$route.name!=='home'" style="color: #999" />
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
@@ -18,8 +23,8 @@
           <img src="../../assets/images/xiaoxi@2x.png">
           <img src="../../assets/images/youxiang@2x.png">
           <img src="../../assets/images/help@2x.png">
-          <a-dropdown :trigger="['click']">
-      <a-menu slot="overlay">
+          <a-dropdown :trigger="['click']" id="#icon-menu">
+      <a-menu slot="overlay" >
         <a-menu-item>
           <router-link to="/personSet">账户设置</router-link>
         </a-menu-item>
@@ -55,10 +60,6 @@
           }
       },
       computed:{
-        // iconColor(){
-        //           let flag=Math.floor(Math.random()*9);
-        //           return this.colorArr[flag];
-        // },
           menuList(){
             return this.$store.state.menuList;
           },
@@ -77,7 +78,7 @@
                  return this.$store.state.userName
           },
         headerImg(){
-            if(this.$route.name=='home'){
+            if(this.showhome){
               return require('../../assets/images/zhuye-hui@2x.png');
             }
             else{

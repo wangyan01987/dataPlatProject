@@ -71,7 +71,7 @@
             if(res.code==='001'){
                 let arr=[];
                  res.data.forEach(item=>{
-                    arr.push({label:item.floorCode,val:item.floorId});
+                    arr.push({label:item.floorName,val:item.floorId});
                  });
                  this.buildingNumArr=arr;
             }

@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入手机号" size="large"  v-decorator="[
            'username',
-            {rules: [{validator:checkName}]}
+            {rules: [{validator:checkName}], validateTrigger:['blur']}
         ]"  class="test">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -18,11 +18,14 @@
           { rules: [{
               validator: validPass,
             }],
+             validateTrigger:['blur']
           }
         ]"
           type="password"
           ref="phone" class="test">
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>
       </a-form-item>
      <a-form-item>
@@ -34,7 +37,7 @@
 
 <script>
   import SIdentify from '@/components/identify'
-  import {isOnlyMobile} from '@/utils/common.js'
+  import {isOnlyMobile,isPassword} from '@/utils/common.js'
   export default {
     name: 'HelloWorld',
     data () {
@@ -46,8 +49,9 @@
       return {
         formTailLayout,
         formData:this.$form.createForm(this),
-        identifyCodes: '1234567890ABCDEFJKhfhg',
-        identifyCode:''
+        identifyCodes: '1234567890ABCDEFJKHfhg',
+        identifyCode:'',
+        psdtype:'password'
 
       }
 
@@ -81,9 +85,12 @@
           }
         }
       },
-      validPass(rule, value, callback){
-        if(!value){
+      validPass(rule, value, callback) {
+        if (!value) {
           callback('请输入密码')
+        }
+        else if (!isPassword(value)) {
+          callback('密码格式不正确');
         }
         else {
           callback();

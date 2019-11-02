@@ -4,7 +4,7 @@
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
            'phoneNumber',
-            {rules: [{validator:checkAccount}],validateTrigger:['change','blur']}
+            {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -13,7 +13,7 @@
         <a-row :gutter="8">
           <a-col :span="16">
             <a-input placeholder="请输入验证码,300秒后失效" id="success"  v-decorator="[ 'code',
-            {rules: [{validator:assignCode}],validateTrigger:['change','blur']}
+            {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
@@ -32,12 +32,14 @@
             rules: [{
               validator: validPass,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
           type="password"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>
         <p><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
@@ -50,12 +52,14 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
-            validateTrigger:['change','blur']
+            validateTrigger:['blur']
           }
         ]"
           type="password"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
+          <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>
       </a-form-item>
       <a-form-item >
@@ -77,7 +81,9 @@
         btnabled:true,
         btnType:'default',
         autoCompleteResult:'',
-        mobile:''
+        mobile:'',
+        psdtype1:'password',
+        psdtype:'password'
       }
 
     },
