@@ -1,7 +1,7 @@
 <template>
   <div class="box-container">
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember">+邀请新成员</a-button></p>
-    <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
+    <a-table  :columns="hasDelete?columns:columns1" :dataSource="dataSource" :loading="loading"  :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="text,record" slot="personImage">
         <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1)}}</span>
        <span v-else> ---</span>
@@ -20,7 +20,6 @@
           </template>
        <span slot="action" slot-scope="text,record,index" class="action" >
          <a> <i class="iconfont iconshanchu" @click="deleteMember($event,record.userId)" v-show="record.isDelete"/></a>
-            <i class="iconfont iconshanchu"   v-show="!record.isDelete"/>
        </span>
     </a-table>
     <a-modal :destroyOnClose=true
@@ -41,24 +40,35 @@
     components:{ModalInfo},
     data(){
       const columns = [
-        { title: '', dataIndex: 'personImage', key: 'personImage',scopedSlots: { customRender: 'personImage' }},
-        { title: '姓名', dataIndex: 'userName', key: 'userName',scopedSlots: { customRender: 'userName' } },
-        { title: '性别', dataIndex: 'gender', key: 'gender',scopedSlots: { customRender: 'gender' } },
-        { title: '手机', dataIndex: 'phoneNumber', key: ',phoneNumber',scopedSlots: { customRender: 'phoneNumber' } },
-        { title: '邮箱', dataIndex: 'email', key: 'email',scopedSlots: { customRender: 'email' } },
-        { title: '公司', dataIndex: 'companyName', key: 'companyName',scopedSlots: { customRender: 'companyName' } },
-        { title: '职位', dataIndex: 'position', key: 'position',scopedSlots: { customRender: 'position' } },
+        { title: '', dataIndex: 'personImage', key: 'personImage',scopedSlots: { customRender: 'personImage' },width:'5%'},
+        { title: '姓名', dataIndex: 'userName', key: 'userName',scopedSlots: { customRender: 'userName' },width:'10%' },
+        { title: '性别', dataIndex: 'gender', key: 'gender',scopedSlots: { customRender: 'gender' },width:'5%' },
+        { title: '手机', dataIndex: 'phoneNumber', key: ',phoneNumber',scopedSlots: { customRender: 'phoneNumber' },width:'10%' },
+        { title: '邮箱', dataIndex: 'email', key: 'email',scopedSlots: { customRender: 'email' } ,width:'10%'},
+        { title: '公司', dataIndex: 'companyName', key: 'companyName',scopedSlots: { customRender: 'companyName' },width:'15%' },
+        { title: '职位', dataIndex: 'position', key: 'position',scopedSlots: { customRender: 'position' },width:'10%'},
         { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
+      ];
+      const columns1 = [
+        { title: '', dataIndex: 'personImage', key: 'personImage',scopedSlots: { customRender: 'personImage' },width:'10%'},
+        { title: '姓名', dataIndex: 'userName', key: 'userName',scopedSlots: { customRender: 'userName' },width:'10%' },
+        { title: '性别', dataIndex: 'gender', key: 'gender',scopedSlots: { customRender: 'gender' },width:'10%' },
+        { title: '手机', dataIndex: 'phoneNumber', key: ',phoneNumber',scopedSlots: { customRender: 'phoneNumber' },width:'10%' },
+        { title: '邮箱', dataIndex: 'email', key: 'email',scopedSlots: { customRender: 'email' } ,width:'10%'},
+        { title: '公司', dataIndex: 'companyName', key: 'companyName',scopedSlots: { customRender: 'companyName' },width:'15%' },
+        { title: '职位', dataIndex: 'position', key: 'position',scopedSlots: { customRender: 'position' },width:'10%'},
       ];
       return{
         visible:false,
         dataSource:[{}],
         columns,
+        columns1,
         pagination:{},
         dataflag:'000',
         loading:false,
         title:'邀请新成员',
         projectId:'',
+        hasDelete:'',
         arr:['userName','gender','phoneNumber','email','companyName','position']
       }
     },
@@ -106,8 +116,19 @@
         this.fetch( this.projectId,page,20)
       },
       //加载信息
-      fetch (projectId,num,size) {
+     async fetch (projectId,num,size) {
         this.loading = true;
+       //判断角色是否可以删除
+      await this.$ajax('bomextract/buildmember/isdeletemember','GET',{projectId:this.projectId}).then(res=>{
+         res=res.data;
+         if(res.code==='001'){
+           if(res.data){
+             this.hasDelete=true;
+           }else{
+             this.hasDelete=false;
+           }
+         }
+       });
        this.$ajax('bomextract/buildmember/getmember','POST',{projectId:projectId,pageNum:num,pageSize:size}).then((res) => {
                      res=res.data;
                      let mapset=['女','男'];
@@ -145,6 +166,7 @@
     mounted(){
     this.projectId=this.$route.params.projectId;
       this.fetch( this.projectId,1,20);
+
 
     }
   }

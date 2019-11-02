@@ -87,13 +87,13 @@ display:none
 .sub-container .box-container{
   flex:auto;
 }
-a .iconfont{
+a .iconfont:not(.icondaqwwwqziyuan){
   color: #999;
 }
-a .iconbianji:hover,a .iconsave:hover{
+a .iconbianji:hover,a .iconbaocun:hover,a .iconxiangqing:hover{
   color:dodgerblue;
 }
-a .iconshanchu:hover, a i.iconcancel:hover{
+a .iconshanchu:hover, a i.iconjianqu:hover{
   color:red;
 }
 .ant-input-number{
@@ -169,6 +169,24 @@ p.has-error{
 }
 .ant-table-thead > tr > th{
   font-weight:bold;
+}
+.ant-table-tbody > tr > td{
+  white-space: nowrap;
+  max-width:140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ant-table-tbody > tr > td>div{
+  white-space: nowrap;
+  max-width:154px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.top-name{
+  margin-left: 10px;
+  font-weight:bold ;
+  color: #1e1e1e;
+  cursor: pointer;
 }
 /*.ant-layout-content{*/
   /*display: flex;*/

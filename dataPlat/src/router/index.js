@@ -80,11 +80,6 @@ const router= new Router({
               name:'member',
               component:()=>import('@/views/member')
             },
-            {
-              path:'statics',
-              name:'statics',
-              component:()=>import('@/views/statics')
-            },
           ]
         },
       ]

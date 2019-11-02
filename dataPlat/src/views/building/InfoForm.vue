@@ -2,11 +2,13 @@
 <template>
 <!-- 单体详情弹窗 -->
     <a-modal
+      class="form-container"
       :title=title
       :visible="visible"
       :confirmLoading="confirmLoading"
       @cancel="handleCancel"
       :destroyOnClose=true>
+      <a class="blue"><span  @click="editInfo" v-if="dataflag==='000'">编辑</span></a>
       <template slot="footer" >
         <a-button type="default"  v-show="dataflag!=='000'" @click="handleCancel">取消</a-button>
         <a-button type="primary" v-show="dataflag!=='000'" @click="handleOk">确定</a-button>
@@ -48,6 +50,22 @@
       handleCancel(e) {
         this.visible = false
       },
+      editInfo(){
+        this.$emit('edit');
+      },
     }
   }
 </script>
+<style scoped>
+  .form-container .ant-modal-content{
+    position:relative;
+  }
+  .blue{
+    cursor:pointer;
+    color:dodgerblue;
+    position:absolute;
+    top:0;
+    left:1.3rem;
+    line-height:54px;
+  }
+</style>

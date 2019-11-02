@@ -29,8 +29,8 @@
           </div>
     </div>
     <div class="slide-item" @click='loadItem'>
-      <p>加载更多</p>
-      <p><a-icon type="down" /></p>
+      <p><i class="iconfont icongengduo" style="margin-right:14px"></i>加载更多</p>
+
     </div>
     <projectform ref="projectform" :propMsg="propMsg"></projectform>
   </div>
@@ -278,10 +278,11 @@
   }
   .slide-item{
     position:fixed;
-    bottom: 0;
-    color:dodgerblue;
+    bottom: 15px;
+    color: rgba(0, 0, 0, 0.45);
     cursor:pointer;
     width:100%;
+    font-size:14px;
   }
   .changeItem{
     text-align:right;

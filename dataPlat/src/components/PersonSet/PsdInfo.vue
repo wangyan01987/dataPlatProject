@@ -14,6 +14,7 @@
             rules: [{
               validator: validPass,
             }],
+              validateTrigger:['blur']
           }
         ]" :type="psdtype1">
               <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
@@ -26,6 +27,7 @@
             rules: [{
               validator: validnewPass,
             }],
+            validateTrigger:['blur']
           }
         ]"
               :type="psdtype2"
@@ -44,7 +46,9 @@
             rules: [{
               validator: compareToFirstPassword,
             }],
-          }
+            validateTrigger:['blur']
+          },
+
         ]"
               :type="psdtype3"
             >

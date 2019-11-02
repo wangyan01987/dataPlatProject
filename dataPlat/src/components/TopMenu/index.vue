@@ -1,8 +1,8 @@
 <template>
   <a-dropdown :trigger="['click']">
-    <a class="ant-dropdown-link" href="javascript:void(0)">
-     {{projectName}} <a-icon type="down" />
-    </a>
+    <span class="ant-dropdown-link top-name" >
+     {{projectName}} <i class="iconfont icondown-fill1-xs"></i>
+    </span>
   <a-menu slot="overlay" >
     <a-menu-item v-for="item in menuList" :key="item.projectId" @click="changeProject(item.projectName)">
       <router-link :to='"/projectDetail/"+item.projectId+"/"+path' ><img :src="item.img"  style="width:30px;margin-right:10px;"/>
@@ -18,10 +18,8 @@
       props:['menuList'],
       data(){
           return{
-
           }
       },
-
       computed:{
            projectName(){
              return this.$store.state.projectName;

@@ -18,7 +18,13 @@
       :wrapper-col="formItemLayout.wrapperCol"
       :validate-status="floornumber.validateStatus"
       :help="floornumber.errorMsg">
-      <a-input-number  @change="handleNumberChange" v-decorator="['floorNum',]" v-if="dataflag!=='000' "/>
+      <a-input @change="handleNumberChange"
+      maxlength="15"
+        placeholder="请输入建筑层数"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'floorNum', {rules:
+         [{pattern:/^[1-9][0-9]{0,14}$/,message:'建筑层数输入格式为1-15位数字'}]}
+        ]"/>
       <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -28,8 +34,13 @@
       :validate-status="prenumber.validateStatus"
       :help="prenumber.errorMsg"
     >
-      <a-input-number :min="1"   v-decorator="[
-        ]"  v-if="dataflag!=='000'"  @change="handleNumberChange"/>
+      <a-input @change="handleNumberChange"
+        maxlength="15"
+        placeholder="请输入预制层数"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'preFloorNum', {rules:
+         [{pattern:/^[1-9][0-9]{0,14}$/,message:'预制层数输入格式为1-15位数字'}]}
+        ]"/>
       <span v-else>{{buildingInfo.preFloorNum}}</span>
     </a-form-item>
     <a-form-item
@@ -65,8 +76,15 @@
       :help="number.errorMsg"
     >
      <div v-if="dataflag!=='000'">
-       <a-input-number v-decorator="[ 'monolayerArea' ]" :min="0.01" :step="0.01"  @change="e=>handleNumberChange(e,'003')"  :formatter='limitDecimals'
-       />m²</div>
+       <a-input @change="e=>handleNumberChange(e,'003')"  :formatter='limitDecimals'
+
+       maxlength="15"
+                style="width:150px;"
+        placeholder="单层建筑面积"
+        v-if="dataflag!=='000'"
+        v-decorator="[ 'monolayerArea', {rules:
+         [{pattern:/^([1-9][0-9]{0,14})|([1-9][0-9]{0,14}[\.][0-9]{1,2})|([0][\.][0-9]{0,2})$/,message:'单层建筑面积输入格式为1-15位数字,小数点后两位'}]}
+        ]"/>m²</div>
       <span v-else>{{buildingInfo.monolayerArea}}m²</span>
     </a-form-item>
     <a-form-item
@@ -88,8 +106,7 @@
                style="margin: -5px 0; "
                :value="text"
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
-               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/>
-             <p class="has-error">输入格式错误</p>
+               @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/><p class="has-error">输入格式错误</p>
            </div>
           <template v-else>{{text}}</template>
         </div>
@@ -142,9 +159,9 @@
       };
       const columns = [
         { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}` },
-        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' } },
-        { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } },
-        { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } },
+        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' },width:'20%' },
+        { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } ,width:'40%'},
+        { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } ,width:'20%'},
       ];
       const dataSource = [
       ];
@@ -194,6 +211,7 @@
           // value=value.slice(0,15);
         };
       },
+
       assignFloor(rule,value,callback){
             if(!value){
              callback();
@@ -240,7 +258,7 @@
       handleSubmit(e) {
         e.preventDefault();
         this.form.validateFields((err, values) => {
-          console.log(this.isSubmit)
+          //console.log(this.isSubmit)
           if (!err&&this.isSubmit===true) {
             let obj=Object.assign({},values);
               obj.projectId=this.$route.params.projectId;
@@ -286,12 +304,12 @@
         }
       },
       handleChange(value, key, column,target1) {
+        console.log('111')
         let str=/^(\d{1,15}-\d{0,15})|(\d{0,15}-\d{1,15})$/;
         if(!str.test(value)){
             target1.style.border='solid 1px red';
             target1.parentElement.nextSibling.style.display='block';
             this.isSubmit=false;
-          //  return false;
         }
         else{
           this.isSubmit=true;
@@ -341,6 +359,15 @@
 
         this.dataSource=record.cmptType;
       },
+    },
+    watch:{
+      dataflag(val,oldval){
+        if(oldval&&val==='001') {
+          let record = this.$store.state.record;
+          this.buildingDetails(record);
+          this.getBuildingType();
+        }
+      }
     },
     mounted(){
       if(this.dataflag==='002'){

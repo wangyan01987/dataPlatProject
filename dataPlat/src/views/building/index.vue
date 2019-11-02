@@ -15,12 +15,14 @@
           </a-tooltip>
 
        </template>
-       <span slot="action" slot-scope="record,index" class="action">
+       <span slot="action" slot-scope="record,index" class="action" @click="$event.stopPropagation()" style="cursor:default">
          <a style="margin-right:30px"> <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)" /></a>
          <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"  /></a>
        </span>
      </a-table>
-     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc' ></info-form>
+
+     <info-form :dataflag="dataflag"  :floorId='floorId'  ref="infoform" @subSuccess='handlesubmitSucc' @edit='lookEditBuilding'></info-form>
+
    </div>
 </template>
 
@@ -32,14 +34,12 @@
       data(){
         const columns = [
           { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${this.pagination.pageSize*(this.current-1)+index+1}`},
-          { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName',scopedSlots: { customRender: 'floorName' } },
-          // { title: '楼栋号', dataIndex: 'floorCode', key: 'floorCode',scopedSlots: { customRender: 'floorCode' } },
-          // { title: '关联栋号', dataIndex: 'relationfloor', key: 'relationfloor',scopedSlots: { customRender: 'relationfloor' } },
-          { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum',scopedSlots: { customRender: 'floorNum' } },
-          { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum',scopedSlots: { customRender: 'preFloorNum' } },
-          { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName',scopedSlots: { customRender: 'quakeGradeName' } },
-          { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea',scopedSlots: { customRender: 'monolayerArea' } },
-          { title: '构件类型', dataIndex: 'cmpTypeNameJoin', key: 'cmpTypeNameJoin',scopedSlots: { customRender: 'cmpTypeNameJoin' } },
+          { title: '楼栋名称', dataIndex: 'floorName', key: 'floorName',scopedSlots: { customRender: 'floorName' },width:'15% '},
+          { title: '建筑层数', dataIndex: 'floorNum', key: 'floorNum',scopedSlots: { customRender: 'floorNum',width:'10% ' } },
+          { title: '预制层数', dataIndex: 'preFloorNum', key: 'preFloorNum',scopedSlots: { customRender: 'preFloorNum' },width:'10% ' },
+          { title: '抗震等级', dataIndex: 'quakeGradeName', key: 'quakeGradeName',scopedSlots: { customRender: 'quakeGradeName' },width:'10%' },
+          { title: '单层建筑面积m²', dataIndex: 'monolayerArea', key: 'monolayerArea',scopedSlots: { customRender: 'monolayerArea' },width:'12%' },
+          { title: '构件类型', dataIndex: 'cmpTypeNameJoin', key: 'cmpTypeNameJoin',scopedSlots: { customRender: 'cmpTypeNameJoin' },width:'20%' },
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];
@@ -96,6 +96,13 @@
           this.dataflag='001';
           this.floorId=record.floorId;
           this.$store.commit("setRecord", record)
+        },
+        lookEditBuilding(){
+
+          this.$refs.infoform.visible=true;
+          this.dataflag='001';
+          this.floorId=this.$store.state.record.floorId;
+          this.$store.commit("setRecord", this.$store.state.record)
         },
           addBuilding(){
    this.$refs.infoform.visible=true;

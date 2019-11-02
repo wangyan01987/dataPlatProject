@@ -116,7 +116,9 @@
           callback('请输入验证码');
           //验证码验证
         }
-        else if(value!==this.identifyCode.toLowerCase()){
+        else if(value.toLowerCase()!==this.identifyCode.toLowerCase()){
+          console.log(value.toLowerCase());
+          console.log(this.identifyCode.toLowerCase());
           callback('验证码不正确');
         }
         else {

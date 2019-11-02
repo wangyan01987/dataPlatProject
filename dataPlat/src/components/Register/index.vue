@@ -4,8 +4,8 @@
       <a-form-item >
         <a-input placeholder="请输入姓名"   v-decorator="[
            'username',
-            {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'},{pattern:/^[\u4e00-\u9fa5\w\']{1,50}$/,message:'姓名支持1-50位中英文字符数字_'}],validateTrigger:['blur']}
-        ]">
+            {rules: [{validator:checkName},{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['blur']},]
+">
           <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
@@ -178,6 +178,23 @@
         }
 
       },
+      checkName(rule,value,callback){
+
+        if(!value){
+          callback('');
+        }else if(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g .test(value)){
+          callback('姓名不能输入表情');
+        }
+        else if(!value.trim()){
+          callback('姓名不能为空')
+        }
+        else if(value.length>20){
+          callback('姓名最大输入为20位字符')
+        }
+        else{
+          callback();
+        }
+      },
       validEmail(rule, value, callback){
         if(value&&!email(value)){
           callback('邮箱格式不正确');
@@ -238,18 +255,6 @@
           }else{
             callback();
              this.mobile=value;
-          }
-        }
-      },
-      checkName(rule, value, callback){
-        if(!value){
-          callback('请输入姓名')
-        }
-        else {
-          if(!isOnlyMobile(value)){
-            callback('姓名输入格式不正确')
-          }else{
-            callback();
           }
         }
       },

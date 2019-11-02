@@ -1,7 +1,6 @@
 <template>
   <div class="register">
     <a-form :form="formData">
-
       <a-form-item >
         <a-input placeholder="请输入手机号"  autocomplete="off"  v-decorator="[ 'phoneNumber',
             {rules: [{validator:checkAccount}]}

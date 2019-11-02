@@ -3,17 +3,15 @@
   <a-layout>
     <a-layout-header>
       <div class="top-header">
-        <div><a href="#/home"><img :src='headerImg'  style="width:32px"></a>
-          <a-icon   type="right"  v-show="$route.name!=='home'" />
+        <div style="margin-left:28px;">
+           <a href="#/home"  >
+             <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
+             <img :src="headerImg"  v-else style="width:24px"/>
+          </a>
+          <a-icon   type="right"  v-show="$route.name!=='home'" style="color: #999" />
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
-          <span v-else>{{topTitle}}</span>
+          <span v-else  class="top-name">{{topTitle}}</span>
         </div>
-        <!--<div>-->
-          <!--<a-input-search-->
-          <!--placeholder="请输入搜索内容"-->
-          <!--style="width: 268px"-->
-          <!--@search="onSearch"-->
-        <!--/></div>-->
         <div class="top-item">
           <a href="#" style="margin-right: 10px;">客户端下载</a>
           <img src="../../assets/images/zengjia.png" >
@@ -21,9 +19,6 @@
           <img src="../../assets/images/youxiang@2x.png">
           <img src="../../assets/images/help@2x.png">
           <a-dropdown :trigger="['click']">
-      <a class="ant-dropdown-link" href="javascript:void(0)">
-        <a-avatar :style="{color:'#fff',backgroundColor: iconColor}">{{userIcon}}</a-avatar>
-      </a>
       <a-menu slot="overlay">
         <a-menu-item>
           <router-link to="/personSet">账户设置</router-link>
@@ -32,17 +27,20 @@
           <span  @click="logout">退出登录</span>
         </a-menu-item>
       </a-menu>
-  </a-dropdown>
-
+            <a class="ant-dropdown-link" href="javascript:void(0)">
+              <a-avatar :style="{color:'#fff',backgroundColor: iconColor}">{{userIcon}}</a-avatar>
+            </a>
+            </a-dropdown>
           <span class="userName">{{userName}}</span>
         </div>
       </div>
     </a-layout-header>
-    <a-layout-content><router-view></router-view></a-layout-content>
+    <a-layout-content>
+      <router-view></router-view>
+    </a-layout-content>
   </a-layout>
 </div>
 </template>
-
 <script>
   import topMenu from '@/components/TopMenu';
     export default {
@@ -50,9 +48,10 @@
       components:{topMenu},
       data(){
           return {
-
             colorArr:['#ecbc27','#ced182',' #f39798','#58b788','#f48e46','#5a91c9','#fb91bd','#5bbefc','#5ae0ca'],
-            iconColor:''
+            iconColor:'',
+            showhome:false,
+            homeImg:"require('../../assets/images/zhuye-hui@2x.png')"
           }
       },
       computed:{
@@ -90,7 +89,6 @@
           '$router':function(to,from){
            // console.log(to)
           }
-
       },
       mounted(){
         // 获取个人信息
@@ -122,7 +120,6 @@
               res=res.data;
               if(res.code==='999'){
                  this.$store.commit('setLogin',false);
-                 //this.$message.success('退出登录');
                 this.$router.push('/login');
                  }
             });
@@ -146,9 +143,8 @@
     align-items:center;
   }
   .top-header img{
-    margin-right:0.2rem;
+    margin-right:10px;
     width:16px;
-    cursor:pointer;
   }
   .top-item{
     padding-right:15px;

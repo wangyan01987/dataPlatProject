@@ -9,7 +9,7 @@ import router from '../router/index.js'
 function getApi(dataType){
   const service = axios.create({
     baseURL: process.env.Base_URL, // api的base_url 设置代理后不需要baseUrl
-    timeout: 5000 // 请求超时时间
+    timeout: 30000 // 请求超时时间
   });
 // request拦截器
   let errorMessage = true;

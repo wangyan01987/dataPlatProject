@@ -5,8 +5,7 @@
        <div class="info-box">
          <a-form :form="form" :hideRequiredMark="!isEditor" >
            <a-form-item  label="姓名" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',
-{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{pattern:/^[\u4e00-\u9fa5\w\']{1,50}$/,message:'姓名输入格式为1-50位中英文字符_'}]}
+             <a-input placeholder="请输入您的姓名"  v-show="isEditor"  v-decorator="[ 'userName',{rules: [{required:true,message:'请输入姓名'},{max:20,message:'最大长度为20个字符'},{validator: checkName}]}
         ]">
              </a-input>
              <span v-show="!isEditor">{{personInfo.userName?personInfo.userName:'未设置'}}</span>
@@ -75,7 +74,8 @@
           'email',
           {rules: [{
               validator: checkEmail,
-            }],validateTrigger:['blur']}
+            }],validateTrigger:['blur']
+            }
         ]"
 
                  @change="handleEmailChange"
@@ -182,9 +182,23 @@
             this.isEditor=true;
           //  this.form.set
           },
-          checkName(){
+        checkName(rule,value,callback){
 
-          },
+          if(!value){
+            callback('');
+          }else if(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g .test(value)){
+            callback('姓名不能输入表情');
+          }
+          else if(!value.trim()){
+            callback('姓名不能为空')
+          }
+          else if(value.length>20){
+            callback('姓名最大输入为20位字符')
+          }
+          else{
+            callback();
+          }
+        },
           checkEmail(rule, value,callback){
               if(value&&!email(value)){
                 callback('邮箱格式不正确');

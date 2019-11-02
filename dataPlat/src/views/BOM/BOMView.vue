@@ -1,13 +1,14 @@
 <template>
     <div class="bom-item-container">
         <div class="bom-item-top">
-          楼层：<a-select  style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择">
+          <span class="title">楼层：</span><a-select  style="width:20%;margin-right:0.24rem;"  @change="floorChange"  @focus="getOption" placeholder="请选择">
               <a-select-option v-for="item in floorArr" :value="item" :key="item">{{item}}</a-select-option>
             </a-select>
-              版本号：<a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" >
+          <span class="title"> 版本号：</span><a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" >
                 <a-select-option v-for="item in versionArr" :value="item" :key="item">{{item}}</a-select-option>
               </a-select>
               <a-input-search placeholder="请输入"  @search="onSearch"  style="width:25%" />
+              <a-button type="primary" style="margin-left:57px">刷新BOM</a-button>
         </div>
        <div class="bom-item-body">
          <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}" >
@@ -39,8 +40,8 @@
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
         <span v-if="record.editable">
-             <a @click="() => save(record.cmptId,record)"><i class="iconfont iconsave"  /></a>
-            <a><i class="iconfont iconcancel"  @click="cancel(record.cmptId)"/></a>
+             <a @click="() => save(record.cmptId,record)"><i class="iconfont iconbaocun"  /></a>
+            <a><i class="iconfont iconjianqu"  @click="cancel(record.cmptId)"/></a>
         </span>
                <span v-else>
                  <a @click="() => edit(record.cmptId,record)">
@@ -435,6 +436,9 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+  }
+  .title{
+    font-weight:bold;
   }
 
 

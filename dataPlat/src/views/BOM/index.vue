@@ -2,7 +2,7 @@
 <div class="container">
  <div class="container-item link">
     <div class="item-top">
-      <span>楼栋号：</span>
+      <span class="title">楼栋名称：</span>
       <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placeholder="请选择"  defaultValue="请选择">
           <a-select-option  v-for="item in  buildingNumArr" :value="item.val" :key='item.val' >{{item.label}}</a-select-option>
       </a-select>
@@ -107,13 +107,16 @@
     /*height:100%;*/
     background-color:#fff;
     margin-right:0.2rem;
-    padding:0.24rem;
+    padding:0.2rem;
   }
   .link{
     width:2.3rem;
   }
   .main-content{
     flex:auto;
+  }
+  .title{
+    font-weight:bold;
   }
 
 </style>
