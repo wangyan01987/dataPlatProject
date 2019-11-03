@@ -110,15 +110,11 @@
             content: '一旦将项目删除，所有与当前项目有关的信息、文件，以及项目成员组将会被清除。',
             okText: '确认',
             cancelText: '取消',
-            // okButtonProps: {
-            //   props: {type:'danger'},
-            // },
             onOk(){
                   //删除信息操作
               self.$ajax('bomextract/project/deleteproject','POST',{'projectId':id}).then(res=>{
                 res=res.data;
                  if(res.code==='001'){
-
                     //itemList里删除
                   self.itemList= self.itemList.filter((item,index)=>{
                         return item.projectId!==id;

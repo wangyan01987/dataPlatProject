@@ -59,11 +59,30 @@
               validator: checkAgreeMent,
             }]}]">
            已阅读并同意
-           <a href="/static/aggrementMobile.html" target="_blank">
+           <a  href="javascript:void(0)"  @click="visible=true">
              PST及平台服务协议
            </a>
          </a-checkbox>
        </a-form-item>
+       <a-drawer
+
+         placement="right"
+         :closable="false"
+         @close="onClose"
+         :visible="visible"
+         width="100%"
+       >
+        <div style="display:flex;" class="top-title">
+         <span > <a @click="visible=false" style="color:#1890ff;margin-right:30px;"><i class="iconfont iconxiangzuo" style="color: #1890ff;"></i>返回</a></span>
+          <span>PST平台协议</span>
+          <span></span>
+        </div>
+      <div class="container">
+        <p class="title">PST及平台协议</p>
+        <p>协议协议协议协议</p>
+      </div>
+
+       </a-drawer>
      </div>
       <div v-show="dataflag==='111'">
         <a-form-item>
@@ -133,6 +152,7 @@
         dataflag:'000',
         psdtype1:'password',
         psdtype2:'password',
+        visible:false
       }
 
     },
@@ -140,6 +160,9 @@
 
     },
     methods:{
+      onClose(){
+        this.visible=false;
+      },
       initData(){
         this.codeText='获取验证码';
         this.btnabled = false;
@@ -197,10 +220,10 @@
       handleSubmit(val) {
 
          if(!val){
-           this.formData.validateFields(['username','phoneNumber','code','email','agreement'],{firstFields:['phoneNumber']},(err, fieldsValue) => {
+           this.formData.validateFields(['username','phoneNumber','code','email','agreement'],{firstFields:['phoneNumber']},(err, value) => {
              if (err) {
                return;
-             };
+             }
              this.dataflag='111';
            })
          }
@@ -268,13 +291,24 @@
           }
         }
       },
-      assignCode(rule, value, callback){
-        if(!value){
+      async assignCode(rule, value, callback){
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          callback('请输入手机号，获取验证码');
+        }else if(!value){
           callback('请输入验证码');
           //验证码验证
         }
         else {
-          callback();
+
+        await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            callback();
+          }else{
+            callback(res.msg);
+          }
+        })
         }
       },
       validPass(rule, value, callback){
@@ -348,7 +382,17 @@
     margin:0;
     line-height:0;
   }
+.top-title span{
+  flex:1;
+}
+  .container{
+    margin-top:20px;
 
-
+  }
+.container .title{
+  text-align:center;
+  font-weight:bold;
+  font-size:18px;
+}
 
 </style>

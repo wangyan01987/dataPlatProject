@@ -301,7 +301,10 @@
           record.save=true;
         };
        if(column!=='remark') {
-          if (!/^[\w\-]+$/.test(value)) {
+         if(value.length===0){
+           this.getDom(target1, '输入不能为空');
+           record.save=false;
+         }else if (!/^[\w\-\*\.]+$/.test(value)) {
             this.getDom(target1, '输入格式不正确');
             record.save=false;
           }else{
@@ -311,14 +314,14 @@
             record.save=true;
           }
         };
-       if(record.save){
+
          const newData = [...this.data];
          const target = newData.filter(item => key === item.cmptId)[0];
          if (target) {
            target[column] = value;
            this.data = newData;
          }
-       }
+
 
       },
       edit(key,record) {
@@ -332,7 +335,6 @@
         }
       },
      async save(key,record) {
-        console.log(record.save)
        if(!record.save){
          return;
        }
@@ -346,7 +348,6 @@
           delete newtarget.bomList;
           delete newtarget.sizeList;
           let obj={cmptBaseInfo:newtarget, bomList:bomList, sizeList:sizeList};
-
           //服务器保存
           //没有校验编号唯一
           let proFlag= await  new Promise((resolve,reject)=>{

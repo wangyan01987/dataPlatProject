@@ -198,7 +198,7 @@
     {
       title: '序号',
       dataIndex: 'index',
-      width: '5%',
+      width: '8%',
       customRender:(text, record, index)=>`${index+1}`
     },
     {
@@ -214,19 +214,19 @@
     {
       title: '规格',
       dataIndex: 'specification',
-      width: '18%',
+      width: '17%',
       scopedSlots: { customRender: 'specification' },
     },
     {
       title: '强度等级',
       dataIndex: 'barGrade',
-      width: '15%',
+      width: '12%',
       scopedSlots: { customRender: 'barGrade' },
     },
     {
       title: '长度/面积(mm/m²)',
       dataIndex: 'length',
-      width: '12%',
+      width: '13%',
       scopedSlots: { customRender: 'length' },
     },
     {

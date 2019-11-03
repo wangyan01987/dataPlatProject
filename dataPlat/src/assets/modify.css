@@ -96,7 +96,7 @@ a .iconbianji:hover,a .iconbaocun:hover,a .iconxiangqing:hover{
 a .iconshanchu:hover, a i.iconjianqu:hover{
   color:red;
 }
-.ant-input-number{
+.ant-modal-mask .ant-input-number{
   width:138px;
 }
 p.has-error{
@@ -107,7 +107,7 @@ p.has-error{
 .ant-form-explain{
   text-align: left;
 }
- .ant-select-dropdown-menu{
+  .ant-select-dropdown-menu{
   max-height:98px;
 }
  .login-box .ant-form-item-control{
@@ -178,7 +178,7 @@ p.has-error{
 .ant-table-tbody > tr > td>div{
   white-space: nowrap;
   max-width:154px;
-  overflow: hidden;
+  /*overflow: hidden;*/
   text-overflow: ellipsis;
 }
 .top-name{

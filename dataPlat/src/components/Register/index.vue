@@ -17,7 +17,7 @@
         </a-input>
       </a-form-item>
       <a-form-item>
-        <a-row :gutter="8">
+        <a-row :gutter="8" style="line-height:40px;">
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'code', {rules: [{validator:assignCode}],validateTrigger:['blur']}
@@ -30,7 +30,7 @@
           </a-col>
         </a-row>
       </a-form-item>
-      <a-form-item>
+      <a-form-item style="margin-bottom: 14px">
         <a-input
           placeholder="请输入密码"
           v-decorator="[
@@ -71,6 +71,7 @@
       </a-form-item>
       <a-form-item>
         <a-auto-complete
+          style="max-height:98px"
           v-decorator="[
           'email',
           {rules: [{
@@ -80,7 +81,7 @@
 
           @change="handleEmailChange"
         >
-          <template slot="dataSource">
+          <template slot="dataSource" id="register" >
             <a-select-option
               v-for="email in autoCompleteResult"
               :key="email">
@@ -98,7 +99,7 @@
               validator: checkAgreeMent,
             }]}]">
           已阅读并同意
-          <a href="/static" target="_blank">
+          <a href="/static" target="_blank" style="color:#1890FF;">
             PST及平台服务协议
           </a>
         </a-checkbox>
@@ -228,7 +229,7 @@
                     this.formData.resetFields();
                   }
                   else{
-                    this.$message.error(res.msg)
+                    this.$message.error(res.msg);
                   };
           })
         })
@@ -258,13 +259,24 @@
           }
         }
       },
-      assignCode(rule, value, callback){
-        if(!value){
+      async assignCode(rule, value, callback){
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          callback('请输入手机号，获取验证码');
+        }else if(!value){
           callback('请输入验证码');
           //验证码验证
         }
         else {
-          callback();
+
+          await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              callback();
+            }else{
+              callback(res.msg);
+            }
+          })
         }
       },
       validPass(rule, value, callback){
@@ -335,7 +347,7 @@
     color: #42b983;
   }
   .register p{
-    margin:0;
+    margin: 10px 0 0;
     line-height:0;
   }
 

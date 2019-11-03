@@ -54,7 +54,7 @@
         style="width:150px;"
         v-if="dataflag!=='000'"
         v-decorator="['quakeGrade']"
-        @blur="handleBlur($event.target.value)"
+
         placeholder="请选择抗震等级"
         @change="handleSelectChange"
       >
@@ -102,10 +102,10 @@
       <span v-else>{{buildingInfo.remark}}</span>
     </a-form-item>
     <p class="title">构件类型</p>
-    <a-table :columns="columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:'暂无数据'}"  class="buildingTable">
+    <a-table :columns="dataflag==='000'?columns1:columns" :dataSource="dataSource" :rowKey=getKey :pagination=false :locale="{emptyText:'暂无数据'}"  class="buildingTable">
       <template slot="floors" slot-scope="text, record, index">
         <div key="floors">
-           <div class="test-floor"  v-if="dataflag!=='000'">
+           <div class="test-floor"  v-if="dataflag!=='000'" :class="{'has-error':record.errorInputType}">
              <a-input
                maxlength="10"
                style="margin: -5px 0; "
@@ -114,18 +114,19 @@
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
                @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/>
              <!--1为空2错误-->
-             <p class="has-error" v-show="record.errorInputType">{{record.errorInputType===1?'不能为空':'格式有错误'}}</p>
+             <p class="has-error" style="height:14px" v-show="record.errorTypeSelect"></p>
+             <p class="has-error" v-show="record.errorInputType">{{record.errorInputType===1?'不能为空':'输入格式不正确'}}</p>
            </div>
           <template v-else>{{text}}</template>
         </div>
       </template>
       <template slot="cmpttypeId" slot-scope="text, record, index">
         <div key="cmpttypeId" >
-          <div  v-if="dataflag!=='000'">
+          <div  v-if="dataflag!=='000'" :class="{'has-error':record.errorTypeSelect}">
             <a-select
               :value="text"
               style="margin: -5px 0"
-
+              @blur="value=>handleBlur(value,record.id)"
               @change="value=> handleSelectChange(value,record.id,'cmpttypeId')"
               placeholder="请选择"
             >
@@ -133,23 +134,14 @@
                 {{item.typeName}}
               </a-select-option>
             </a-select>
-            <p class="has-error" v-show="record.errorTypeSelect===0">{{'请选择构件类型'}}</p>
+            <p class="has-error" style="height:14px" v-show="record.errorInputType"></p>
+            <p class="has-error" v-show="record.errorTypeSelect===1">{{record.errorTypeSelect===1?'请选择构件类型':''}}</p>
           </div>
           <template v-else>{{record.component}}</template>
         </div>
       </template>
        <template slot="action" slot-scope="text,record" class="action" v-if="dataflag!=='000'">
-         <a-popconfirm
-           v-if="dataSource.length"
-           title="确定删除？"
-           cancelText="取消"
-           okText="确定"
-           okType="danger"
-           @confirm="() => deleteBuilding(record.id)">
-           <a-icon slot="icon" type="question-circle-o" style="color: red" />
-        <img :src="require('../../assets/images/shanchu@2x.png')" alt=""  style="width:14px;cursor:pointer;"/>
-        </a-popconfirm>
-
+         <a><i class="iconfont iconshanchu" @click="deleteBuilding(record.id)"></i></a>
        </template>
     </a-table>
      <div class="add-action" v-if="dataflag!=='000'">
@@ -159,8 +151,9 @@
 </template>
 
 <script>
-
+let a=0;
   export default {
+
     props:['dataflag','floorId'],
     data () {
       let count=0;
@@ -169,10 +162,15 @@
         wrapperCol: { span: 16},
       };
       const columns = [
-        { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}` },
-        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' },width:'20%' },
+        { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}`,width:'15%' },
+        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' },width:'30%' },
         { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } ,width:'40%'},
-        { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } ,width:'20%'},
+        { title: '操作', dataIndex: 'action', key: 'action', scopedSlots: { customRender: 'action' } ,width:'15%'},
+      ];
+      const columns1 = [
+        { title: '序号', dataIndex: 'index', key: 'index',customRender:(text, record, index)=>`${index+1}`,width:'20%' },
+        { title: '楼层段', dataIndex: 'floors', key: 'floors',scopedSlots: { customRender: 'floors' },width:'30%' },
+        { title: '构件类型', dataIndex: 'cmpttypeId', key: 'cmpttypeId',scopedSlots: { customRender: 'cmpttypeId' } ,width:'40%'},
       ];
       const dataSource = [
       ];
@@ -189,6 +187,7 @@
         isSubmit:true,
         projectId,
         count,
+        columns1,
         number:{
 
         },
@@ -229,9 +228,17 @@
         }
 
       },
-      handleBlur(val){
-        console.log('-----')
-        console.log(val)
+      handleBlur(val,key){
+        const newData = [...this.dataSource];
+        const target = newData.filter(item => key === item.id)[0];
+      if(!val){
+        target.errorTypeSelect=1;
+      }
+      else{
+        target.errorTypeSelect=0;
+      };
+        this.dataSource = newData;
+
       },
       handleNumberChange(value,flag) {
         if(flag==='003'){
@@ -276,7 +283,7 @@
             }
       },
       addBuilding(){
-        let a=this.dataSource.length+1;
+        //let a=this.dataSource.length+1;
         let obj={id:a++};
         this.dataSource.push(obj)
       },
@@ -289,14 +296,55 @@
       },
 
       handleSubmit(e) {
+        this.isSubmit=true;
         e.preventDefault();
         //循环数组
-      //   console.log(this.dataSource)
-      this.dataSource=  this.dataSource.map(item=>{
-        console.log(item)
-          // if(!item.floors){
-          //   item.errorInputType=1;
-          // }
+        this.dataSource =this.dataSource.map(item=>{
+          if(!item.floors){
+            item.errorInputType=1;
+            this.isSubmit=false;
+          }
+
+          if(!item.cmpttypeId){
+            item.errorTypeSelect=1;
+            this.isSubmit=false;
+          }
+          return item;
+        });
+        this.form.validateFields((err, values) => {
+          if (!err&&this.isSubmit) {
+            let obj=Object.assign({},values);
+            obj.projectId=this.$route.params.projectId;
+            let data=JSON.parse(JSON.stringify(this.dataSource));
+            let newArr=data.map(item=>{
+              delete item.index;
+              delete item.component;
+              return item;
+            });
+            obj.cmptType=newArr;
+            var url = "";let msg;
+            if(this.dataflag==='002'){
+              msg='添加成功';
+              url='bomextract/build/addmonomer'
+            }else if(this.dataflag==='001'){
+              msg='修改成功';
+              url='bomextract/build/modifymonomer';
+              obj.floorId=this.floorId;
+              delete obj.projectId;
+            };
+            let params=obj;
+            this.$ajax(url,'POST',obj).then(res=>{
+              res=res.data;
+              if(res.code==='001'){
+                this.$message.success(msg,5);
+                this.$emit('success',true);
+                // params.relationfloor=params.relationfloor.join('、');
+                this.$store.commit("setRecord",params);
+              }else{
+                this.$message.error(res.msg);
+              }
+            })
+          }
         });
 
       },
