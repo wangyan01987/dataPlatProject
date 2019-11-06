@@ -175,9 +175,7 @@
           }
           this.autoCompleteResult = autoCompleteResult;
         },
-        modifyEmail(){
-             let email=this.form.getFieldValue('email');
-        },
+
           editor(){
             this.isEditor=true;
           //  this.form.set
@@ -207,11 +205,12 @@
                 callback();
               }
           },
-        checkPhone(){
-
-        },
         modifyEmail(){
           var newEmail = this.form.getFieldValue("email");
+          if(newEmail&&!email(newEmail)){
+           return;
+          }
+
           this.$ajax('bomextract/user/modifyemail','POST',{"email":newEmail}).then(res=>{
                 res=res.data;
                 if(res.code==='001'){

@@ -6,7 +6,7 @@
         <p><a-button type="primary" @click="goInvite">接受邀请</a-button></p>
       </div>
       <div  class="box-item" v-else>
-        <p><a-icon type="close-circle" theme="filled" style="color:#f5222d"/>邀请链接已经失效</p>
+        <p style="font-size:16px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:16px;margin-right:10px;"/>邀请链接已失效</p>
       </div>
     </div>
 </template>
@@ -20,7 +20,7 @@
             userName:'',
             projectName:'',
             projectId:'',
-            isValid:true,
+            isValid:'',
             code:'',
             bodyStyle:{height:500}
           }
@@ -64,13 +64,15 @@
           this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:this.code}).then(res=>{
             res=res.data;
             if(res.code==='001'){
-              this.isValid=res.data.isValid;
+              this.isValid=true;
               this.userName=res.data.userName;
               this.projectName=res.data.projectName;
               this.projectId=res.data.projectId;
             }
             else{
-              this.$message.error(res.msg);
+              if(res.code==='003'){
+                this.isValid=false;
+              }
             }
           })
         };

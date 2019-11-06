@@ -45,7 +45,7 @@
 
               </a-form-item>
       </a-form>
-      <p class="action"><span @click="add">添加</span></p>
+      <p class="action"><span @click="add">添 加</span></p>
     </div>
 </template>
 
@@ -192,4 +192,5 @@
   .dynamic-delete-button:hover {
     color: red;
   }
+
 </style>

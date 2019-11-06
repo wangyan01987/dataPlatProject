@@ -7,15 +7,15 @@
       <a-menu-item key="BOM" >
         <router-link to="BOM">BOM</router-link>
       </a-menu-item>
-      <a-menu-item key="file">
-     <router-link  :to="{name:'file'}">文件</router-link>
-      </a-menu-item>
-      <a-menu-item key="issue">
-        <router-link :to="{name:'issue'}">任务</router-link>
-      </a-menu-item>
-      <a-menu-item key="statics">
-        <router-link :to="{name:'statics'}">统计</router-link>
-      </a-menu-item>
+      <!--<a-menu-item key="file">-->
+     <!--<router-link  :to="{name:'file'}">文件</router-link>-->
+      <!--</a-menu-item>-->
+      <!--<a-menu-item key="issue">-->
+        <!--<router-link :to="{name:'issue'}">任务</router-link>-->
+      <!--</a-menu-item>-->
+      <!--<a-menu-item key="statics">-->
+        <!--<router-link :to="{name:'statics'}">统计</router-link>-->
+      <!--</a-menu-item>-->
       <a-menu-item key="member">
         <router-link :to="{name:'member'}">成员</router-link>
       </a-menu-item>

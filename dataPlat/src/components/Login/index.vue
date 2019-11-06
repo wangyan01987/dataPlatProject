@@ -29,7 +29,7 @@
           </a-col>
         </a-row>
       </a-form-item>
-      <a-form-item>
+      <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-input
           ref="password"
           :type="psdtype"
@@ -40,14 +40,17 @@
             rules: [{
               validator: validPass,
             }],
+            validateTrigger:['blur']
           }
         ]" >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
-      <a-button @click='submit' type="primary" style="width:100%" size="large">登录</a-button>
+
+      <a-button @click='submit' type="primary" style="width:100%;margin-top:24px;" size="large">登录</a-button>
     </a-form>
 
   </div>
@@ -69,7 +72,8 @@
         formTailLayout,
         formData:this.$form.createForm(this),
         identifyCodes: '123456789ABCDEFKsdefb',
-        identifyCode:''
+        identifyCode:'',
+        errorMsg:''
 
       }
 
@@ -124,8 +128,9 @@
         }
       },
       validPass(rule, value, callback){
+        this.errorMsg='';
         if(!value){
-          callback('请输入密码')
+          callback('请输入密码');
         }
         else {
           callback();
@@ -139,10 +144,12 @@
 
           //提交表单
           let obj=fieldsValue;
+          obj.password=this.$md5(obj.password);
            delete obj.assignCode;
           this.$ajax('loginbypwd','POST',obj,true).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
+                  this.errorMsg='';
                   this.$message.success('登录成功！');
                   this.$store.commit('setLogin',true);
                   this.$store.commit('setPhone',fieldsValue.username);
@@ -175,7 +182,8 @@
                   }
                 }
                 else{
-                  this.$message.error(res.msg);
+                  this.errorMsg=res.msg;
+
                 }
           })
         })

@@ -7,14 +7,13 @@
             <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
               <div class="box-item">
                 <div class="item-img" >
-                  <img :src="item.img" style="width:100%;height:100%;"  v-if="item.img"/>
+                  <img   v-if="item.img"    :src="item.img" style="width:100%;height:100%;" />
                   <a-tooltip>
                     <template slot="title">
                       {{item.projectName}}
                     </template>
                     <p class="item-title" >{{item.projectName}}</p>
                   </a-tooltip>
-
                 </div>
                 <div class="editor-box">
                   <p class="editor" @click="$event.stopPropagation()" >
@@ -28,7 +27,7 @@
               <div class="box-item ">
                 <div class="add-item"  @click="addItem" >
                   <a-icon type="plus" class="icon"/>
-                  <p style="margin-top:10px;">创建新项目</p>
+                  <p style="margin-top:10px;font-size:14px;">创建新项目</p>
                 </div>
               </div>
             </div>
@@ -72,11 +71,9 @@
               src:require('../../assets/projectImg/004.jpg')
             },
             ],
-          itemList: [],
+          itemList: [{img:'',projectName:''}],
           addItemList: []
         }
-      },
-      watch:{
       },
       methods: {
         goToDetail(id,name){
@@ -86,10 +83,11 @@
         loadItem() {
           //获取新的数据
           this.getItem(count++).then(res=>{
-            this.addItemList= res.data;
-            this.itemList=this.itemList.concat(this.addItemList);
+            if(res.length!==0){
+              this.addItemList= res;
+              this.itemList=this.itemList.concat(this.addItemList);
+            }
           });
-
         },
         editItem(id,e){
           //编辑信息 flag=1
@@ -160,12 +158,6 @@
           this.propMsg.dataflag=2;
           this.$refs.projectform.visible=true;
         },
-        // randomImg(item){
-        //     //产生随机数
-        //     let key= Math.floor(Math.random()*6);
-        //     item.img=this.imgList[key].src;
-        //     return item;
-        // }
       },
       mounted() {
         //项目名称清零
@@ -209,8 +201,9 @@
      }
   .item-title{
     border-radius:4px 4px 0 0;
+    font-size:14px;
       width: 100%;
-      height: 40px;
+      height: 44px;
       letter-spacing: 0;
       color: #ffffff;
       position:absolute;

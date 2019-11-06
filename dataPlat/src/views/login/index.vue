@@ -1,18 +1,18 @@
 <template>
  <div class="container">
     <div class="box-top">
-     <p class="logo">平行数据平台</p>
+      <p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>
       <p class="action"><span>客户端下载</span>|<span>关于PST</span>|<span>联系我们</span></p>
     </div>
    <p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>
    <div class="box-body">
         <div class="login-box">
-          <a-tabs defaultActiveKey="1" @change="callback">
+          <a-tabs defaultActiveKey="1" @change="callback" :tabBarGutter="44">
             <a-tab-pane tab="登录" key="1">
-              <login v-show="loginType==='001'"></login>
-              <loginmobile v-show="loginType==='002'"></loginmobile>
+              <login v-if="loginType==='001'"></login>
+              <loginmobile v-if="loginType==='002'"></loginmobile>
             </a-tab-pane>
-            <a-tab-pane tab="注册" key="2" forceRender><register></register></a-tab-pane>
+            <a-tab-pane tab="注册" key="2" ><register v-if="loginType==='000'" @gologin=""></register></a-tab-pane>
           </a-tabs>
           <div class="action-box" v-if="loginType==='001'||loginType==='002'">
             <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
@@ -30,7 +30,7 @@
      width="444px"
      :destroyOnClose=true
    >
-     <forgetpsd></forgetpsd>
+     <forgetpsd @success="visible=false"></forgetpsd>
    </a-modal>
    <div class="box-foot">
      <p>
@@ -91,6 +91,7 @@
  }
   .box-top{
       display:flex;
+    padding-left:32px;
     padding-top:0.22rem;
     padding-right:0.7rem;
     color: #ffffff;
@@ -98,7 +99,7 @@
     z-index: 1000;
   }
   .logo{
-    width: 1.92rem;
+
     line-height: 0.33rem;
     font-family: PingFangSC-Semibold;
     font-size: 0.24rem;
@@ -131,7 +132,7 @@
     overflow: auto;
     background-color: #ffffff;
     border-radius: 0.12rem;
-    padding:25px;
+    padding:25px 32px;
   }
   .box-foot{
     width:100%;

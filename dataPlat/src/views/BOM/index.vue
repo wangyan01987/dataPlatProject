@@ -3,7 +3,7 @@
  <div class="container-item link">
     <div class="item-top">
       <span class="title">楼栋名称：</span>
-      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placeholder="请选择"  defaultValue="请选择">
+      <a-select  style="width: 120px" @change="handleChange" v-model="buildingid" placeholder="请选择"  defaultValue="请选择" >
           <a-select-option  v-for="item in  buildingNumArr" :value="item.val" :key='item.val' >{{item.label}}</a-select-option>
       </a-select>
     </div>
@@ -15,7 +15,7 @@
       <span v-for="item in dataList" :id="item"></span>
  </div>
   <div class="container-item main-content">
-      <bom-view :objType="objType" :buildingid="buildingid" ></bom-view>
+      <bom-view :objType="objType" :buildingid="buildingid" ref="bomView"></bom-view>
   </div>
 </div>
 </template>
@@ -46,9 +46,11 @@
           },
         goBom(e,link){
             e.preventDefault();
-
+            if(this.objType===link.title){
+              this.$refs.bomView.updateBom();
+            }else{
               this.objType=link.title;
-
+            }
         },
         //获取构件类型
           getType(val){
@@ -110,13 +112,14 @@
     padding:0.2rem;
   }
   .link{
-    width:2.3rem;
+    width:2.4rem;
   }
   .main-content{
     flex:auto;
   }
   .title{
     font-weight:bold;
+    font-size:14px;
   }
 
 </style>

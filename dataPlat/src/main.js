@@ -12,6 +12,8 @@ import './assets/mobile.css'
 import './assets/css/iconfont.css'
 import  $ajax from './ajax/ajax.js';
 import 'lib-flexible';
+import md5 from 'js-md5';
+Vue.prototype.$md5 = md5;
 Vue.prototype.$ajax=$ajax;
 Vue.config.productionTip = false;
 Vue.use(ant);

@@ -6,7 +6,7 @@
                  size="large"
                  v-decorator="[
            'phoneNumber',
-            {rules: [{validator:checkName}]}
+            {rules: [{validator:checkName}], validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
@@ -17,18 +17,19 @@
             <a-input placeholder="请输入验证码" id="success"
                      size="large"
                      v-decorator="['code',
-            {rules: [{validator:assignCode}]}]">
+            {rules: [{validator:assignCode}], validateTrigger:['blur']}]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
           <a-col :span="8">
-           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled">{{codeText}}</a-button>
+           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
       <p class="error-msg">{{errorMsg}}</p>
-      <a-button @click='submit' type="primary" style="width:100%;margin-bottom: 10px;margin-top: 30px;" size="large">登录</a-button>
-
+     <a-form-item style="margin-bottom: 0">
+       <a-button @click='submit' type="primary" style="width:100%;margin-bottom:0;margin-top: 30px;" size="large">登录</a-button>
+     </a-form-item>
     </a-form>
 
   </div>
@@ -125,13 +126,24 @@
           }
         }
       },
-      assignCode(rule, value, callback){
-        if(!value){
+      async assignCode(rule, value, callback){
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          callback('请输入手机号，获取验证码');
+        }else if(!value){
           callback('请输入验证码');
           //验证码验证
         }
         else {
-          callback();
+
+          await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'login'}).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              callback();
+            }else{
+              callback(res.msg);
+            }
+          })
         }
       },
       validPass(rule, value, callback){
@@ -183,10 +195,9 @@
               }
             }
             else{
-              this.$message.error(res.msg);
-              // this.errorMsg='手机号或验证码错误';
-              // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
-              // document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
+              this.errorMsg='手机号或验证码错误';
+              document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[3].style.cssText='border:1px solid red';
+              document.querySelectorAll('.ant-input-affix-wrapper .ant-input')[4].style.cssText='border:1px solid red'
             }
           });
 

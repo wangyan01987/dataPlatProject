@@ -9,28 +9,28 @@
           <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-      <a-form-item >
+      <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}
       ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
       <a-form-item>
         <a-row :gutter="8" style="line-height:40px;">
-          <a-col :span="16">
+          <a-col :span="17">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
-          'code', {rules: [{validator:assignCode}],validateTrigger:['blur']}
-        ]">
+          'code', {rules: [{validator:assignCode}],validateTrigger:['blur']}]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
-          <a-col :span="8">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled">{{codeText}}</a-button>
+          <a-col :span="7">
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;width:100%">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
-      <a-form-item style="margin-bottom: 14px">
+      <a-form-item  class="special" >
         <a-input
           placeholder="请输入密码"
           v-decorator="[
@@ -47,7 +47,7 @@
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
         </a-input>
-        <p><a-icon type="exclamation-circle" style="color:#1890ff" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
+        <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;margin-top:6px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -99,7 +99,7 @@
               validator: checkAgreeMent,
             }]}]">
           已阅读并同意
-          <a href="/static" target="_blank" style="color:#1890FF;">
+          <a href="/static/index.html" target="_blank" style="color:#1890FF;">
             PST及平台服务协议
           </a>
         </a-checkbox>
@@ -114,8 +114,6 @@
 <script>
   import {isOnlyMobile,isPassword, email} from '@/utils/common.js';
   import $ from "jquery"
-
-
   export default {
     name: 'register',
     data () {
@@ -128,6 +126,7 @@
         mobile:'',
         psdtype:'password',
         psdtype1:'password',
+        errorMsg:''
         }
 
     },
@@ -154,13 +153,18 @@
         //获取验证码
         //发送请求
        let mobile= this.formData.getFieldValue('phoneNumber');
+            if(!mobile){
+              return;
+            }
            this.$ajax('sendsms','POST',{type:'register',phoneNumber:mobile}).then(res=>{
              res=res.data;
                 if(res.code==='001'){
                   this.$message.success('发送成功');
                 }
                 else{
-                  this.$message.error(res.msg);
+                  if(res.code==='006'){
+                    this.errorMsg=res.msg;
+                  }
                 }
            });
         const TIME_COUNT = 60;
@@ -219,13 +223,14 @@
           //提交表单
          let obj=fieldsValue;
          obj.personImage=this.setColor();
+          obj.password=this.$md5(obj.password);
           delete obj.repassword;
           delete obj.agreement;
           this.$ajax('register','POST',obj).then(res=>{
                   res=res.data;
                   if(res.code==='001'){
-
                     this.$message.success('注册成功，请登录');
+                    this.$emit('gologin');
                     this.formData.resetFields();
                   }
                   else{
@@ -247,6 +252,7 @@
 
       checkAccount(rule, value, callback){
         this.mobile=null;
+        this.errorMsg='';
         if(!value){
           callback('请输入手机号');
         }
@@ -262,7 +268,8 @@
       async assignCode(rule, value, callback){
         let mobile= this.formData.getFieldValue('phoneNumber');
         if(!mobile){
-          callback('请输入手机号，获取验证码');
+
+          callback('请输入验证码');
         }else if(!value){
           callback('请输入验证码');
           //验证码验证
@@ -315,7 +322,8 @@
     },
     watch:{
       mobile(val){
-        if(val){
+
+        if(val&&isOnlyMobile(val)){
           this.initData();
         }
         else{
@@ -346,10 +354,12 @@
   a {
     color: #42b983;
   }
-  .register p{
-    margin: 10px 0 0;
-    line-height:0;
+  .register p:not(.has-error){
+    margin: 0;
   }
+  /*.special.ant-form-item{*/
+    /*margin-bottom: 10px;*/
+  /*}*/
 
 
 

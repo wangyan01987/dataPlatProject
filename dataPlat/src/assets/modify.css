@@ -100,7 +100,9 @@ a .iconshanchu:hover, a i.iconjianqu:hover{
   width:138px;
 }
 p.has-error{
-  margin-top:2px;
+  line-height:1;
+  height:16px;
+  margin-top:3px;
   margin-bottom: 0;
   color:red;
 }
@@ -108,7 +110,7 @@ p.has-error{
   text-align: left;
 }
   .ant-select-dropdown-menu{
-  max-height:98px;
+  /*max-height:98px;*/
 }
  .login-box .ant-form-item-control{
    line-height:1;
@@ -195,6 +197,18 @@ p.has-error{
 }
 .ant-dropdown{
 top:50px !important;
+}
+.member .ant-form-item{
+  margin-bottom: 8px;
+}
+.ant-form-explain ,.has-error{
+
+
+  font-size:12px;
+
+}
+.ant-form-explain{
+  padding-top:3px;
 }
 /*.ant-layout-content{*/
   /*display: flex;*/

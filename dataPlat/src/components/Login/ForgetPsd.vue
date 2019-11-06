@@ -20,7 +20,7 @@
             </a-input>
           </a-col>
           <a-col :span="8">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled">{{codeText}}</a-button>
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" >{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
@@ -42,7 +42,7 @@
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
         </a-input>
-        <p><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
+        <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -144,13 +144,14 @@
             return;
           };
           let obj=fieldsValue;
+          obj.password=this.$md5(obj.password);
            delete obj.repassword;
           //提交表单
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
                 this.$message.success('修改成功',5);
-                this.visible=false;
+                this.$emit('success');
             }
             else{
               this.$message.error(res.msg);

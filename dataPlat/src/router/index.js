@@ -37,7 +37,7 @@ const router= new Router({
       path:'/',
       name:'layout',
       component:()=>import('@/views/layout'),
-      //redirect:'/home',
+      redirect:'/home',
       children:[
         {
           path:'home',
@@ -95,29 +95,24 @@ const router= new Router({
 import  store from '../store';
   router.beforeEach((to,from,next)=>{
   let client=document.body.clientWidth;
-  // if(client<750&&to.path!=='/loginMobile'){
-  //   next({path:'/loginMobile' });
-  // }
-  // else if(to.path==='/loginMobile'){
-  //   next();
-  // }
-  // else {
-  //   if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess') {
-  //     next('/login')
-  //   } else {
-  //     next();
-  //   }
-  // }
-
-  if (!store.state.isLogin && to.path !== '/login' && to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile') {
-    console.log(to.path)
+  let token=localStorage.getItem('token');
+  if (to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile'&&!token && to.path !== '/login' ) {
          if(client<750){
            next({path:'/loginMobile' })
+         }
+         else if(to.name==='home'&&to.query.token){
+          // store.commit('setLogin',true);
+           localStorage.setItem('token',to.query.token);
+           next();
          }
          else{
            next('/login');
          }
       } else {
+      if(to.name==='home'&&to.query.token){
+         localStorage.setItem('token',to.query.token);
+         next();
+       }
         next();
       }
 });

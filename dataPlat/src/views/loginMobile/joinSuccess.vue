@@ -5,6 +5,10 @@
       <p class="project-content">{{projectName}}</p>
       <p class="action">您可以前往网页继续协作</p>
     </div>
+    <div class="box-item" v-show="flag==='000'">
+      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a"/>登录成功</p>
+      <p class="action">您可以前往网页继续协作</p>
+    </div>
   </div>
 </template>
 
@@ -39,7 +43,7 @@
         });
       }
       else{
-        this.$message.error('错误');
+       this.flag='000';
       }
 
     }

@@ -3,7 +3,7 @@
   <a-layout>
     <a-layout-header>
       <div class="top-header">
-        <div style="margin-left:28px;">
+        <div style="margin-left:28px;" class="top-header-left">
            <a href="#/home"  >
              <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
                <a-tooltip v-else>
@@ -13,17 +13,17 @@
                  <img :src="headerImg"   style="width:24px" @mouseover="showhome=true" @mouseout="showhome=false"/>
                </a-tooltip>
           </a>
-          <a-icon   type="right"  v-show="$route.name!=='home'" style="color: #999" />
+          <i class="iconfont iconarr-right1" v-show="$route.name!=='home'" style="color: #999"></i>
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
           <span v-else  class="top-name">{{topTitle}}</span>
         </div>
         <div class="top-item">
           <a  style="margin-right: 10px;text-decoration: none"
               href="javascript:void(0)" download="客户端软件" @click="downFile($event,1,$event.target)" @dblclick="downFile($event,2,$event.target)">客户端下载</a>
-          <img src="../../assets/images/zengjia.png" >
-          <img src="../../assets/images/xiaoxi@2x.png">
-          <img src="../../assets/images/youxiang@2x.png">
-          <img src="../../assets/images/help@2x.png">
+          <!--<img src="../../assets/images/zengjia.png" >-->
+          <!--<img src="../../assets/images/xiaoxi@2x.png">-->
+          <!--<img src="../../assets/images/youxiang@2x.png">-->
+          <!--<img src="../../assets/images/help@2x.png">-->
           <a-dropdown :trigger="['click']" id="#icon-menu">
       <a-menu slot="overlay" >
         <a-menu-item>
@@ -109,6 +109,7 @@
                            this.iconColor= this.colorArr[flag];
                    }
                  this.$store.commit('setUserName',res.data.userName);
+                   this.$store.commit('setUserId',res.data.userId);
                 }
                 else{
                   this.$message.error(res.msg);
@@ -142,8 +143,9 @@
             this.$ajax('logout','POST').then(res=>{
               res=res.data;
               if(res.code==='999'){
-                 this.$store.commit('setLogin',false);
                 this.$router.push('/login');
+                // this.$store.commit('setLogin',false);
+
                  }
             });
         }
@@ -162,6 +164,7 @@
     width:100%;
     height:100%;
     display:flex;
+    font-size:14px;
     justify-content: space-between;
     align-items:center;
   }
@@ -172,5 +175,12 @@
   .top-item{
     padding-right:15px;
   }
+  .top-header-left{
+    display:flex;
+    /*line-height:15px;*/
+    vertical-align: center;
+  }
+
+
 
 </style>

@@ -144,6 +144,7 @@
             if (err) {
               return;
             };
+            fieldsValue.password=this.$md5(fieldsValue.password);
             delete fieldsValue.repassword;
             //提交表单
             this.$ajax('bomextract/user/modifypassword','POST',fieldsValue).then(res=>{
@@ -192,7 +193,7 @@
     line-height: 53px;
     margin:0;
     border-bottom: 1px solid  rgba(0, 0, 0, 0.1);
-    padding:0 2rem;
+    padding:0 0.2rem;
   }
   .info-box{
     padding:24px 180px;

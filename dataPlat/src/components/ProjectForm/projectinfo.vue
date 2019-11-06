@@ -29,7 +29,7 @@
               <a-form-item v-show="dataflag===1||dataflag===2">
                 <a-select @select="(e)=>{
                 provincehandleChange(e,'001')
-                }" placeholder="省市" v-decorator="['provinceId']">
+                }" placeholder="省市" v-decorator="['provinceId']"  :allowClear=true>
                   <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -37,7 +37,7 @@
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select @select="(value)=>{handleChange(value,'001')}" placeholder="城市" v-decorator="['cityId']" >
+                <a-select @select="(value)=>{handleChange(value,'001')}" placeholder="城市" v-decorator="['cityId']"   :allowClear=true>
                   <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -45,7 +45,7 @@
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select placeholder="区县" v-decorator="[ 'districtId']"  >
+                <a-select placeholder="区县" v-decorator="[ 'districtId']"  :allowClear=true>
                   <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -222,8 +222,18 @@
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
+              if(obj.projectName){
+                let arr=this.$store.state.menuList;
+                this.$store.state.menuList= arr.map(item=>{
+                  if(item.projectId===obj.projectId){
+                    item.projectName=obj.projectName;
+                  };
+                  return item;
+                });
+              }
               this.$message.success(`${msg}成功`, 5);
               this.formData.resetFields();
+
               this.$store.commit("setProjectName", obj.projectName);
               this.$emit('save');
             }else{

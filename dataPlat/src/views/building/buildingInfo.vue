@@ -114,8 +114,8 @@
                placeholder="示例1-3,请输入数字和下划线（长度不超过10位）"
                @change="e => handleChange(e.target.value, record.id,'floors',e.target)"/>
              <!--1为空2错误-->
-             <p class="has-error" style="height:14px" v-show="record.errorTypeSelect"></p>
-             <p class="has-error" v-show="record.errorInputType">{{record.errorInputType===1?'不能为空':'输入格式不正确'}}</p>
+             <p class="has-error" style="height:15px" v-show="record.errorTypeSelect&&!record.errorInputType"></p>
+             <p class="has-error" v-show="record.errorInputType">{{record.errorInputType===1?'请输入楼层段':'输入格式不正确'}}</p>
            </div>
           <template v-else>{{text}}</template>
         </div>
@@ -134,7 +134,7 @@
                 {{item.typeName}}
               </a-select-option>
             </a-select>
-            <p class="has-error" style="height:14px" v-show="record.errorInputType"></p>
+            <p class="has-error" style="height:15px" v-show="record.errorInputType&&!record.errorTypeSelect"></p>
             <p class="has-error" v-show="record.errorTypeSelect===1">{{record.errorTypeSelect===1?'请选择构件类型':''}}</p>
           </div>
           <template v-else>{{record.component}}</template>
@@ -145,7 +145,7 @@
        </template>
     </a-table>
      <div class="add-action" v-if="dataflag!=='000'">
-      <span @click="addBuilding"><a-icon type="plus-circle" />添加</span>
+      <span @click="addBuilding"><a-icon type="plus-circle" style="margin-right:5px;" />添加</span>
      </div>
   </a-form>
 </template>
@@ -213,7 +213,7 @@ let a=0;
       onblur(val,key){
         const newData = [...this.dataSource];
         const target = newData.filter(item => key === item.id)[0];
-        let exg=/^([1-9]{1,8}[\-]?[1-9]{0,8})$/;
+        let exg=/^([1-9]{1,8}[\-]?[0-9]{0,8})$/;
         if (target) {
           if(val===''){
             target.errorInputType=1;
@@ -443,9 +443,9 @@ let a=0;
   cursor:pointer;
 }
   p.has-error{
-    text-align:center;
+    text-align:left;
     color: #f5222d;
-    margin-top:11px;
+    margin-top:2px;
     margin-bottom: 0;
   }
   .add-item{

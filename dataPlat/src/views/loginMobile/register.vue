@@ -10,12 +10,12 @@
            <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
          </a-input>
        </a-form-item>
-       <a-form-item >
+       <a-form-item  :class="{'has-error':phoneErr}">
          <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
-            {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}
-      ]">
+            {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}]">
            <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
          </a-input>
+         <p class="has-error">{{phoneErr}}</p>
        </a-form-item>
        <a-form-item>
          <a-row :gutter="8">
@@ -27,8 +27,8 @@
                <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
              </a-input>
            </a-col>
-           <a-col :span="7">
-             <a-button  :type="btnType" @click="sendCode" :disabled="btnabled">{{codeText}}</a-button>
+           <a-col :span="8">
+             <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;">{{codeText}}</a-button>
            </a-col>
          </a-row>
        </a-form-item>
@@ -59,7 +59,7 @@
               validator: checkAgreeMent,
             }]}]">
            已阅读并同意
-           <a  href="javascript:void(0)"  @click="visible=true">
+           <a  href="javascript:void(0)"  @click="visible=true" style="color:#1890ff">
              PST及平台服务协议
            </a>
          </a-checkbox>
@@ -73,14 +73,11 @@
          width="100%"
        >
         <div style="display:flex;" class="top-title">
-         <span > <a @click="visible=false" style="color:#1890ff;margin-right:30px;"><i class="iconfont iconxiangzuo" style="color: #1890ff;"></i>返回</a></span>
-          <span>PST平台协议</span>
+         <span > <a @click="visible=false" style="color:#1890ff;margin-right:30px;">
+           <i class="iconfont iconxiangzuo" style="color: #1890ff;"></i>返回</a></span>
           <span></span>
         </div>
-      <div class="container">
-        <p class="title">PST及平台协议</p>
-        <p>协议协议协议协议</p>
-      </div>
+         <aggrement></aggrement>
 
        </a-drawer>
      </div>
@@ -97,13 +94,13 @@
              validateTrigger:['blur']
           }
         ]"
-            type="password"
+            :type="psdtype"
           >
             <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-            <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype1='text'"  /></a>
-            <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype1='password'"  /></a>
+            <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
+            <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
           </a-input>
-          <p><a-icon type="exclamation-circle" style="color:#1890ff" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
+          <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
         </a-form-item>
         <a-form-item>
           <a-input
@@ -117,21 +114,22 @@
             validateTrigger:['blur']
           }
         ]"
-            type="password"
+            :type="psdtype1"
           >
             <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
             <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype2='text'"  /></a>
             <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype2='password'"  /></a>
           </a-input>
-
+           <p class="has-error">{{errorMsg}}</p>
         </a-form-item>
       </div>
-      <a-form-item >
+      <a-form-item style="margin-bottom: 0" >
         <a-button  type="primary" style="width:100%"  @click="handleSubmit(0)"  v-if="dataflag==='000'">下一步</a-button>
-      <div v-else style="margin-top:8.4%;">
+      <a-form-item v-else >
         <a-button  type="primary" style="width:100%"  @click="handleSubmit(1)" >注册</a-button>
-         <div style="text-align:right;"> <a style="color:#1890ff;text-decoration: underline" @click="dataflag='000'">返回上一步</a></div>
-      </div>
+         <div style="text-align:right;margin-top:12px;"> <a style="color:#1890ff;text-decoration: underline" @click="dataflag='000'">返回上一步</a></div>
+      </a-form-item>
+
       </a-form-item>
     </a-form>
   </div>
@@ -139,6 +137,7 @@
 
 <script>
   import {isOnlyMobile,isPassword, email} from '@/utils/common.js';
+  import aggrement from './aggrement'
   export default {
     name: 'register',
     data () {
@@ -150,14 +149,16 @@
         autoCompleteResult:'',
         mobile:'',
         dataflag:'000',
+        psdtype:'password',
         psdtype1:'password',
-        psdtype2:'password',
-        visible:false
+        visible:false,
+        errorMsg:'',
+        phoneErr:''
       }
 
     },
     components:{
-
+      aggrement
     },
     methods:{
       onClose(){
@@ -176,14 +177,22 @@
       sendCode(){
         //获取验证码
         //发送请求
+
         let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          return;
+        }
         this.$ajax('sendsms','POST',{type:'register',phoneNumber:mobile}).then(res=>{
           res=res.data;
           if(res.code==='001'){
+            this.phoneErr='';
             this.$message.success('发送成功');
           }
           else{
-            this.$message.error(res.msg);
+               if(res.code==='006'){
+                 //手机号已注册
+                 this.phoneErr=res.msg;
+               }
           }
         });
         const TIME_COUNT = 60;
@@ -218,9 +227,9 @@
         }
       },
       handleSubmit(val) {
-
          if(!val){
            this.formData.validateFields(['username','phoneNumber','code','email','agreement'],{firstFields:['phoneNumber']},(err, value) => {
+
              if (err) {
                return;
              }
@@ -235,11 +244,13 @@
              if(val){
                //提交表单
                let obj=fieldsValue;
+               obj.password=this.$md5(obj.password);
                delete obj.repassword;
                delete obj.agreement;
                this.$ajax('register','POST',obj).then(res=>{
                  res=res.data;
                  if(res.code==='001'){
+                   this.errorMsg='';
                   // this.$message.success('注册成功，请登录');
                    this.dataflag='000';
                    this.$emit('registerSuccess',true);
@@ -247,7 +258,7 @@
                    this.formData.resetFields();
                  }
                  else{
-                   this.$message.error(res.msg)
+                 this.errorMsg=res.msg;
                  };
                })
              }
@@ -267,7 +278,9 @@
 
       checkAccount(rule, value, callback){
         this.mobile=null;
+        this.phoneErr='';
         if(!value){
+
           callback('请输入手机号');
         }
         else {
@@ -293,13 +306,14 @@
       },
       async assignCode(rule, value, callback){
         let mobile= this.formData.getFieldValue('phoneNumber');
-        if(!mobile){
-          callback('请输入手机号，获取验证码');
-        }else if(!value){
+     if(!value){
           callback('请输入验证码');
           //验证码验证
         }
-        else {
+        else    if(!mobile){
+       callback('请获取正确的验证码');
+               }
+     else {
 
         await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
           res=res.data;
@@ -347,7 +361,7 @@
     },
     watch:{
       mobile(val){
-        if(val){
+        if(val&&isOnlyMobile(val)){
           this.initData();
         }
         else{
@@ -378,7 +392,10 @@
   a {
     color: #42b983;
   }
-  .register p{
+  .has-error{
+    margin-top:5px;
+  }
+  .register p:not(.has-error){
     margin:0;
     line-height:0;
   }

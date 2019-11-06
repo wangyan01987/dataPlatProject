@@ -15,7 +15,9 @@
                slot-scope="text, record, index"
              >
                <div :key="col">
-                 <a-input-number :min="0" :max="Math.pow(10,10)-1" v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
+                 <a-input-number :min="0" :max="Math.pow(10,6)-1"   :precision="0"
+
+                                 v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
                  />
                  <template v-else>{{text?text:'---'}}</template>
                </div>
@@ -75,7 +77,8 @@
           <template slot="amount" slot-scope="text, record, index">
             <div>
               <a-input-number :min="0"
-                              :max="Math.pow(10,10)-1"
+                              :max="Math.pow(10,6)-0.01"
+                              :precision="2"
                               v-if="record.editable"
                               style="margin: -5px 0"
                               :value="text"

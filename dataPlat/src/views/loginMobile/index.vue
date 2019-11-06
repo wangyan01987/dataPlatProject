@@ -3,10 +3,10 @@
   <div class="login-box box-body " v-show="login">
     <a-tabs defaultActiveKey="1" @change="callback" :activeKey="key">
       <a-tab-pane tab="登录" key="1" >
-         <login v-show="loginType==='001'"></login>
-        <loginmobile v-show="loginType==='002'"></loginmobile>
+         <login v-if="loginType==='001'"></login>
+        <loginmobile v-if="loginType==='002'"></loginmobile>
       </a-tab-pane>
-      <a-tab-pane tab="注册" key="2" forceRender><register @registerSuccess="registerSuccess"></register></a-tab-pane>
+      <a-tab-pane tab="注册" key="2" forceRender><register @registerSuccess="registerSuccess" v-if="loginType==='000'"></register></a-tab-pane>
     </a-tabs>
     <div class="action-box" v-if="loginType==='001'||loginType==='002'">
       <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
@@ -15,10 +15,10 @@
       <span @click="loginType='001'"  v-show="loginType==='002'" >账号密码登录</span>
     </div>
   </div>
-    <div class="login-box box-body" v-show="!login&&!registered&&!repassworded">
+    <div class="login-box box-body" v-if="!login&&!registered&&!repassworded">
       <P class="repsd"><span>重置密码</span></P>
       <forgetpsd  @changePsd="changePsd"></forgetpsd>
-         <p style="text-align:right"><a @click="login=true">返回登录页</a></p>
+         <p style="text-align:right;margin-top:-12px;"><a @click="login=true">返回登录页</a></p>
     </div>
   <div class="login-box box-body" v-show="repassworded">
     <div class="registerSuccess " >
@@ -110,16 +110,35 @@
 
 
 <style scoped>
-   .container{
-     height:100%;
-     width:100%;
-     background: url("./image/bg-h5.png") no-repeat  ;
-     background-size:cover;
-     position:relative;
-   }
+  .container{
+    height:100%;
+    width:100%;
+    background: url("./image/bg-h5.png") no-repeat  ;
+    background-size:cover;
+    position:relative;
+  }
+  @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
+    .container{
+      background: url("./image/bg-h5@3x.png") no-repeat;
+      height:100%;
+      width:100%;
+      background-size:cover;
+      position:relative;
+    }
+  }
+  @media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2){
+    .container{
+      background: url("./image/bg-h5@2x.png") no-repeat  ;
+      height:100%;
+      width:100%;
+      background-size:cover;
+      position:relative;
+    }
+  }
+
   .login-box{
     width: 9.1rem;
-    height: 64.4%;
+    min-height: 64.4%;
     background-color: #ffffff;
     border-radius: 0.2rem;
     position:absolute;
@@ -137,7 +156,7 @@
      font-stretch: normal;
      letter-spacing: 0px;
      color: #1890ff;
-     margin-top:24px;
+     margin-top:12px;
    }
    .action-box span{
      cursor:pointer;

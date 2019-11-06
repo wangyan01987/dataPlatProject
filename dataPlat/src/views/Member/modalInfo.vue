@@ -38,7 +38,7 @@
     </div>
 
     <div class="item-info">
-      <a-button type="primary"  @click="sendCode(dataflag)">发送邀请</a-button>
+      <a-button type="primary"  @click="sendCode(dataflag)" style="width:112px">发送邀请</a-button>
     </div>
   </div>
 </div>
@@ -168,5 +168,11 @@
   #qrCode{
     height:120px;
     margin-left:20px;
+  }
+  .item-title p{
+    text-align:left;
+  }
+  .item-title p:nth-of-type(2){
+    margin-bottom: 0;
   }
 </style>

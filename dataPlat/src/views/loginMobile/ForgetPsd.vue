@@ -9,17 +9,18 @@
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-      <a-form-item>
+      <a-form-item :class="{'has-error':codeErr}">
         <a-row :gutter="8">
-          <a-col :span="16">
-            <a-input placeholder="请输入验证码,300秒后失效" id="success"  v-decorator="[ 'code',
+          <a-col :span="15">
+            <a-input placeholder="请输入验证码"  v-decorator="[ 'code',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
+            <p class="error-msg">{{codeErr}}</p>
           </a-col>
-          <a-col :span="8">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled">{{codeText}}</a-button>
+          <a-col :span="7">
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
@@ -35,13 +36,13 @@
             validateTrigger:['blur']
           }
         ]"
-          type="password"
+          :type="psdtype"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
-          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype='text'"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype='password'" /></a>
         </a-input>
-        <p><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
+        <p style="margin-top:3px"><a-icon type="info-circle" style="color:#1890ff;margin-right:5px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -55,12 +56,13 @@
             validateTrigger:['blur']
           }
         ]"
-          type="password"
+          :type="psdtype1"
         >
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
-          <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
+          <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype1='text'"  /></a>
+          <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype1='password'" /></a>
         </a-input>
+        <p class="has-error">{{errorMsg}}</p>
       </a-form-item>
       <a-form-item >
         <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit" >提交</a-button>
@@ -83,7 +85,9 @@
         autoCompleteResult:'',
         mobile:'',
         psdtype1:'password',
-        psdtype:'password'
+        psdtype:'password',
+        errorMsg:'',
+        codeErr:''
       }
 
     },
@@ -143,16 +147,24 @@
             return;
           };
           let obj=fieldsValue;
+          obj.password=this.$md5(obj.password);
            delete obj.repassword;
           //提交表单
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
-               // this.$message.success('修改成功',5);
+              this.errorMsg='';
+              this.codeErr='';
                 this.$emit('changePsd',true);
             }
             else{
-              this.$message.error(res.msg);
+                if(res.code==='008'){
+                  this.codeErr=res.msg;
+                }
+                else{
+                  this.errorMsg=res.msg;
+                }
+
             }
           })
         })
@@ -180,14 +192,18 @@
           }
         }
       },
-      assignCode(rule, value, callback){
-        if(!value){
+      async assignCode(rule, value, callback){
+        let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          callback('请输入手机号，获取验证码');
+        }else if(!value){
           callback('请输入验证码');
           //验证码验证
         }
-        else {
+        else{
           callback();
         }
+
       },
       validPass(rule, value, callback){
         if(!value){
@@ -200,9 +216,7 @@
           callback();
         }
       },
-      // handleChange(val){
-      //   console.log(val)
-      // },
+
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){
@@ -245,9 +259,11 @@
   a {
     color: #42b983;
   }
+  .register .has-error{
+   margin-top:5px;
+  }
   .register p{
     margin:0;
-    line-height:0;
   }
 
 

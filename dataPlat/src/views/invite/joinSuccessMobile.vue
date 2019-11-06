@@ -1,7 +1,13 @@
 <template>
   <div class="content-box">
+
     <div class="box-item" v-show="flag==='001'">
       <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;"/><span style="margin-left:10px;font-weight: bold">已成功加入项目</span></p>
+      <p class="project-content">{{projectName}}</p>
+      <p class="action">您可以前往网页继续协作</p>
+    </div>
+    <div class="box-item" v-show="flag==='000'">
+      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;"/><span style="margin-left:10px;font-weight: bold">登录成功</span></p>
       <p class="project-content">{{projectName}}</p>
       <p class="action">您可以前往网页继续协作</p>
     </div>
@@ -39,7 +45,7 @@
         });
       }
       else{
-        this.$message.error('错误');
+        this.flag='000';
       }
 
     }

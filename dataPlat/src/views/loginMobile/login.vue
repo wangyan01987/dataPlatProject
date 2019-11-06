@@ -9,7 +9,7 @@
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-      <a-form-item style="margin-top:6.8%;">
+      <a-form-item  >
         <a-input
           placeholder="请输入密码"
           size="large"
@@ -21,15 +21,16 @@
              validateTrigger:['blur']
           }
         ]"
-          type="password"
+          :type=psdtype
           ref="phone" class="test">
           <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
-          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
-          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
+          <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype='text'"  /></a>
+          <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype='password'" /></a>
         </a-input>
+        <p class="error-msg">{{errorMsg}}</p>
       </a-form-item>
-     <a-form-item>
-       <a-button @click='submit' type="primary" style="width:100%;margin-top:20px;" size="large">登录</a-button>
+     <a-form-item style="margin-bottom: 0">
+       <a-button @click='submit' type="primary" style="width:100%;margin-top:14px;" size="large">登录</a-button>
      </a-form-item>
     </a-form>
   </div>
@@ -51,7 +52,8 @@
         formData:this.$form.createForm(this),
         identifyCodes: '1234567890ABCDEFJKHfhg',
         identifyCode:'',
-        psdtype:'password'
+        psdtype:'password',
+        errorMsg:''
 
       }
 
@@ -74,6 +76,7 @@
       },
 
       checkName(rule, value, callback){
+        this.errorMsg='';
         if(!value){
           callback('请输入手机号')
         }
@@ -86,6 +89,7 @@
         }
       },
       validPass(rule, value, callback) {
+        this.errorMsg='';
         if (!value) {
           callback('请输入密码')
         }
@@ -103,10 +107,12 @@
           };
           //提交表单
           let obj=fieldsValue;
+          obj.password=this.$md5(obj.password);
           delete obj.assignCode;
           this.$ajax('loginbypwd','POST',obj,true).then(res=>{
             res=res.data;
             if(res.code==='001'){
+              this.errorMsg='';
               this.$message.success('登录成功！');
               this.$store.commit('setLogin',true);
               this.$store.commit('setPhone',fieldsValue.username);
@@ -131,15 +137,17 @@
                     });
                   }
 
+
                 });
               }
               else{
                 //跳转到主页
-                this.$router.push('/home');
+                this.$router.push({name:'joinSuccessMobile'});
               }
             }
             else{
-              this.$message.error(res.msg);
+              this.errorMsg=res.msg;
+              // this.$message.error(res.msg);
             }
           })
         })

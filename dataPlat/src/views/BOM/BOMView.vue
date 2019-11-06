@@ -22,7 +22,7 @@
              <div  v-if="record.editable"><a-input
                  style="margin: -5px 0"
                  :value="text"
-                 maxlength="31"
+                 :maxlength="getMax(col)"
                  @change="e => handleChange(e.target.value, record.cmptId, col,e.target,record)"
                /><p class="has-error"></p>
              </div>
@@ -73,8 +73,6 @@
 <script>
   import BomInfo from './BomInfo'
   import $ from 'jquery'
-
-
   const data =[];
   export default {
     components:{BomInfo},
@@ -136,9 +134,10 @@
         },
         floor:'',
         version:'',
-        prodId:'11',
+        prodId:'',
         cacheData:'',
         current:1,
+        maxlength:30
       };
     },
     props:['objType','buildingid'],
@@ -173,8 +172,15 @@
 
     },
     methods: {
+     getMax(column){
+       switch (column){
+         case 'prodId':return  11;
+         case 'floor': return  31;
+         case 'remark':return 150;
+       };
+     },
       updateBom(){
-        this.version='';
+        this.prodId='';
         this.version='';
         this.floor='';
         this.getBom(1,20);
@@ -290,30 +296,42 @@
       },
      async handleChange(value, key, column,target1,record) {
         record.save=true;
-        if(value.length>30){
-             this.getDom(target1,'最大字符长度为30');
-          record.save=false;
-            return;
-        }else{
-          target1.style.border='1px solid #d9d9d9';
-          $(target1).parents('td').css('padding-bottom',16);
-          target1.parentNode.nextSibling.style.display='none';
-          record.save=true;
-        };
+        //为空判断
        if(column!=='remark') {
          if(value.length===0){
            this.getDom(target1, '输入不能为空');
            record.save=false;
-         }else if (!/^[\w\-\*\.]+$/.test(value)) {
-            this.getDom(target1, '输入格式不正确');
-            record.save=false;
-          }else{
+          }else  if ( column==='version') {
+           if (value&&!/^[A-Z]$/.test(value)) {
+             this.getDom(target1, '版本号输入格式不正确');
+             record.save = false;
+           }
+           else {
+             target1.style.border = '1px solid #d9d9d9';
+             $(target1).parents('td').css('padding-bottom', 16);
+             target1.parentNode.nextSibling.style.display = 'none';
+             record.save = true;
+           }
+         }else if(column==='floor'){
+           if(!/^[1-9]+[\-]?[0-9]*$/.test(value)){
+             this.getDom(target1, '楼层输入格式不正确');
+             record.save = false;
+           }
+           else{
+             target1.style.border = '1px solid #d9d9d9';
+             $(target1).parents('td').css('padding-bottom', 16);
+             target1.parentNode.nextSibling.style.display = 'none';
+             record.save = true;
+           }
+         }
+          else{
             target1.style.border='1px solid #d9d9d9';
             $(target1).parents('td').css('padding-bottom',16);
             target1.parentNode.nextSibling.style.display='none';
             record.save=true;
           }
         };
+       //格式判断
 
          const newData = [...this.data];
          const target = newData.filter(item => key === item.cmptId)[0];
@@ -321,8 +339,6 @@
            target[column] = value;
            this.data = newData;
          }
-
-
       },
       edit(key,record) {
         record.save=true;
@@ -428,6 +444,7 @@
   }
   .title{
     font-weight:bold;
+    font-size:14px;
   }
 
 

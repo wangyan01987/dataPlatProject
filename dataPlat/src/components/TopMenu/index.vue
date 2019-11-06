@@ -1,8 +1,16 @@
 <template>
   <a-dropdown :trigger="['click']">
     <span class="ant-dropdown-link top-name" >
-     {{projectName}} <i class="iconfont icondown-fill1-xs"></i>
+      <a-tooltip>
+    <template slot="title">
+      {{projectName}}
+    </template>
+   <span>
+      {{projectName}}</span>
+  </a-tooltip>
+       <i class="iconfont icondown-fill1-xs"></i>
     </span>
+
   <a-menu slot="overlay" class="top-menu" >
     <a-menu-item v-for="item in menuList" :key="item.projectId" @click="changeProject(item.projectName)">
       <router-link :to='"/projectDetail/"+item.projectId+"/"+path' >
@@ -50,5 +58,14 @@
 }
   .top-menu a{
 
+  }
+  .top-name{
+    display:flex;
+  }
+  .top-name span{
+    max-width:154px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>
