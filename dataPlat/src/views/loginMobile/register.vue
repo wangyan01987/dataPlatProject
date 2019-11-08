@@ -3,32 +3,32 @@
     <a-form :form="formData">
      <div v-show="dataflag==='000'">
        <a-form-item >
-         <a-input placeholder="请输入姓名"
+         <a-input placeholder="请输入姓名"  size="large"
                   v-decorator="[ 'username',
             {rules: [{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['blur']}
         ]">
            <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
          </a-input>
        </a-form-item>
-       <a-form-item  :class="{'has-error':phoneErr}">
-         <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
+       <a-form-item  :class="{'ant-form-item-with-help':phoneErr}">
+         <a-input placeholder="请输入手机号"   size="large"  v-decorator="['phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}]">
            <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
          </a-input>
-         <p class="has-error">{{phoneErr}}</p>
+         <p class="has-error" v-show="phoneErr">{{phoneErr}}</p>
        </a-form-item>
        <a-form-item>
          <a-row :gutter="8">
            <a-col :span="15">
-             <a-input placeholder="请输入验证码" id="success"   v-decorator="[
+             <a-input placeholder="请输入验证码" id="success"  size="large"   v-decorator="[
           'code',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
                <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
              </a-input>
            </a-col>
-           <a-col :span="8">
-             <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;">{{codeText}}</a-button>
+           <a-col :span="9">
+             <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;font-size:16px;width:100%">{{codeText}}</a-button>
            </a-col>
          </a-row>
        </a-form-item>
@@ -48,18 +48,17 @@
                {{ email }}
              </a-select-option>
            </template>
-
-           <a-input placeholder="请输入邮箱地址（选填）" >
+           <a-input placeholder="请输入邮箱地址（选填）"  size="large" >
              <img slot="prefix" src="../../assets/images/youxiang@2x.png" style="width:14px"/>
            </a-input>
          </a-auto-complete>
        </a-form-item>
-       <a-form-item >
+       <a-form-item style="font-size:12px;">
          <a-checkbox v-decorator="['agreement', {valuePropName: 'checked',rules: [{
               validator: checkAgreeMent,
             }]}]">
            已阅读并同意
-           <a  href="javascript:void(0)"  @click="visible=true" style="color:#1890ff">
+           <a  href="javascript:void(0)"  @click="visible=true" style="color:#1890ff;">
              PST及平台服务协议
            </a>
          </a-checkbox>
@@ -85,6 +84,7 @@
         <a-form-item>
           <a-input
             placeholder="请输入密码"
+            size="large"
             v-decorator="[
           'password',
           {
@@ -100,10 +100,11 @@
             <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
             <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
           </a-input>
-          <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
+          <p class="small-size"><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;font-size:12px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
         </a-form-item>
         <a-form-item>
           <a-input
+            size="large"
             placeholder="请再次输入密码"
             v-decorator="[
           'repassword',
@@ -120,7 +121,7 @@
             <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype2='text'"  /></a>
             <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype2='password'"  /></a>
           </a-input>
-           <p class="has-error">{{errorMsg}}</p>
+           <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
         </a-form-item>
       </div>
       <a-form-item style="margin-bottom: 0" >
@@ -229,7 +230,6 @@
       handleSubmit(val) {
          if(!val){
            this.formData.validateFields(['username','phoneNumber','code','email','agreement'],{firstFields:['phoneNumber']},(err, value) => {
-
              if (err) {
                return;
              }
@@ -259,6 +259,7 @@
                  }
                  else{
                  this.errorMsg=res.msg;
+                   this.dataflag='111';
                  };
                })
              }
@@ -280,7 +281,6 @@
         this.mobile=null;
         this.phoneErr='';
         if(!value){
-
           callback('请输入手机号');
         }
         else {
@@ -314,15 +314,15 @@
        callback('请获取正确的验证码');
                }
      else {
-
-        await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
-          res=res.data;
-          if(res.code==='001'){
-            callback();
-          }else{
-            callback(res.msg);
-          }
-        })
+           callback();
+        // await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
+        //   res=res.data;
+        //   if(res.code==='001'){
+        //     callback();
+        //   }else{
+        //     callback(res.msg);
+        //   }
+        // })
         }
       },
       validPass(rule, value, callback){

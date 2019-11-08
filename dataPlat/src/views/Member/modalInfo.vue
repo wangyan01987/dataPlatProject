@@ -22,11 +22,11 @@
     <div class="item-body">
       <div class="item-title" v-if="dataflag==='001'">
         <p>通过邮箱邀请项目组成员</p>
-        <p >今日可邀请次数{{mobilelimitNumber}}</p>
+        <p >今日可邀请次数{{emailLimitNum}}</p>
       </div>
       <div class="item-title" v-else>
         <p>通过手机号邀请项目组成员</p>
-        <p >今日可邀请次数{{emailLimitNum}}</p>
+        <p >今日可邀请次数 {{mobilelimitNumber}}</p>
       </div>
       <div>
         <p class="action" v-if="dataflag==='001'"><span @click="toPhone" >手机号邀请</span><span @click="toUrl">链接邀请</span></p>
@@ -34,7 +34,7 @@
       </div>
     </div>
     <div class="item-info" >
-      <add-info  ref="mobileInfo" :dataflag="dataflag" :key="dataflag"></add-info>
+      <add-info  ref="mobileInfo" :dataflag="dataflag" :key="dataflag" @stateCount="changeCount" :emailLimitNum="emailLimitNum" :mobilelimitNumber="mobilelimitNumber"></add-info>
     </div>
 
     <div class="item-info">
@@ -60,6 +60,17 @@
           }
       },
       methods:{
+        changeCount(val){
+          if(this.dataflag==='001'){
+            //邮箱
+            this.emailLimitNum=this.emailLimitNum-val;
+            console.log(this.emailLimitNum)
+
+          }
+          else if(this.dataflag==='002'){
+            this.mobilelimitNumber=this.mobilelimitNumber-val;
+          }
+        },
           copyUrl(data){
             let url = data;
             let oInput = document.createElement('input');

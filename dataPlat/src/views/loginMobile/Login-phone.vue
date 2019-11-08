@@ -22,7 +22,7 @@
             </a-input>
           </a-col>
           <a-col :span="8">
-           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px">{{codeText}}</a-button>
+           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px;font-size:16px;">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
@@ -168,6 +168,7 @@
               this.$store.commit('setLogin',true);
               this.$store.commit('setPhone',fieldsValue.phoneNumber);
               let code=this.$route.query.code;
+              let msg=this.$route.query.msg;
               if(code){
                 //解析code
                 this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
@@ -188,6 +189,9 @@
                   }
 
                 });
+              }
+              else if(msg){
+                this.$router.push('/joinSuccesstext');
               }
               else{
                 //跳转到主页

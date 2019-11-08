@@ -1,6 +1,12 @@
 .mobile .ant-row.ant-form-item{
   /*//margin-top:6.8%;*/
 }
+@media screen and (max-width: 750px){
+  .ant-tabs-tab{
+    font-size:16px;
+  }
+}
+
 .mobile .ant-form-item:not(.ant-form-item-with-help){
   margin-bottom: 24px;
 }
@@ -9,7 +15,11 @@
   color:red;
   margin-top:5px;
 }
-
+.ant-btn[disabled]{
+  color: rgba(0, 0, 0, 0.65);
+  background-color: #fff;
+  border-color: #d9d9d9;
+}
 @media screen and (max-width: 360px) {
   .mobile .register .ant-form-item{
     margin-bottom: 12px;

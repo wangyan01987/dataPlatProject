@@ -1,10 +1,12 @@
 <template>
   <div class="content-box">
-
     <div class="box-item" v-show="flag==='001'">
       <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;"/><span style="margin-left:10px;font-weight: bold">已成功加入项目</span></p>
       <p class="project-content">{{projectName}}</p>
       <p class="action">您可以前往网页继续协作</p>
+    </div>
+    <div  class="box-item-error" v-show="flag==='002'">
+      <p style="font-size:18px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:24px;margin-right:10px;"/>{{errorMsg}}</p>
     </div>
     <div class="box-item" v-show="flag==='000'">
       <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;fontSize:24px;"/><span style="margin-left:10px;font-weight: bold">登录成功</span></p>
@@ -22,6 +24,7 @@
         projectName:'',
         projectId:'',
         flag:'',
+        errorMsg:''
       }
     },
     methods:{
@@ -33,16 +36,25 @@
     mounted(){
       //获取参数
       let code=this.$route.query.code;
+      let msg=this.$route.query.msg;
       if(code){
         this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
           res=res.data;
+          console.log(res.code)
           if(res.code==='001'){
             this.projectName=res.data.projectName;
             this.projectId=res.data.projectId;
             this.flag='001'
+          }else if(res.code==='002'){
+            this.flag='002';
+            this.errorMsg=res.msg;
           }
 
         });
+      }
+      else if(msg){
+        this.flag='001';
+
       }
       else{
         this.flag='000';
@@ -92,6 +104,14 @@
     letter-spacing: 0px;
     color: rgba(0, 0, 0, 0.65);
 
+  }
+  .box-item-error{
+     height:3.6rem;
+    background-color: #fff;
+    margin: 20% auto;
+    line-height: 3.6rem;
+    width:90%;
+    border:none;
   }
 
 </style>

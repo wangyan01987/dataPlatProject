@@ -12,7 +12,8 @@
               <a-button type="primary" style="margin-left:57px" @click="updateBom">刷新BOM</a-button>
         </div>
        <div class="bom-item-body">
-         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :pagination="pagination" :locale="{emptyText: '暂无数据'}" >
+         <a-table :columns="columns" :dataSource="data" :loading="loading"  :rowKey='getKey' :customRow="click" style="cursor: pointer"
+                  :pagination="pagination" :locale="{emptyText: '暂无数据'}" >
            <template
              v-for="col in ['version', 'floor', 'prodId','remark']"
              :slot="col"
@@ -40,11 +41,11 @@
            </template>
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
-        <span v-if="record.editable">
+        <span v-if="record.editable" @click="$event.stopPropagation()" class="action-box">
              <a @click="() => save(record.cmptId,record)"><i class="iconfont iconbaocun"  /></a>
             <a><i class="iconfont iconjianqu"  @click="cancel(record.cmptId)"/></a>
         </span>
-               <span v-else>
+               <span v-else class="action-box" @click="$event.stopPropagation()">
                  <a @click="() => edit(record.cmptId,record)">
                    <i class="iconfont iconbianji"  /></a>
 
@@ -179,6 +180,23 @@
          case 'remark':return 150;
        };
      },
+      click(record,index){
+
+        let self=this;
+        return{
+          props:{
+            style:'cursor:pointer'
+          },
+          on:{
+            click(){
+              //
+              if(!record.editable){
+                self.goDetail(record);
+              }
+            }
+          }
+        }
+      },
       updateBom(){
         this.prodId='';
         this.version='';
@@ -292,7 +310,7 @@
         target1.style.border='1px solid red';
         target1.parentNode.nextSibling.style.display='block';
         $(target1).parent().siblings('.has-error').text(msg);
-        $(target1).parents('td').css('padding-bottom',0);
+        // $(target1).parents('td').css('padding-bottom',0);
       },
      async handleChange(value, key, column,target1,record) {
         record.save=true;
@@ -445,6 +463,15 @@
   .title{
     font-weight:bold;
     font-size:14px;
+  }
+  .action-box a{
+    margin-right:24px;
+  }
+  .has-error{
+    line-height:1.5;
+    margin-top:3px;
+    height:0;
+
   }
 
 

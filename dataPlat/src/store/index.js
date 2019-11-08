@@ -13,7 +13,8 @@ const store=new Vuex.Store({
        menuList:[],
        userName:"",
        record:{},
-        userId:''
+        userId:'',
+    projectUserId:''
   },
   mutations:{
        setLogin(state,val){
@@ -36,6 +37,9 @@ const store=new Vuex.Store({
     },
     setUserId(state,val){
          state.userId=val;
+    },
+    setprojectUserId(state,val){
+          state.projectUserId=val;
     }
   }
 

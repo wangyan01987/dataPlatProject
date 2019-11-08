@@ -55,14 +55,14 @@
     computed:{
     },
     watch:{
-        mobile(val){
-           if(val){
-             this.initData()
-           }
-           else{
-
-           }
+      mobile(val){
+        if(val&&isOnlyMobile(val)&&!this.timer){
+          this.initData();
         }
+        else{
+          this.resetData();
+        }
+      }
     },
     methods:{
       initData(){
@@ -91,6 +91,7 @@
             this.$message.error(res.msg);
           }
         });
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -148,6 +149,7 @@
           this.$ajax('loginbycaptcha','POST',obj,'form').then(res=>{
             res=res.data;
                       if(res.code==='001'){
+                        let msg=this.$route.query.msg;
                         this.$message.success('登录成功',5);
                         this.$store.commit('setLogin',true);
                         this.$store.commit('setPhone',fieldsValue.phoneNumber);
@@ -172,6 +174,9 @@
                             }
 
                           });
+                        }
+                        else if(msg){
+                          this.$router.push('/joinSuccesstext');
                         }
                         else{
                           //跳转到主页

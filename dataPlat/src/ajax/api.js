@@ -61,7 +61,7 @@ function getApi(dataType){
 
     },
     error => {
-      message.error('系统错误，请稍后重试',5);
+     // message.error('系统错误，请稍后重试',5);
       return Promise.reject(error)
     }
   );

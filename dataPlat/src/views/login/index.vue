@@ -1,18 +1,20 @@
 <template>
  <div class="container">
     <div class="box-top">
-      <p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>
-      <p class="action"><span>客户端下载</span>|<span>关于PST</span>|<span>联系我们</span></p>
+      <!--<p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>-->
+      <p class="action"> <a  style="margin-right: 10px;text-decoration: none;color:#fff"
+                             href="http://pstbj.com:6041/bomextract/bom/download?code=khd1" download="客户端软件">客户端下载</a></p>
+
     </div>
-   <p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>
+   <!--<p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>-->
    <div class="box-body">
         <div class="login-box">
-          <a-tabs defaultActiveKey="1" @change="callback" :tabBarGutter="44">
-            <a-tab-pane tab="登录" key="1">
+          <a-tabs defaultActiveKey="1" :activeKey="key" @change="callback" :tabBarGutter="44">
+            <a-tab-pane tab="登录" key="1" >
               <login v-if="loginType==='001'"></login>
               <loginmobile v-if="loginType==='002'"></loginmobile>
             </a-tab-pane>
-            <a-tab-pane tab="注册" key="2" ><register v-if="loginType==='000'" @gologin=""></register></a-tab-pane>
+            <a-tab-pane tab="注册" key="2" ><register v-if="loginType==='000'" @gologin="gologin"></register></a-tab-pane>
           </a-tabs>
           <div class="action-box" v-if="loginType==='001'||loginType==='002'">
             <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
@@ -32,11 +34,11 @@
    >
      <forgetpsd @success="visible=false"></forgetpsd>
    </a-modal>
-   <div class="box-foot">
-     <p>
-       copyright@2019平行系统（北京）信息技术有限公司
-     </p>
-   </div>
+   <!--<div class="box-foot">-->
+     <!--<p>-->
+       <!--copyright@2019平行系统（北京）信息技术有限公司-->
+     <!--</p>-->
+   <!--</div>-->
  </div>
 </template>
 
@@ -54,18 +56,24 @@
               //002  快速登陆
               //000 注册
               loginType:'001',
+              key:'1',
               visible:false
             }
       },
       mounted(){
-         // this.$store.commit('setLogin',true);
-         //  console.log(this.$store.state.isLogin)
+
       },
       methods:{
+          gologin(){
+            this.key='1';
+            this.loginType='001';
+          },
           callback(val){
              if(val==='2'){
+               this.key='2';
                this.loginType='000'
              }else{
+               this.key='1';
                this.loginType='001';
              }
           },
@@ -83,7 +91,7 @@
     margin-bottom: 0;
   }
  .container{
-   background:url("../../assets/images/bg-dl@2x.png") fixed center;
+   background:url("../../assets/images/bg-dl.png") no-repeat center ;
    background-size:cover;
    height:100%;
    width:100%;
@@ -95,8 +103,8 @@
     padding-top:0.22rem;
     padding-right:0.7rem;
     color: #ffffff;
-    justify-content: space-between;
-    z-index: 1000;
+    justify-content: flex-end;
+    z-index: 10;
   }
   .logo{
 
@@ -111,6 +119,8 @@
   .action{
     font-size:0.16rem;
     line-height: 0.33rem;
+    cursor: pointer;
+    z-index: 22;
   }
   .action span{
     padding:0 0.1rem;

@@ -18,6 +18,18 @@ Vue.prototype.$ajax=$ajax;
 Vue.config.productionTip = false;
 Vue.use(ant);
 /* eslint-disable no-new */
+//自定义指令
+ Vue.directive('bury',{
+   bind:function(el,binding){
+     el.addEventListener('click',()=>{
+       const val=binding.value;
+       $ajax('buriedpoint/web/visit','POST',val).then(res=>{
+         console.log('------')
+       })
+     });
+
+   }
+ });
 new Vue({
   el: '#app',
   router,

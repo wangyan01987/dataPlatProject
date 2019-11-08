@@ -67,7 +67,7 @@
          </a-form-item>
          <a-form-item  label="邮箱" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol1">
            <a-row :gutter="4">
-             <a-col :span="18">
+             <a-col :span="17">
                <a-auto-complete
                  v-if="isEditEmail"
                  v-decorator="[
@@ -95,9 +95,9 @@
                <span  v-show="!isEditEmail" >{{personInfo.email?personInfo.email:'未绑定'}}</span>
                <span class="action" v-show="!isEditEmail"  @click="isEditEmail=true">修改</span>
              </a-col>
-             <a-col :span="6">
+             <a-col :span="7">
                <span  class="action"  v-show="isEditEmail" @click="isEditEmail=false">取消</span>
-               <span  class="action"  v-show="isEditEmail" @click="modifyEmail">确定</span>
+               <span  class="action"  v-show="isEditEmail" @click="modifyEmail" style="margin-left:24px">确定</span>
              </a-col>
            </a-row>
          </a-form-item>
@@ -311,10 +311,13 @@ padding-top:24px;
     padding:0.16rem 0.24rem;
   }
   .action{
+    margin-left:32px;
+    font-size:14px;
    color: #1890ff;
     cursor:pointer;
   }
   .editor{
+    font-size:14px;
     float:right;
     cursor:pointer;
     color: #1890ff;

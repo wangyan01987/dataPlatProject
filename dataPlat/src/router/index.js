@@ -14,6 +14,12 @@ const router= new Router({
       component:()=>import('@/views/invite/joinSuccessMobile.vue')
     },
     {
+      path:'/joinSuccesstext',
+      name:'joinSuccesstext',
+      component:()=>import('@/views/invite/joinSuccesstext.vue')
+
+    },
+    {
        path:'/joinSuccess',
       name:'joinSuccess',
      component:()=>import('@/views/invite/joinSuccess.vue')
@@ -96,25 +102,86 @@ import  store from '../store';
   router.beforeEach((to,from,next)=>{
   let client=document.body.clientWidth;
   let token=localStorage.getItem('token');
-  if (to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile'&&!token && to.path !== '/login' ) {
-         if(client<750){
-           next({path:'/loginMobile' })
-         }
-         else if(to.name==='home'&&to.query.token){
-          // store.commit('setLogin',true);
-           localStorage.setItem('token',to.query.token);
-           next();
-         }
-         else{
-           next('/login');
-         }
-      } else {
-      if(to.name==='home'&&to.query.token){
-         localStorage.setItem('token',to.query.token);
-         next();
-       }
+  //未登录
+  // if (to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile'&&!token && to.path !== '/login' ) {
+  //   console.log('--------------')
+  //        if(client<750){
+  //          next({path:'/loginMobile' })
+  //        }
+  //        else if(to.name==='home'&&to.query.token){
+  //          localStorage.setItem('token',to.query.token);
+  //          next('/home');
+  //        }
+  //        else{
+  //          next('/login');
+  //        }
+  //     } else if(token&&to.name!=='joinSuccessMobile'){
+  //   console.log('22222222222222222222')
+  //       if(client<750){
+  //          next({path:'/joinSuccessMobile' })
+  //         }
+  //         else{
+  //         next();
+  //         }
+  //     }
+  //     else {
+  //       console.log('3333333333333333333')
+  //     if(to.name==='home'&&to.query.token){
+  //        localStorage.setItem('token',to.query.token);
+  //        next();
+  //      } else{
+  //         next();
+  //        }
+  //
+  //     }
+      if(to.name==='invite' || to.name === 'joinSuccess'){
         next();
+      }else{
+        if(!token){
+          //未登录
+          if(client<750){
+            if(to.name==='loginMobile'){
+              next();
+            }
+            else{
+              next('/loginMobile')
+            }
+          }else{
+            //web端
+            if(to.name==='login'||to.name==='home'&&to.query.token){
+              if(to.query.token){
+                localStorage.setItem('token',to.query.token);
+              }
+              next();
+            }
+            else{
+              next('/login')
+            }
+          }
+        }else if(token){
+          //已登录
+          if(client<750){
+            if(to.name==='joinSuccessMobile'){
+              next();
+            }else if(to.name==='joinSuccesstext'){
+              next();
+            }else{
+              next('/joinSuccessMobile');
+            }
+
+          }else{
+            //web端
+            if(to.name==='home'&&to.query.token){
+                       localStorage.setItem('token',to.query.token);
+                       next('/home');
+                     }
+                     else{
+                        next();
+                     }
+          }
+        }
       }
+
 });
 export default router;
 

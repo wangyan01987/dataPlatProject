@@ -4,7 +4,7 @@
     <div class="spin-content">
       <a-form :form="formData">
         <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-input maxlength="51"  placeholder="请输入项目名称，支持英文、数字、符号，字数小于50" v-decorator="[ 'projectName', {validateTrigger:['blur'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
+          <a-input maxlength="50"  placeholder="请输入项目名称，支持英文、数字、符号，字数小于50" v-decorator="[ 'projectName', {validateTrigger:['blur'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2" ></a-input>
           <span v-show="dataflag===0">{{obj.projectName}}</span>
         </a-form-item>
@@ -27,7 +27,9 @@
           <a-row :gutter="4">
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select @select="(e)=>{
+                <a-select
+                  @change="handleprovince"
+                  @select="(e)=>{
                 provincehandleChange(e,'001')
                 }" placeholder="省市" v-decorator="['provinceId']"  :allowClear=true>
                   <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
@@ -37,7 +39,9 @@
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
-                <a-select @select="(value)=>{handleChange(value,'001')}" placeholder="城市" v-decorator="['cityId']"   :allowClear=true>
+                <a-select @select="(value)=>{handleChange(value,'001')}"
+                          @change="handleCity"
+                          placeholder="城市" v-decorator="['cityId']"   :allowClear=true>
                   <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -53,7 +57,7 @@
             </a-col>
           </a-row>
           <a-form-item class="special">
-            <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
+            <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="50"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
             <span v-else>{{obj.proLocal}}</span>
           </a-form-item>
         </a-form-item>
@@ -189,6 +193,21 @@
           }
         }
       },
+      handleprovince(val){
+        if(!val){
+          //清空市区
+          this.districtarr=[];
+          this.cityarr=[];
+          this.formData.setFieldsValue({'cityId':undefined});
+          this.formData.setFieldsValue({'districtId':undefined});
+
+        }
+      },
+      handleCity(val){
+        //清空区
+        this.districtarr=[];
+        this.formData.setFieldsValue({'districtId':undefined});
+      },
       randomImg(item){
         //产生随机数
         let key= Math.floor(Math.random()*5);
@@ -207,9 +226,23 @@
             obj=fieldsValue;
              url='bomextract/project/addproject';
              msg='创建';
+            //设置随机图片
+            this.randomImg(obj);
           }
           else{
             obj=fieldsValue;
+            if(!fieldsValue.provinceId){
+              obj.provinceId=null;
+              obj.cityId=null;
+              obj.districtId=null;
+            }
+            else if(!fieldsValue.cityId){
+              obj.cityId=null;
+              obj.districtId=null;
+            }
+            else if(!fieldsValue.districtId){
+              obj.districtId=null;
+            }
             obj.projectId=this.projectId;
                url='bomextract/project/modifyproject';
                msg='编辑';
@@ -217,8 +250,8 @@
          if(fieldsValue['proTime']){
            obj.proTime=fieldsValue['proTime'].format('YYYY-MM-DD');
          };
-         //设置随机图片
-          this.randomImg(obj);
+
+
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){

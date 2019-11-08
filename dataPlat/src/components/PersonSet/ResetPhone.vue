@@ -1,14 +1,16 @@
 <template>
   <div class="register">
     <a-form :form="formData">
-      <a-form-item >
+      <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-input placeholder="请输入手机号"  autocomplete="off"  v-decorator="[ 'phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" :src='require("../../assets/images/iphone@2x.png")' style="width:14px"/>
+
         </a-input>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
-      <a-form-item>
+      <a-form-item :class="{'ant-form-item-with-help':allError}">
         <a-row :gutter="8">
           <a-col :span="18">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[ 'code',{rules: [{validator:assignCode}],validateTrigger:['blur']}]" autocomplete="off">
@@ -16,9 +18,10 @@
             </a-input>
           </a-col>
           <a-col :span="6">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="width:100%">{{codeText}}</a-button>
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="width:100%;height:40px;">{{codeText}}</a-button>
           </a-col>
         </a-row>
+        <p class="has-error" v-show="allError">{{allError}}</p>
       </a-form-item>
 
     </a-form>
@@ -37,6 +40,10 @@
         btnabled:true,
         btnType:'default',
         autoCompleteResult:'',
+        errorMsg:'',
+        isCount:false,
+        timer:'',
+        allError:''
       }
 
     },
@@ -58,10 +65,12 @@
           if(res.code==='001'){
             this.$message.success('发送成功');
           }
-          else{
-            this.$message.error(res.msg);
+          else if(res.code==='006'){
+            this.errorMsg=res.msg;
           }
+
         });
+        this.timer='';
         const TIME_COUNT = 60;
         if (!this.timer) {
           this.count = TIME_COUNT;
@@ -72,6 +81,7 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
+              clearTimeout(this.timer);
               this.initData()
             }
           }, 1000)
@@ -89,22 +99,21 @@
             res = res.data;
             if(res.code==='001'){
                   // 更新数据
+              this.allError='';
                   this.$message.success('修改成功！');
                   //
                   this.$parent.phoneNumber=fieldsValue.phoneNumber;
                   this.$parent.visible=false;
                 }
                 else{
-                  this.$message.error(res.msg);
-                }
+                  this.allError=res.msg;
+                  }
 
         })
         })
       },
-      cancel(){
-
-          },
       checkAccount(rule, value, callback){
+        this.errorMsg='';
         if(!value){
           callback('请输入手机号')
         }
@@ -113,7 +122,10 @@
             callback('手机号输入格式不正确')
           }else{
             callback();
+          if(!this.timer){
             this.initData();
+          }
+
           }
         }
       },
@@ -159,7 +171,7 @@
   a {
     color: #42b983;
   }
-  .register p{
+  .register p:not(.has-error){
     margin:0;
     line-height:0;
   }

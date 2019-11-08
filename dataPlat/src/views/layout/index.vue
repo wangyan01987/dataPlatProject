@@ -145,7 +145,6 @@
               if(res.code==='999'){
                 this.$router.push('/login');
                 // this.$store.commit('setLogin',false);
-
                  }
             });
         }

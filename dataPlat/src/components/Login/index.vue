@@ -155,6 +155,7 @@
                   this.$store.commit('setPhone',fieldsValue.username);
                   //判断是否需要跳到joinSuccess
                   let code=this.$route.query.code;
+                  let msg=this.$route.query.msg;
                   if(code){
                     //解析code
                     this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
@@ -176,9 +177,14 @@
 
                     });
                   }
+                  else if(msg){
+                    this.$router.push('/joinSuccesstext');
+                  }
                   else{
                     //跳转到主页
-                    this.$router.push('/home');
+                  this.$router.push('/home');
+
+
                   }
                 }
                 else{
@@ -188,9 +194,6 @@
           })
         })
       },
-      // handleChange(val){
-      //   console.log(val)
-      // },
       setMsg(obj){
         if(obj instanceof Object){
           for(var item in obj){

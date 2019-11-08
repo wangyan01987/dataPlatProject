@@ -1,5 +1,5 @@
 <template>
-  <div class="register">
+  <div class="resetPsd register">
     <a-form :form="formData">
       <a-form-item >
         <a-input placeholder="请输入手机号"   v-decorator="[
@@ -9,7 +9,7 @@
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-      <a-form-item>
+      <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-row :gutter="8">
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
@@ -20,9 +20,10 @@
             </a-input>
           </a-col>
           <a-col :span="8">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" >{{codeText}}</a-button>
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;width:100%;">{{codeText}}</a-button>
           </a-col>
         </a-row>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -42,7 +43,7 @@
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
         </a-input>
-        <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
+        <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;margin-top:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -85,6 +86,7 @@
         mobile:'',
         psdtype:'password',
         psdtype1:'password',
+        errorMsg:''
       }
 
     },
@@ -112,6 +114,10 @@
         //获取验证码
         //发送请求
         let mobile= this.formData.getFieldValue('phoneNumber');
+        if(!mobile){
+          return;
+        };
+        this.errorMsg='';
         this.$ajax('sendsms','POST',{type:'modifyPwd',phoneNumber:mobile}).then(res=>{
           res=res.data;
           if(res.code==='001'){
@@ -122,6 +128,7 @@
           }
         });
         const TIME_COUNT = 60;
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -131,11 +138,11 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
+              clearTimeout(this.timer);
               this.initData()
             }
           }, 1000)
         }
-
       },
 
       handleSubmit  (e) {
@@ -150,11 +157,15 @@
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
+              this.errorMsg='';
                 this.$message.success('修改成功',5);
                 this.$emit('success');
             }
             else{
-              this.$message.error(res.msg);
+               if(res.code==='008'){
+                 this.errorMsg=res.msg;
+               }
+             // this.$message.error(res.msg);
             }
           })
         })
@@ -183,6 +194,7 @@
         }
       },
       assignCode(rule, value, callback){
+        this.errorMsg='';
         if(!value){
           callback('请输入验证码');
           //验证码验证
@@ -247,7 +259,7 @@
   a {
     color: #42b983;
   }
-  .register p{
+  .register p:not(.has-error){
     margin:0;
     line-height:0;
   }

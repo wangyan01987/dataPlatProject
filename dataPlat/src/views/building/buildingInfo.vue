@@ -25,7 +25,7 @@
         placeholder="请输入建筑层数"
         v-if="dataflag!=='000'"
         v-decorator="[ 'floorNum', {rules:
-         [{pattern:/^[1-9][0-9]{0,14}$/,message:'建筑层数输入格式为1-15位数字'}]}
+         [{pattern:/^[1-9][0-9]{0,14}$/,message:'建筑层数输入格式为1-15位数字'}],validateTrigger:['blur']}
         ]"/>
       <span v-else>{{buildingInfo.floorNum}}</span>
     </a-form-item>
@@ -42,7 +42,7 @@
         placeholder="请输入预制层数"
         v-if="dataflag!=='000'"
         v-decorator="[ 'preFloorNum', {rules:
-         [{pattern:/^[1-9][0-9]{0,14}$/,message:'预制层数输入格式为1-15位数字'}]}
+         [{pattern:/^[1-9][0-9]{0,14}$/,message:'预制层数输入格式为1-15位数字'}],validateTrigger:['blur']}
         ]"/>
       <span v-else>{{buildingInfo.preFloorNum}}</span>
     </a-form-item>
@@ -54,9 +54,9 @@
         style="width:150px;"
         v-if="dataflag!=='000'"
         v-decorator="['quakeGrade']"
-
+         :allowClear="true"
         placeholder="请选择抗震等级"
-        @change="handleSelectChange"
+        @change="handleSelectChangeLevel"
       >
         <a-select-option :value=1>
           一级
@@ -88,7 +88,7 @@
         placeholder="单层建筑面积"
         v-if="dataflag!=='000'"
         v-decorator="[ 'monolayerArea', {rules:
-         [{pattern:/^([1-9][0-9]{0,14})|([1-9][0-9]{0,14}[\.][0-9]{1,2})|([0][\.][0-9]{0,2})$/,message:'单层建筑面积输入格式为1-15位数字,小数点后两位'}]}
+         [{pattern:/^([0-9][0-9]{0,14}[\.]?[0-9]{1,2})$/,message:'单层建筑面积输入格式为1-15位数字,小数点后两位'}],validateTrigger:['blur']}
         ]"/>m²</div>
       <span v-else>{{buildingInfo.monolayerArea}}m²</span>
     </a-form-item>
@@ -313,6 +313,7 @@ let a=0;
         });
         this.form.validateFields((err, values) => {
           if (!err&&this.isSubmit) {
+
             let obj=Object.assign({},values);
             obj.projectId=this.$route.params.projectId;
             let data=JSON.parse(JSON.stringify(this.dataSource));
@@ -321,6 +322,10 @@ let a=0;
               delete item.component;
               return item;
             });
+            if(!this.form.getFieldValue('quakeGrade')){
+              obj.quakeGrade=null;
+            }
+
             obj.cmptType=newArr;
             var url = "";let msg;
             if(this.dataflag==='002'){
@@ -348,7 +353,22 @@ let a=0;
         });
 
       },
+      handleSelectChangeLevel(val){
+     if(!val){
+       this.form.setFieldsValue({'quakeGrade':0});
+       console.log(this.form.getFieldValue('quakeGrade'))
+
+     }
+        // //console.log(val)
+        // if(!val){
+        //   console.log(val)
+        //   val='';
+        //
+        // };
+
+      },
       handleSelectChange(value,key,column){
+
         const newData = [...this.dataSource];
         const  target= newData.filter(item=>item.id===key)[0];
         if(target){
@@ -377,19 +397,25 @@ let a=0;
        },
       buildingDetails(record){
         // 单体详情
+        let quake;
         this.buildingInfo={...record};
         for(let item in this.buildingInfo){
              if(!this.buildingInfo[item]){
                this.buildingInfo[item]='---';
              }
         };
+        if(!record.quakeGrade){
+          quake=undefined;
+        }else{
+          quake=record.quakeGrade;
+        }
         let copyRecord={
          // relationfloor:arr,
           floorName:record.floorName,
           floorCode:record.floorCode,
           floorNum:record.floorNum,
           preFloorNum:record.preFloorNum,
-          quakeGrade:record.quakeGrade,
+          quakeGrade:quake,
           monolayerArea:record.monolayerArea,
           remark:record.remark
           };

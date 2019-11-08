@@ -113,28 +113,28 @@
   .container{
     height:100%;
     width:100%;
-    background: url("./image/bg-h5.png") no-repeat  ;
+    background: url("./image/bg-h5@2x.jpg") no-repeat  ;
     background-size:cover;
     position:relative;
   }
-  @media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){
-    .container{
-      background: url("./image/bg-h5@3x.png") no-repeat;
-      height:100%;
-      width:100%;
-      background-size:cover;
-      position:relative;
-    }
-  }
-  @media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2){
-    .container{
-      background: url("./image/bg-h5@2x.png") no-repeat  ;
-      height:100%;
-      width:100%;
-      background-size:cover;
-      position:relative;
-    }
-  }
+  /*@media (-webkit-min-device-pixel-ratio: 3),(min-device-pixel-ratio: 3){*/
+    /*.container{*/
+      /*background: url("./image/bg-h5@3x.png") no-repeat;*/
+      /*height:100%;*/
+      /*width:100%;*/
+      /*background-size:cover;*/
+      /*position:relative;*/
+    /*}*/
+  /*}*/
+  /*@media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2){*/
+    /*.container{*/
+      /*background: url("./image/bg-h5@2x.jpg") no-repeat  ;*/
+      /*height:100%;*/
+      /*width:100%;*/
+      /*background-size:cover;*/
+      /*position:relative;*/
+    /*}*/
+  /*}*/
 
   .login-box{
     width: 9.1rem;

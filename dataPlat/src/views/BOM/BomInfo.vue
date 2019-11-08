@@ -47,7 +47,7 @@
         <a-table :columns="columsSource" :pagination="false" :dataSource="dataSource" :rowKey="record=>{record.matlId}">
           <template slot="barGrade" slot-scope="text,record,index">
             <div >
-              <a-select width="80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.matlId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
+              <a-select  v-show="record.matl1stName==='钢材类'"  width="80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.matlId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
                   <a-select-option  v-for="item in barGradeArr " :key="item" :value="item">{{item}}</a-select-option>
               </a-select>
               <template v-else>{{text?text:'---'}}</template>
@@ -72,11 +72,11 @@
             {{text?text:'---'}}
           </template>
           <template slot="allweight" slot-scope="text, record, index">
-            {{text?text:'---'}}kg
+            {{text?text:'---'}}{{record.allUnit}}
           </template>
           <template slot="amount" slot-scope="text, record, index">
             <div>
-              <a-input-number :min="0"
+              <a-input-number :min="0"     v-show="record.matl1stName!=='混凝土类'"
                               :max="Math.pow(10,6)-0.01"
                               :precision="2"
                               v-if="record.editable"
@@ -84,7 +84,7 @@
                               :value="text"
                               @change="value => handleChange(value, record.matlId,'amount','002')"
               />
-              <template v-else>{{text?text:'---'}}</template>根
+              <template v-else>{{text?text:'---'}}</template>{{record.unit}}
             </div>
           </template>
           <template slot="operation" slot-scope="text, record, index">
@@ -374,9 +374,7 @@
           const newData = [...this.dataSource];
           const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
-            delete target.editable;
-            this.dataSource = newData;
-            this.cacheData2 = newData.map(item => ({ ...item }));
+
             //保存物料信息
             let obj={
               materialId:target.matlId,
@@ -389,6 +387,12 @@
               res=res.data;
               if(res.code==='001'){
                 this.$message.success('修改成功',2);
+                if(res.data){
+                    target.allweight=res.data;
+                }
+                delete target.editable;
+                  this.dataSource = newData;
+                this.cacheData2 = newData.map(item => ({ ...item }));
               }
               else{
                 this.$message.error('修改失败',2);

@@ -3,7 +3,7 @@
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember" icon="plus">邀请新成员</a-button></p>
     <a-table  :columns="hasDelete?columns:columns1" :dataSource="dataSource" :loading="loading"  :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="text,record" slot="personImage">
-        <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1)}}</span>
+        <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1).toUpperCase()}}</span>
        <span v-else> ---</span>
         </a-avatar>
       </template>

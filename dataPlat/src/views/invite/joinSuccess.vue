@@ -1,18 +1,19 @@
 <template>
   <div class="content-box">
+    <p class="logo"><i class="iconfont icondaqwwwqziyuan"></i></p>
      <div class="box-item" v-show="flag==='000'">
           <p>
-            <a-icon type="exclamation-circle" theme="filled" style="color:greenyellow" />
+            <a-icon type="info-circle" theme="filled" style="color:#1890ff;font-size:14px;" />
               您还未登录，请先登录,3s后将跳转到登录页面！
           </p>
      </div>
     <div class="box-item" v-show="flag==='002'">
-      <p>
-        <a-icon type="close-circle" theme="filled" style="color:red;font-size: 14px"  />{{errorMsg}}
+      <p style="font-size:16px;">
+        <a-icon type="close-circle" theme="filled" style="color:red;font-size: 16px;margin-right:10px;"  />{{errorMsg}}
       </p>
     </div>
     <div class="box-item" v-show="flag==='001'">
-      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a"/>已成功加入项目</p>
+      <p class="title" ><a-icon type="check-circle" theme="filled" style="color:#52c41a;margin-right:10px;"/>已成功加入项目</p>
       <p class="project-content">{{projectName}}</p>
       <p><a-button type="primary" @click="goProject()">进入项目</a-button></p>
     </div>
@@ -40,18 +41,26 @@
       mounted(){
           //获取参数
         let code=this.$route.query.code;
-        if(!this.$store.state.isLogin&&code) {
+         let token=localStorage.getItem('token');
+        let client=document.body.clientWidth;
+        let toname;
+        if(client<750){
+          toname='loginMobile'
+        }
+        else{
+          toname='login';
+        }
+        if(!token&&code) {
           this.flag='000';
           setTimeout(() => {
             this.$router.push({
-              name: 'login',
+              name: toname,
               query: {code:code}
             });
-
           }, 3000);
           return;
         }
-        else if(code){
+        else if(token&&code){
           this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:code}).then(res=>{
              res=res.data;
              if(res.code==='001'){
@@ -59,16 +68,16 @@
                this.projectId=res.data.projectId;
                this.flag='001'
              }
+             else{
 
+               this.flag='002';
+               this.errorMsg=res.msg;
+             }
           });
-
-
-
         }
         else{
           this.$message.error('错误');
         }
-
           }
 
 

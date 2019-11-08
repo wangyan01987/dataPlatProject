@@ -9,8 +9,10 @@
     </div>
    <div>
    </div>
-   <a-anchor @click="goBom">
-     <a-anchor-link  :href="item"  v-for="item in dataList" :title="item" :key="item"  />
+   <a-anchor @click="goBom" class="anchor-box">
+     <a-anchor-link  :id="'anchor'+index" :href="item"  v-for="(item,index) in dataList" :title="item" :key="item"  :class="{'ant-anchor-link-active':index===0 }
+
+"/>
    </a-anchor>
       <span v-for="item in dataList" :id="item"></span>
  </div>
@@ -58,6 +60,12 @@
                     res=res.data;
                     if(res.code==='001'){
                         this.dataList=res.data;
+                         if(res.data.length>0){
+                           this.objType=res.data[0];
+                           this.$nextTick(function () {
+                             document.getElementById('anchor0').previousSibling.lastChild.style.cssText='top:10.5px;display:inline-block';
+                           })
+                         }
                     }
                })
           },
@@ -120,6 +128,9 @@
   .title{
     font-weight:bold;
     font-size:14px;
+  }
+  .anchor-box{
+    margin-top:24px;
   }
 
 </style>

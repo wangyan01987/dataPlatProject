@@ -1,5 +1,5 @@
 <template>
-  <div class="info-container">
+  <div class="info-container register">
     <div class="info-item">
       <p class="title"><span>修改密码</span></p>
       <div class="info-box">
@@ -36,7 +36,8 @@
               <a v-show="psdtype2==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype2='text'"  /></a>
               <a  v-show="psdtype2==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype2='password'"  /></a>
             </a-input>
-            <p style="margin:0;line-height:0"><a-icon type="exclamation-circle"  theme='filled' style="color:#1890ff" />6-16位字母、数字或符号组成，区分大小写</p>
+            <p style="margin:3px 0 0 0;line-height:0;font-size:12px;">
+              <a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
           <a-form-item>
             <a-input   maxlength="16"
@@ -57,10 +58,9 @@
               <a  v-show="psdtype3==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype3='password'"  /></a>
             </a-input>
           </a-form-item>
-          <div class="action-box">
+          <a-form-item>
             <a-button @click='submit' type="primary" style="width:100%">提交</a-button>
-          </div>
-
+          </a-form-item>
         </a-form>
       </div>
     </div>
@@ -144,18 +144,17 @@
             if (err) {
               return;
             };
-            fieldsValue.password=this.$md5(fieldsValue.password);
+            fieldsValue.newPassWord=this.$md5(fieldsValue.newPassWord);
+            fieldsValue.oldPassword=this.$md5(fieldsValue.oldPassword);
             delete fieldsValue.repassword;
             //提交表单
             this.$ajax('bomextract/user/modifypassword','POST',fieldsValue).then(res=>{
                 res=res.data;
                 if(res.code==='001'){
                   // 更新数据
-                  this.$message.success('修改成功！');
+                  this.$message.success('修改成功，请重新登录',5);
                   this.$store.state.isLogin=false;
                   this.$router.push('/login');
-                  this.$message.warning('请先登录');
-
                   // 重新登录
                 }
                 else{

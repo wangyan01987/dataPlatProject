@@ -4,7 +4,7 @@
     <a-spin size="large"  v-if="loaded"/>
     <div class="box">
           <div class="box-container">
-            <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName)">
+            <div class="box-wrapper" v-for="item in itemList" @click="goToDetail(item.projectId,item.projectName,item.projectUserId)">
               <div class="box-item">
                 <div class="item-img" >
                   <img   v-if="item.img"    :src="item.img" style="width:100%;height:100%;" />
@@ -17,7 +17,7 @@
                 </div>
                 <div class="editor-box">
                   <p class="editor" @click="$event.stopPropagation()" >
-                    <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)" /></a>
+                    <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)"  v-bury="buryObj"/></a>
                     <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)" v-show="item.isDelete" /></a>
                   </p>
                 </div>
@@ -43,17 +43,27 @@
 
 <script>
   import projectform from '@/components/ProjectForm'
-  let count=2;
+
     export default {
       name: "index",
       components:{projectform},
       data: function () {
+        let count=2;
+        let buryObj={
+             action:'actionEditProjectAtListPage',
+             user: this.$store.state.userId,
+            eventType:'buttonClick',
+           eventName:'editProjectAtListPage',
+          pageName:'项目列表页编辑',
+          terminal:'PC'
+        };
         return {
           propMsg:{
             dataflag:0,
-            projectId:''
+            projectId:'',
           },
           loaded:false,
+          count,
           imgList:[{
             src:require('../../assets/projectImg/001.jpg')
           },{
@@ -72,17 +82,21 @@
             },
             ],
           itemList: [{img:'',projectName:''}],
-          addItemList: []
+          addItemList: [],
+         buryObj
         }
       },
       methods: {
-        goToDetail(id,name){
+        goToDetail(id,name,userId){
+
           this.$router.push({name:'projectDetail',params:{projectId:id}});
            this.$store.commit('setProjectName',name);
+           this.$store.commit('setprojectUserId',userId);
+
         },
         loadItem() {
           //获取新的数据
-          this.getItem(count++).then(res=>{
+          this.getItem(this.count++).then(res=>{
             if(res.length!==0){
               this.addItemList= res;
               this.itemList=this.itemList.concat(this.addItemList);
@@ -168,16 +182,7 @@
          let arr5=res.slice(0,5);
          this.$store.commit('setMenuList',arr5);
        });
-        // //滑动加载
-        // var that = this;
-        // window.addEventListener("scroll", function () {
-        //   if (document.body.scrollHeight <= window.screen.height + document.body.scrollTop) {
-        //   //  that.loadItem();
-        //   }
-        //   else{
-        //
-        //   }
-        // })
+
 
       }
     }

@@ -21,7 +21,7 @@
                 <a-auto-complete  @search="handleSearch" placeholder="请输入邮箱" :max="30"
                                  v-decorator="[`names[${k}]`,
               {
-                validateTrigger:['change','blur'],
+                validateTrigger:['blur'],
                 rules:[{
                 required:true,
                 whitespace:true,
@@ -54,17 +54,25 @@
 
     export default {
         name: "addInfo",
-      props:['dataflag'],
+      props:['dataflag','emailLimitNum','mobileLimitNum'],
       data(){
         let id=1;
           return{
                id,
-            result:[]
+            result:[],
           }
       },
       computed:{
           flagName(){
             return  this.dataflag==='002'?'手机号':'邮箱';
+          },
+          limitNum() {
+            if (this.dataflag === '002') {
+              return this.mobileLimitNum;
+            }
+            else {
+              return this.emailLimitNum;
+            }
           }
       },
       methods:{
@@ -98,7 +106,7 @@
             }
             else{
               callback();
-              this.initData();
+
             }
           }
         },
@@ -111,7 +119,7 @@
               callback('手机号输入格式不正确')
             }else{
               callback();
-              this.initData();
+             // this.initData();
             }
           }
         },
@@ -129,17 +137,17 @@
         add(){
           const {form}=this;   //form=this.form
            const keys=form.getFieldValue('keys');
-           if(keys.length>=10){
+           if(keys.length>this.limitNum){
              this.$message.error(`当前页面有效${this.flagName}超出剩余额度`);
              return;
            }
            const nextKeys=keys.concat(++this.id);
-           console.log(nextKeys)
            form.setFieldsValue({
              keys:nextKeys
            });
         },
         handleSubmit (e) {
+
           this.form.validateFields((err, values) => {
             if (!err) {
                //发送邀请
@@ -151,7 +159,9 @@
                   url='bomextract/buildmember/inviteemail';
                   this.$ajax(url,'POST',{link:link,projectName:projectName,emails:data}).then(res=>{
                          if(res.data.code==='001'){
+                           let count=data.length;
                            this.$message.success('邀请成功',5);
+                           this.$emit('stateCount',count);
                          }else{
                             this.$message.error(res.data.msg);
                          }
@@ -160,7 +170,9 @@
                   url='bomextract/buildmember/invitesms';
                   this.$ajax(url,'POST',{link:link,projectName:projectName,phones:data}).then(res=>{
                     if(res.data.code==='001'){
+                      let count=data.length;
                       this.$message.success('邀请成功',5);
+                      this.$emit('stateCount',count);
                     }
                     else{
                       this.$message.error(res.data.msg);

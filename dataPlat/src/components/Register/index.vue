@@ -47,7 +47,7 @@
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
         </a-input>
-        <p><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;margin-top:6px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
+        <p style="font-size:12px;"><a-icon type="info-circle" style="color:#1890ff;margin-right:3px;margin-top:6px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
       </a-form-item>
       <a-form-item>
         <a-input
@@ -97,7 +97,7 @@
       <a-form-item >
         <a-checkbox v-decorator="['agreement', {valuePropName: 'checked',rules: [{
               validator: checkAgreeMent,
-            }]}]">
+            }]}]" style="font-size: 12px">
           已阅读并同意
           <a href="/static/index.html" target="_blank" style="color:#1890FF;">
             PST及平台服务协议
@@ -126,8 +126,10 @@
         mobile:'',
         psdtype:'password',
         psdtype1:'password',
-        errorMsg:''
+        errorMsg:'',
+        timer:''
         }
+
 
     },
     components:{
@@ -168,6 +170,7 @@
                 }
            });
         const TIME_COUNT = 60;
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -177,6 +180,7 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
+              clearTimeout(this.timer);
               this.initData()
             }
           }, 1000)
@@ -322,8 +326,7 @@
     },
     watch:{
       mobile(val){
-
-        if(val&&isOnlyMobile(val)){
+        if(val&&isOnlyMobile(val)&&!this.timer){
           this.initData();
         }
         else{

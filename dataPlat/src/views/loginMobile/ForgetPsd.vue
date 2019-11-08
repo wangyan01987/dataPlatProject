@@ -2,7 +2,7 @@
   <div class="register">
     <a-form :form="formData">
       <a-form-item >
-        <a-input placeholder="请输入手机号"   v-decorator="[
+        <a-input placeholder="请输入手机号" size="large"   v-decorator="[
            'phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
@@ -12,7 +12,7 @@
       <a-form-item :class="{'has-error':codeErr}">
         <a-row :gutter="8">
           <a-col :span="15">
-            <a-input placeholder="请输入验证码"  v-decorator="[ 'code',
+            <a-input placeholder="请输入验证码"  size="large" v-decorator="[ 'code',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
@@ -20,13 +20,14 @@
             <p class="error-msg">{{codeErr}}</p>
           </a-col>
           <a-col :span="7">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;">{{codeText}}</a-button>
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;font-size:16px;">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
       <a-form-item>
         <a-input
           placeholder="请输入密码"
+          size="large"
           v-decorator="[
           'password',
           {
@@ -47,6 +48,7 @@
       <a-form-item>
         <a-input
           placeholder="请再次输入密码"
+          size="large"
           v-decorator="[
           'repassword',
           {
@@ -62,7 +64,7 @@
           <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype1='text'"  /></a>
           <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype1='password'" /></a>
         </a-input>
-        <p class="has-error">{{errorMsg}}</p>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
       <a-form-item >
         <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit" >提交</a-button>

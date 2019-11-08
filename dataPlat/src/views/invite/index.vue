@@ -1,12 +1,13 @@
 <template>
     <div class="content-box">
+      <p class="logo"><i class="iconfont icondaqwwwqziyuan"></i></p>
       <div v-if="isValid" class="box-item">
         <p class="title">{{title}}</p>
         <p class="project-content">{{projectName}}</p>
-        <p><a-button type="primary" @click="goInvite">接受邀请</a-button></p>
+        <p><a-button type="primary" @click="goInvite" style="width:160px">接受邀请</a-button></p>
       </div>
-      <div  class="box-item" v-else>
-        <p style="font-size:16px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:16px;margin-right:10px;"/>邀请链接已失效</p>
+      <div  class="box-item-error" v-else>
+        <p style="font-size:18px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:24px;margin-right:10px;"/>邀请链接已失效</p>
       </div>
     </div>
 </template>
@@ -27,7 +28,7 @@
       },
       computed:{
              title(){
-               return this.userName+'邀请你加入项目'
+               return  '#'+this.userName+'#'+'邀请你加入项目'
              }
       },
       methods:{
@@ -35,13 +36,14 @@
 
           },
         goInvite(){
-                  if(this.$store.state.isLogin){
+                  if(localStorage.getItem('token')){
                     this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:this.projectId}).then(res=>{
                       if(res.data.code==='001'){
                         //加入成功页面
-                        this.$router.push({name:'joinSuccess',query:{joinSuccess:true}});
+                        this.$router.push({name:'joinSuccess',query:{code:this.code}});
                       }
                       else{
+                        this.$router.push({name:'joinSuccess',query:{code:this.code}});
                         this.$message.error(res.data.msg);
                       }
                     });
@@ -59,6 +61,7 @@
           }
       },
       mounted(){
+        let flag=document.body.clientWidth;
         this.code=this.$route.query.code;
         if(this.code){
           this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:this.code}).then(res=>{
@@ -75,7 +78,24 @@
               }
             }
           })
-        };
+        }else{
+          let token=localStorage.getItem('token');
+          if(!token){
+                //登录
+            this.$message.error('您还未登录，请先登录');
+            if(flag<750){
+             this.$router.push({path:'/loginMobile',query:{msg:'001'}})
+            }
+            else{
+              this.$router.push({path:'/login',query:{msg:'001'}})
+            }
+             }
+             else{
+               this.$router.push({path:'/joinSuccesstext'})
+
+                 }
+
+        }
 
       }
 
@@ -85,7 +105,7 @@
 <style scoped>
   .title{
     font-size: 18px;
-    font-weight: normal;
+    font-weight: bold;
     font-stretch: normal;
     letter-spacing: 0px;
     color: rgba(0, 0, 0, 0.85);
@@ -104,6 +124,15 @@
      overflow:hidden;
     background-color:#F2F3F5;
   }
+  .logo{
+    text-align:left;
+    margin-left:32px;
+    margin-top:20px;
+  }
+  .logo i{
+    font-size:24px;
+    color:#1890ff;
+  }
   .box-item{
     margin:10% auto;
     width:5.8rem;
@@ -113,8 +142,21 @@
     border: solid 1px rgba(0, 0, 0, 0.25);
     background-color:#fff;
   }
+  .box-item-error{
+    width:5.8rem;
+    height:3.6rem;
+    background-color: #fff;
+    border: solid 1px rgba(0, 0, 0, 0.25);
+    margin: 176px auto;
+    line-height: 3.6rem;
+  }
   @media screen and (max-width: 750px) {
     .box-item{
+      margin-top:20%;
+      width:90%;
+      border:none;
+    }
+    .box-item-error{
       margin-top:20%;
       width:90%;
       border:none;

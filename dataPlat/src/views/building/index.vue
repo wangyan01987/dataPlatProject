@@ -18,7 +18,8 @@
        <span slot="action" slot-scope="record,index" class="action" @click="$event.stopPropagation()" style="cursor:default">
          <a style="margin-right:30px"> <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)" /></a>
 
-         <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"  v-show="record.createUserId===$store.state.userId" /></a>
+         <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"
+               v-show="record.createUserId===$store.state.userId||$store.state.userId===$store.state.projectUserId" /></a>
        </span>
      </a-table>
 

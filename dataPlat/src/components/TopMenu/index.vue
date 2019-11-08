@@ -14,7 +14,7 @@
   <a-menu slot="overlay" class="top-menu" >
     <a-menu-item v-for="item in menuList" :key="item.projectId" @click="changeProject(item.projectName)">
       <router-link :to='"/projectDetail/"+item.projectId+"/"+path' >
-        <img :src="item.img"  style="width:60px;margin-right:15px;"/>
+        <img :src="item.img"  style="width:80px;margin-right:15px;"/>
         <span >{{item.projectName}}</span></router-link>
     </a-menu-item>
     <a-menu-item>
@@ -55,9 +55,10 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  line-height: 1;
 }
-  .top-menu a{
-
+  .top-menu.ant-dropdown-menu{
+    width:336px;
   }
   .top-name{
     display:flex;
