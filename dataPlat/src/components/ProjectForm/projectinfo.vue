@@ -20,13 +20,17 @@
           <a-select placeholder="请选择项目类型" v-decorator="['protype']">
             <a-select-option v-for="item in arr" :key="item.value" :value="item.value">{{item.label}}</a-select-option>
           </a-select>
-          <span v-show="dataflag===0">{{obj.protype}}</span>
+          <span v-show="dataflag===0">{{obj.protype?obj.protype:'---'}}</span>
         </a-form-item>
 
         <a-form-item label="项目所在地" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-row :gutter="4">
+          <span v-show="dataflag===0" class="area">{{obj.provinceName}}</span>
+          <span v-show="dataflag===0" class="area">{{obj.cityName}}</span>
+          <span v-show="dataflag===0" class="area">{{obj.districtName}}</span>
+          <span v-show="dataflag===0">{{obj.proLocal}}</span>
+          <a-row :gutter="4" v-show="dataflag===1||dataflag===2">
             <a-col :span="8">
-              <a-form-item v-show="dataflag===1||dataflag===2">
+              <a-form-item >
                 <a-select
                   @change="handleprovince"
                   @select="(e)=>{
@@ -35,7 +39,7 @@
                   <a-select-option v-for="item in provincearr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
-              <span v-show="dataflag===0">{{obj.provinceName}}</span>
+
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
@@ -45,7 +49,7 @@
                   <a-select-option v-for="item in cityarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
-              <span v-show="dataflag===0">{{obj.cityName}}</span>
+
             </a-col>
             <a-col :span="8">
               <a-form-item v-show="dataflag===1||dataflag===2">
@@ -53,28 +57,28 @@
                   <a-select-option v-for="item in districtarr" :key="item.id" :value="item.id">{{item.name}}</a-select-option>
                 </a-select>
               </a-form-item>
-              <span v-show="dataflag===0">{{obj.districtName}}</span>
+
             </a-col>
           </a-row>
           <a-form-item class="special">
-            <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="50"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-if="dataflag===1||dataflag===2"></a-input>
-            <span v-else>{{obj.proLocal}}</span>
+            <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="50"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-show="dataflag===1||dataflag===2"></a-input>
+
           </a-form-item>
         </a-form-item>
         <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
           <a-input placeholder="请输入项目公司，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['proCompany',{validateTrigger:['blur'],rules: [{validator:checkName}]}]" v-if="dataflag===1||dataflag===2"></a-input>
-          <span v-else>{{obj.proCompany}}</span>
+          <span v-else>{{obj.proCompany?obj.proCompany:'---'}}</span>
         </a-form-item>
         <a-form-item label="建设单位" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
           <a-input placeholder="请输入建设单位，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="[
           'developmentUnit',
             {validateTrigger:['blur'],rules: [{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2"></a-input>
-          <span v-show="dataflag===0">{{obj.developmentUnit}}</span>
+          <span v-show="dataflag===0">{{obj.developmentUnit?obj.developmentUnit:'---'}}</span>
         </a-form-item>
         <a-form-item v-bind="formItemLayout"
                      label="立项时间"><a-date-picker v-decorator="['proTime']" placeholder="请选择日期" v-show="dataflag===1||dataflag===2"/>
-          <span v-show="dataflag===0">{{obj.proTime}}</span>
+          <span v-show="dataflag===0">{{obj.proTime?obj.proTime:'---'}}</span>
         </a-form-item>
         <a-form-item label="栋数" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-if="dataflag===1">
           <a-input v-decorator="[ 'buildNum' ]" disabled></a-input>
@@ -83,7 +87,7 @@
           <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"
                       :maxLength='401'
                       v-decorator="[ 'introduction',{validateTrigger:['blur'],rules:[{max:400,message:'字数最多为400字'}]}]"/>
-          <span v-show="dataflag===0">{{obj.introduction}}</span>
+          <span v-show="dataflag===0">{{obj.introduction?obj.introduction:'---'}}</span>
         </a-form-item>
         <a-form-item label="合同名称" :label-col="formItemLayout.labelCol"
                      :wrapper-col="formItemLayout.wrapperCol">
@@ -91,7 +95,7 @@
           'contractName',
             {rules: [{validator:checkName}]}
         ]" v-if="dataflag===1||dataflag===2"></a-input>
-          <span v-else>{{obj.contractName}}</span>
+          <span v-else>{{obj.contractName?obj.contractName:'---'}}</span>
         </a-form-item>
       </a-form>
       <div class="btn-box" v-if="dataflag!==0">
@@ -250,8 +254,6 @@
          if(fieldsValue['proTime']){
            obj.proTime=fieldsValue['proTime'].format('YYYY-MM-DD');
          };
-
-
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
@@ -412,5 +414,8 @@
   .btn-box{
     display:flex;
    justify-content:flex-end;
+  }
+  .area{
+    margin-right:10px;
   }
 </style>

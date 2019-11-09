@@ -103,6 +103,7 @@ a .iconshanchu:hover, a i.iconjianqu:hover{
   width:138px;
 }
 p.has-error{
+  text-align:left;
   line-height:1;
   height:16px;
   margin-top:3px;

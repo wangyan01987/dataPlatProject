@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <a-form :form="formData" >
-      <a-form-item >
+      <a-form-item :class="{'ant-form-item-with-help':errorphone}">
         <a-input placeholder="请输入手机号"
                  size="large"
                  v-decorator="[
@@ -10,6 +10,7 @@
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
+        <p class="has-error" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
       <a-form-item>
         <a-row :gutter="10">
@@ -21,8 +22,8 @@
               <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
             </a-input>
           </a-col>
-          <a-col :span="8">
-           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px;font-size:16px;">{{codeText}}</a-button>
+          <a-col :span="9">
+           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px;font-size:16px;width:100%">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
@@ -52,7 +53,9 @@
         codeText:'获取验证码',
         errorMsg:'',
         mobile:'',
-        btnunabled:true
+        btnunabled:true,
+        errorphone:'',
+        timer:''
 
       }
 
@@ -61,12 +64,13 @@
     },
     watch:{
         mobile(val){
-           if(val){
+           if(val&&!this.timer){
              this.initData()
+           } else{
+            // this.resetData();
            }
-           else{
 
-           }
+
         }
     },
     methods:{
@@ -90,12 +94,19 @@
         this.$ajax('sendsms','POST',{"phoneNumber":this.mobile, "type":"login"}).then(res=>{
            res=res.data;
           if(res.code==='001'){
+            this.errorphone='';
                this.$message.success('发送成功')
           }
           else{
-            this.$message.error(res.msg);
+            if(res.code==='005'){
+              this.errorphone=res.msg;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           }
         });
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -105,7 +116,8 @@
               this.btnunabled = true;
               this.btnType = 'default';
             } else {
-              this.initData()
+              this.initData();
+              clearTimeout(this.timer)
             }
           }, 1000)
         };
@@ -114,6 +126,7 @@
 
       checkName(rule, value, callback){
         this.mobile=null;
+        this.errorphone='';
         if(!value){
           callback('请输入手机号')
         }

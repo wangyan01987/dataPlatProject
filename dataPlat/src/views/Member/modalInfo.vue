@@ -26,7 +26,6 @@
       </div>
       <div class="item-title" v-else>
         <p>通过手机号邀请项目组成员</p>
-        <p >今日可邀请次数 {{mobilelimitNumber}}</p>
       </div>
       <div>
         <p class="action" v-if="dataflag==='001'"><span @click="toPhone" >手机号邀请</span><span @click="toUrl">链接邀请</span></p>

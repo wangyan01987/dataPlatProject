@@ -154,7 +154,8 @@
         psdtype1:'password',
         visible:false,
         errorMsg:'',
-        phoneErr:''
+        phoneErr:'',
+        timer:''
       }
 
     },
@@ -194,9 +195,13 @@
                  //手机号已注册
                  this.phoneErr=res.msg;
                }
+               else{
+                 this.$message.error(res.msg);
+               }
           }
         });
         const TIME_COUNT = 60;
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -206,7 +211,8 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
-              this.initData()
+              clearTimeout(this.timer)
+              this.initData();
             }
           }, 1000)
         }
@@ -361,11 +367,11 @@
     },
     watch:{
       mobile(val){
-        if(val&&isOnlyMobile(val)){
+        if(val&&isOnlyMobile(val)&&!this.timer){
           this.initData();
         }
         else{
-          this.resetData();
+          //this.resetData();
         }
       }
     },

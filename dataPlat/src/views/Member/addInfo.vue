@@ -67,12 +67,9 @@
             return  this.dataflag==='002'?'手机号':'邮箱';
           },
           limitNum() {
-            if (this.dataflag === '002') {
-              return this.mobileLimitNum;
-            }
-            else {
+
               return this.emailLimitNum;
-            }
+
           }
       },
       methods:{
@@ -137,7 +134,7 @@
         add(){
           const {form}=this;   //form=this.form
            const keys=form.getFieldValue('keys');
-           if(keys.length>this.limitNum){
+           if(keys.length>this.limitNum&&this.dataflag==='001'){
              this.$message.error(`当前页面有效${this.flagName}超出剩余额度`);
              return;
            }

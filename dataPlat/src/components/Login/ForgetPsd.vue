@@ -1,13 +1,14 @@
 <template>
   <div class="resetPsd register">
     <a-form :form="formData">
-      <a-form-item >
+      <a-form-item  :class="{'ant-form-item-with-help':errorphone}">
         <a-input placeholder="请输入手机号"   v-decorator="[
            'phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
+        <p class="has-error" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
       <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-row :gutter="8">
@@ -86,7 +87,8 @@
         mobile:'',
         psdtype:'password',
         psdtype1:'password',
-        errorMsg:''
+        errorMsg:'',
+        errorphone:''
       }
 
     },
@@ -124,7 +126,13 @@
             this.$message.success('发送成功');
           }
           else{
-            this.$message.error(res.msg);
+            if(res.code==='005'){
+              this.errorphone=res.msg;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
+
           }
         });
         const TIME_COUNT = 60;
@@ -157,6 +165,7 @@
           this.$ajax('bomextract/user/retrievepwd','POST',fieldsValue).then(res=>{
                  res=res.data;
             if(res.code==='001'){
+              this.errorphone='';
               this.errorMsg='';
                 this.$message.success('修改成功',5);
                 this.$emit('success');
@@ -181,6 +190,7 @@
       },
       checkAccount(rule, value, callback){
         this.mobile=null;
+        this.errorphone='';
         if(!value){
           callback('请输入手机号')
         }

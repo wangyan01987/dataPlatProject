@@ -1,15 +1,16 @@
 <template>
   <div class="register">
     <a-form :form="formData">
-      <a-form-item >
+      <a-form-item :class="{'ant-form-item-with-help':errorphone}">
         <a-input placeholder="请输入手机号" size="large"   v-decorator="[
            'phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
+        <p class="has-error" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
-      <a-form-item :class="{'has-error':codeErr}">
+      <a-form-item :class="{'ant-form-item-with-help':codeErr}">
         <a-row :gutter="8">
           <a-col :span="15">
             <a-input placeholder="请输入验证码"  size="large" v-decorator="[ 'code',
@@ -19,8 +20,8 @@
             </a-input>
             <p class="error-msg">{{codeErr}}</p>
           </a-col>
-          <a-col :span="7">
-            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;font-size:16px;">{{codeText}}</a-button>
+          <a-col :span="9">
+            <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;font-size:16px;width:100%">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>
@@ -89,16 +90,18 @@
         psdtype1:'password',
         psdtype:'password',
         errorMsg:'',
-        codeErr:''
+        codeErr:'',
+        errorphone:'',
+        timer:''
       }
 
     },
     watch:{
       mobile(val){
-        if(val){
+        if(val&&!this.timer){
           this.initData()
         }else{
-          this.resetData();
+         // this.resetData();
         }
       }
     },
@@ -120,13 +123,20 @@
         this.$ajax('sendsms','POST',{type:'modifyPwd',phoneNumber:mobile}).then(res=>{
           res=res.data;
           if(res.code==='001'){
+            this.errorphone='';
             this.$message.success('发送成功');
           }
           else{
-            this.$message.error(res.msg);
+            if(res.code==='005'){
+              this.errorphone=res.msg;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           }
         });
         const TIME_COUNT = 60;
+        this.timer='';
         if (!this.timer) {
           this.count = TIME_COUNT;
           this.timer = setInterval(() => {
@@ -136,6 +146,7 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
+              clearTimeout(this.timer);
               this.initData()
             }
           }, 1000)
@@ -182,6 +193,7 @@
       },
       checkAccount(rule, value, callback){
         this.mobile=null;
+        this.errorphone='';
         if(!value){
           callback('请输入手机号')
         }

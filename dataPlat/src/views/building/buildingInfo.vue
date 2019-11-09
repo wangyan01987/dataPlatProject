@@ -473,6 +473,7 @@ let a=0;
     color: #f5222d;
     margin-top:2px;
     margin-bottom: 0;
+    line-height:1.5;
   }
   .add-item{
     cursor: pointer;

@@ -115,5 +115,18 @@
     border: solid 1px rgba(0, 0, 0, 0.25);
     background-color:#fff;
   }
+  @media screen and (max-width: 750px) {
+    .box-item{
+      margin-top:20%;
+      width:90%;
+      border:none;
+    }
+    .project-content{
+      margin-bottom: 80px;
+    }
+    .content-box{
+      background-color:#fff;
+    }
+  }
 
 </style>

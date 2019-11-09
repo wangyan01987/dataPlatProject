@@ -1,13 +1,14 @@
 <template>
   <div class="hello">
-    <a-form :form="formData" >
-      <a-form-item >
+    <a-form :form="formData"  >
+      <a-form-item  :class="{'ant-form-item-with-help':errorphone}">
         <a-input placeholder="请输入手机号"   v-decorator="[
            'phoneNumber',
             {rules: [{validator:checkName}],validateTrigger:['blur']}
         ]">
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
+        <p class="error-msg" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
       <a-form-item>
         <a-row :gutter="8">
@@ -22,7 +23,7 @@
           </a-col>
         </a-row>
       </a-form-item>
-      <p class="error-msg">{{errorMsg}}</p>
+      <p class="error-msg" v-show="errorMsg">{{errorMsg}}</p>
       <a-button @click='submit' type="primary" style="width:100%;margin-bottom: 10px;margin-top: 30px;" size="large">登录</a-button>
 
     </a-form>
@@ -47,7 +48,8 @@
         codeText:'获取验证码',
         errorMsg:'',
         mobile:'',
-        btnunabled:true
+        btnunabled:true,
+        errorphone:''
 
       }
 
@@ -85,10 +87,16 @@
         this.$ajax('sendsms','POST',{"phoneNumber":this.mobile, "type":"login"}).then(res=>{
            res=res.data;
           if(res.code==='001'){
+            this.errorphone='';
                this.$message.success('发送成功')
           }
           else{
-            this.$message.error(res.msg);
+            if(res.code==='005'){
+              this.errorphone=res.msg;
+            }
+            else{
+              this.$message.error(res.msg);
+            }
           }
         });
         this.timer='';
@@ -109,6 +117,7 @@
       },
 
       checkName(rule, value, callback){
+        this.errorphone='';
         this.mobile=null;
         if(!value){
           callback('请输入手机号')

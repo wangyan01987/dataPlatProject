@@ -1,13 +1,16 @@
 <template>
     <div class="content-box">
       <p class="logo"><i class="iconfont icondaqwwwqziyuan"></i></p>
-      <div v-if="isValid" class="box-item">
+      <div v-show="isValid==='001'" class="box-item">
         <p class="title">{{title}}</p>
-        <p class="project-content">{{projectName}}</p>
-        <p><a-button type="primary" @click="goInvite" style="width:160px">接受邀请</a-button></p>
+        <p class="project-content">#{{projectName}}#</p>
+        <p><a-button type="primary" @click="goInvite" style="width:160px;height:40px;">接受邀请</a-button></p>
       </div>
-      <div  class="box-item-error" v-else>
-        <p style="font-size:18px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:24px;margin-right:10px;"/>邀请链接已失效</p>
+      <div  class="box-item-error" v-show="isValid==='002'">
+        <p style="font-size:18px;"><a-icon type="close-circle" theme="filled" style="color:#f5222d;font-size:24px;margin-right:10px;"/>{{errorMsg}}</p>
+      </div>
+      <div>
+
       </div>
     </div>
 </template>
@@ -23,6 +26,7 @@
             projectId:'',
             isValid:'',
             code:'',
+            errorMsg:'',
             bodyStyle:{height:500}
           }
       },
@@ -36,6 +40,7 @@
 
           },
         goInvite(){
+          let flag=document.body.clientWidth;
                   if(localStorage.getItem('token')){
                     this.$ajax('bomextract/buildmember/acceptinvitation','GET',{projectId:this.projectId}).then(res=>{
                       if(res.data.code==='001'){
@@ -43,17 +48,23 @@
                         this.$router.push({name:'joinSuccess',query:{code:this.code}});
                       }
                       else{
-                        this.$router.push({name:'joinSuccess',query:{code:this.code}});
-                        this.$message.error(res.data.msg);
+                         if(flag<750){
+                           this.$router.push({name:'joinSuccessMobile',query:{code:this.code}});
+                           this.$message.error(res.data.msg);
+                         }
+                         else{
+                           this.$router.push({name:'joinSuccess',query:{code:this.code}});
+                           this.$message.error(res.data.msg);
+                         }
                       }
                     });
                   }
                   else{
-                    let flag=document.body.clientWidth;
                     if(flag<750){
                       this.$message.error('您还未登录，请先登录');
                       this.$router.push({name:'loginMobile',query:{code:this.code}});
                     }else{
+                      this.$message.error('您还未登录，请先登录');
                       this.$router.push({name:'joinSuccess',query:{code:this.code}});
                     }
 
@@ -67,15 +78,14 @@
           this.$ajax('bomextract/buildmember/getinvitparam','GET',{code:this.code}).then(res=>{
             res=res.data;
             if(res.code==='001'){
-              this.isValid=true;
+              this.isValid='001';
               this.userName=res.data.userName;
               this.projectName=res.data.projectName;
               this.projectId=res.data.projectId;
             }
             else{
-              if(res.code==='003'){
-                this.isValid=false;
-              }
+                this.isValid='002';
+                this.errorMsg=res.msg;
             }
           })
         }else{
