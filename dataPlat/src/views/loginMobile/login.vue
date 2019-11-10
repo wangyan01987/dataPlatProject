@@ -9,7 +9,7 @@
           <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
         </a-input>
       </a-form-item>
-      <a-form-item  >
+      <a-form-item   :class="{'ant-form-item-with-help':errorMsg}">
         <a-input
           placeholder="请输入密码"
           size="large"
@@ -27,7 +27,7 @@
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype='password'" /></a>
         </a-input>
-        <p class="error-msg">{{errorMsg}}</p>
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
      <a-form-item style="margin-bottom: 0">
        <a-button @click='submit' type="primary" style="width:100%;margin-top:14px;" size="large">登录</a-button>

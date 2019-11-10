@@ -34,6 +34,7 @@
       },
       methods:{
           goProject(){
+            this.$store.commit('setProjectName',this.projectName);
             this.$router.push({name:'projectDetail',params:{projectId:this.projectId}});
 
           }

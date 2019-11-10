@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-   <p class="changeItem"></p>
+   <!--<p class="changeItem"></p>-->
     <a-spin size="large"  v-if="loaded"/>
     <div class="box">
           <div class="box-container">
@@ -35,8 +35,8 @@
     </div>
     <div class="slide-item" @click='loadItem'>
       <p><i class="iconfont icongengduo" style="margin-right:14px"></i>加载更多</p>
-
     </div>
+
     <projectform ref="projectform" :propMsg="propMsg"></projectform>
   </div>
 </template>
@@ -282,7 +282,7 @@
     font-size:0.32rem;
   }
   .slide-item{
-    position:fixed;
+    position:absolute;
     bottom: 15px;
     color: rgba(0, 0, 0, 0.45);
     cursor:pointer;
@@ -304,5 +304,17 @@ cursor:pointer;
     flex-wrap: wrap;
     margin:0 auto;
     width:80%;
+    height:100%;
+
+  }
+  .box{
+    background: #f0f2f5;
+  }
+  .container{
+    min-height:100%;
+    padding-top:80px;
+    position:relative;
+    padding-bottom: 50px;
+
   }
 </style>

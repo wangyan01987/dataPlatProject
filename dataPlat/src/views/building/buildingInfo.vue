@@ -1,15 +1,20 @@
 <template>
   <a-form :form="form"
   >
-    <a-form-item label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" :hideRequiredMark="dataflag==='000'" >
-      <a-input
-        maxlength="20"
-        placeholder="请输入楼栋名称"
-        v-if="dataflag!=='000'"
-        v-decorator="[ 'floorName', {rules:
-         [{required:true,message:'请输入楼栋名称'},{pattern:/^[\u4e00-\u9fa5\w]{1,20}$/,message:'楼栋号输入格式为1-20位中英文数字及下划线'}, {validator:assignFloor}],validateTrigger:['blur']}
+    <a-form-item
+      :class="{'ant-form-item-with-help':errorMsg}"
+      label="楼栋名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" :hideRequiredMark="dataflag==='000'" >
+      <div    v-if="dataflag!=='000'">
+        <a-input
+          maxlength="20"
+          placeholder="请输入楼栋名称"
+
+          v-decorator="[ 'floorName', {rules:
+         [{required:true,message:'请输入楼栋名称'}, {validator:assignFloor}],validateTrigger:['blur']}
         ]"
-      />
+        />
+        <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
+      </div>
       <span v-else>{{buildingInfo.floorName}}</span>
     </a-form-item>
     <a-form-item
@@ -188,6 +193,7 @@ let a=0;
         projectId,
         count,
         columns1,
+        errorMsg:'',
         number:{
 
         },
@@ -253,34 +259,37 @@ let a=0;
       },
 
       assignFloor(rule,value,callback){
+        this.errorMsg='';
             if(!value){
              callback();
-            }
-            else if(!/^[\u4e00-\u9fa5\w]{1,20}$/.test(value)){
-              callback()
-            }
-            else{
-              //新建单体校验楼栋名称
-                if(this.dataflag==='002'){
-                  this.$ajax('bomextract/build/buildnumexist','GET',{projectId:this.projectId,buildNum:value}).then(res=>{
-                    res=res.data;
-                    if(res.code==='001'){
-                      if(res.data){
-                        callback('楼栋名称已存在，请重新输入');
-                      }
-                      else{
-                        callback()
-                      }
-                    }
-                    else{
-                      callback()
-                    }
-
-                  })
-                }else{
-                  callback();
+            } else if(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g .test(value)){
+          callback("楼栋名称不符合规范，请重新输入")
                 }
+                else{
+                  callback();
             }
+            // else{
+            //   //新建单体校验楼栋名称
+            //     if(this.dataflag==='002'){
+            //       // this.$ajax('bomextract/build/buildnumexist','GET',{projectId:this.projectId,floorName:value}).then(res=>{
+            //       //   res=res.data;
+            //       //   if(res.code==='001'){
+            //       //     if(res.data){
+            //       //       callback('楼栋名称已存在，请重新输入');
+            //       //     }
+            //       //     else{
+            //       //       callback()
+            //       //     }
+            //       //   }
+            //       //   else{
+            //       //     callback()
+            //       //   }
+            //       //
+            //       // })
+            //     }else{
+            //       callback();
+            //     }
+            // }
       },
       addBuilding(){
         //let a=this.dataSource.length+1;
@@ -313,7 +322,6 @@ let a=0;
         });
         this.form.validateFields((err, values) => {
           if (!err&&this.isSubmit) {
-
             let obj=Object.assign({},values);
             obj.projectId=this.$route.params.projectId;
             let data=JSON.parse(JSON.stringify(this.dataSource));
@@ -341,12 +349,20 @@ let a=0;
             this.$ajax(url,'POST',obj).then(res=>{
               res=res.data;
               if(res.code==='001'){
+                this.errorMsg='';
                 this.$message.success(msg,5);
                 this.$emit('success',true);
                 // params.relationfloor=params.relationfloor.join('、');
                 this.$store.commit("setRecord",params);
               }else{
-                this.$message.error(res.msg);
+                if(res.code==='002'){
+                  this.errorMsg=res.msg;
+                }
+                else{
+                  this.$message.error(res.msg);
+                }
+
+
               }
             })
           }
@@ -471,7 +487,7 @@ let a=0;
   p.has-error{
     text-align:left;
     color: #f5222d;
-    margin-top:2px;
+    margin-top:3px;
     margin-bottom: 0;
     line-height:1.5;
   }

@@ -1,8 +1,9 @@
 <template>
    <div class="box-container">
+     {{pagination.current}}
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding" icon="plus">新建单体</a-button></p>
      <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
-     :loading="loading" :current='current' style="cursor: pointer">
+     :loading="loading"  style="cursor: pointer">
 
        <template v-for="item in ['floorCode','floorName','relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
 
@@ -56,14 +57,19 @@
           }
       },
       methods:{
-        handlesubmitSucc(){
-          if(this.dataflag==='002'){
-           this.fetch(1,20);
-          }
-          else{
-            let currentIndex=this.current;
+          handlesubmitSucc(){
+          let currentIndex=this.current;
             this.fetch(currentIndex,20);
-          }
+
+          // if(this.dataflag==='002'){
+          //   //this.pagination.current=1;
+          //   let currentIndex=this.current;
+          //  this.fetch(currentIndex,5);
+          // }
+          // else{
+          //   let currentIndex=this.current;
+          //   this.fetch(currentIndex,20);
+          // }
         },
         deleteBuilding(e,floorId,index){
             e.stopPropagation();
@@ -75,12 +81,12 @@
             cancelText: '取消',
             okButtonProps:{},
             onOk:()=>{
-              this.$ajax('bomextract/build/delmonomer','GET',{'floorId':floorId}).then((res) => {
+               this.$ajax('bomextract/build/delmonomer','GET',{'floorId':floorId}).then((res) => {
               res=res.data;
               if(res.code==='001'){
               let dataSource=[...this.dataSource];
               this.dataSource=dataSource.filter(item=>item.floorId!==floorId);
-
+              this.fetch(this.current,20);
               this.$message.success('删除成功！');
               }
               else{
@@ -131,9 +137,9 @@
         },
         changePage(page,size){
           this.current=page;
-           this.fetch(page,20)
+          this.fetch(page,20)
         },
-        fetch (num,size) {
+      async  fetch (num,size) {
             this.loading=true;
             let obj={
               projectId:this.projectId,
@@ -141,10 +147,12 @@
               "pageSize":size
 
             };
-            this.$ajax('bomextract/build/getmonomer','POST',obj).then((res) => {
+          const pagination = { ...this.pagination };
+
+          await  this.$ajax('bomextract/build/getmonomer','POST',obj).then((res) => {
               res=res.data;
               if(res.code==='001'){
-                const pagination = { ...this.pagination };
+
                 pagination.total = res.count;
                 pagination.pageSize=size;
                 pagination.onChange=this.changePage;
@@ -163,10 +171,16 @@
                     });
                 this.dataSource=obj1;
                 this.pagination = pagination;
-
               }
 
           });
+
+           if(this.dataSource.length===0&&this.current>1){
+             this.current=this.current-1;
+             this.fetch(this.current,size);
+           }
+
+
         }
       },
       watch:{

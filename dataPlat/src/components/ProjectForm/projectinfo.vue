@@ -3,9 +3,11 @@
   <a-spin :spinning="spinning">
     <div class="spin-content">
       <a-form :form="formData">
-        <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
+        <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol"
+                     :class="{'ant-form-item-with-help':errorMsg}">
           <a-input maxlength="50"  placeholder="请输入项目名称，支持英文、数字、符号，字数小于50" v-decorator="[ 'projectName', {validateTrigger:['blur'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
         ]" v-show="dataflag===1||dataflag===2" ></a-input>
+          <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
           <span v-show="dataflag===0">{{obj.projectName}}</span>
         </a-form-item>
         <a-form-item label="项目简称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
@@ -24,7 +26,7 @@
         </a-form-item>
 
         <a-form-item label="项目所在地" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <span v-show="dataflag===0" class="area">{{obj.provinceName}}</span>
+          <span v-show="dataflag===0" class="area">{{obj.provinceName?obj.provinceName:'---'}}</span>
           <span v-show="dataflag===0" class="area">{{obj.cityName}}</span>
           <span v-show="dataflag===0" class="area">{{obj.districtName}}</span>
           <span v-show="dataflag===0">{{obj.proLocal}}</span>
@@ -62,7 +64,6 @@
           </a-row>
           <a-form-item class="special">
             <a-input placeholder="请输入详细地址，支持中英文字符，字数小于50"  maxlength="50"  v-decorator="['proLocal', {validateTrigger:['blur'],rules: [{validator:checkName}]}]"  v-show="dataflag===1||dataflag===2"></a-input>
-
           </a-form-item>
         </a-form-item>
         <a-form-item label="项目公司" :label-col="formItemLayout.labelCol":wrapper-col="formItemLayout.wrapperCol">
@@ -132,6 +133,7 @@
           {label:'办公',value:'3'},{label:'教育',value:'4'},
           {label:'其他',value:'5'}],
         spinning:false,
+        errorMsg:'',
         cityarr:[],
         districtarr:[],
         imgList:[{
@@ -157,14 +159,14 @@
     components: {},
     methods: {
       checkNumber(rule, value, callback){
-            if(value&&!isNum(value)){
-              if(value.length>=50){
+            if(value){
+              if(value.length>50){
                 callback("超出字符限制50");
-              }
-              else{
+              }else if(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g .test(value)){
                 callback('项目编号不符合规范，请重新输入');
+              }else{
+                callback();
               }
-
             }
             else{
               callback()
@@ -181,20 +183,21 @@
           case 'contractName':str='合同名称';break;
           default :str='项目名称';
         };
+          if(str==='项目名称'){
+            this.errorMsg='';
+          }
         if (!value) {
           callback()
         }
         else {
-          if (!isName(value)) {
-            if(value.length>=50){
-              callback(str+"超出字符限制50");
-            }
-            else{
-              callback(str+"不符合规范，请重新输入")
-            }
-          } else {
+          if(value.length>50){
+            callback(str+"超出字符限制50");
+          }else if(/\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDE4F]/g .test(value)){
+            callback(str+"不符合规范，请重新输入")
+          }else{
             callback();
           }
+
         }
       },
       handleprovince(val){
@@ -257,6 +260,7 @@
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
+              this.errorMsg='';
               if(obj.projectName){
                 let arr=this.$store.state.menuList;
                 this.$store.state.menuList= arr.map(item=>{
@@ -272,7 +276,12 @@
               this.$store.commit("setProjectName", obj.projectName);
               this.$emit('save');
             }else{
-              this.$message.error(res.msg);
+              if(res.code==='004'){
+                this.errorMsg=res.msg;
+              }else{
+                this.$message.error(res.msg);
+              }
+
             }
           });
         })

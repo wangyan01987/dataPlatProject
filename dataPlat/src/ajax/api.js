@@ -49,12 +49,15 @@ function getApi(dataType){
         localStorage.setItem('token',token);
       };
       if(code==='999'){
-        store.commit('setLogin',false);   //重新登录
+
         //删除token
          localStorage.removeItem('token');
-          message.error('请先登录',5);
+           if(store.state.isLogin){
+             message.error('请先登录',5);
+           }
           //跳转到登录页
         router.push('/login');
+        store.commit('setLogin',false);   //重新登录
 
       }
       return response;

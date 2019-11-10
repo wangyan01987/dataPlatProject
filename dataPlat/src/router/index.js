@@ -103,38 +103,9 @@ import  store from '../store';
   let client=document.body.clientWidth;
   let token=localStorage.getItem('token');
   //未登录
-  // if (to.name!== 'invite' && to.name !== 'joinSuccess'&&to.name!=='loginMobile'&&!token && to.path !== '/login' ) {
-  //   console.log('--------------')
-  //        if(client<750){
-  //          next({path:'/loginMobile' })
-  //        }
-  //        else if(to.name==='home'&&to.query.token){
-  //          localStorage.setItem('token',to.query.token);
-  //          next('/home');
-  //        }
-  //        else{
-  //          next('/login');
-  //        }
-  //     } else if(token&&to.name!=='joinSuccessMobile'){
-  //   console.log('22222222222222222222')
-  //       if(client<750){
-  //          next({path:'/joinSuccessMobile' })
-  //         }
-  //         else{
-  //         next();
-  //         }
-  //     }
-  //     else {
-  //       console.log('3333333333333333333')
-  //     if(to.name==='home'&&to.query.token){
-  //        localStorage.setItem('token',to.query.token);
-  //        next();
-  //      } else{
-  //         next();
-  //        }
-  //
-  //     }
+    console.log(to.name)
       if(to.name==='invite' || to.name === 'joinSuccess'){
+
         next();
       }else{
         if(!token){

@@ -75,7 +75,13 @@
               }
             },
           userIcon(){
-            return this.$store.state.userName.toUpperCase().substring(0,1);
+            if(this.$store.state.userName){
+              return this.$store.state.userName.toUpperCase().substring(0,1);
+            }
+            else{
+              return '-';
+            }
+
           },
           userName(){
                  return this.$store.state.userName
@@ -140,11 +146,13 @@
 
         },
         logout(){
+          this.$store.commit('setLogin',false);
             this.$ajax('logout','POST').then(res=>{
               res=res.data;
+
               if(res.code==='999'){
                 this.$router.push('/login');
-                // this.$store.commit('setLogin',false);
+
                  }
             });
         }

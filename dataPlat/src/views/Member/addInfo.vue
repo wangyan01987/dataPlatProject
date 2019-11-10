@@ -165,7 +165,8 @@
                   })
                 }else{
                   url='bomextract/buildmember/invitesms';
-                  this.$ajax(url,'POST',{link:link,projectName:projectName,phones:data}).then(res=>{
+                  let projectId=this.$route.params.projectId;
+                  this.$ajax(url,'POST',{link:link,projectName:projectName,phones:data,projectId:projectId}).then(res=>{
                     if(res.data.code==='001'){
                       let count=data.length;
                       this.$message.success('邀请成功',5);

@@ -235,7 +235,7 @@
         this.version=val;
         this.getBom(1,20);
       },
-      getBom(num,size){
+    async  getBom(num,size){
         this.loading=true;
         this.data=[];
         let obj={};
@@ -246,7 +246,7 @@
         obj.version=this.version;
         obj.floor=this.floor;
         obj.prodId=this.prodId;
-        this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
+       await this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
           res=res.data;
           if(res.code==='001'||res.state=='success'){
             this.loading=false;
@@ -255,14 +255,25 @@
             pagination.pageSize=size;
             this.pagination=pagination;
             pagination.onChange=this.changePage;
-            res.data.forEach(item=>{
-              item.cmptBaseInfo.bomList=item.bomList;
-              item.cmptBaseInfo.sizeList=item.sizeList;
-              this.data.push(item.cmptBaseInfo);
-            });
-           this.cacheData=this.data.map(item => ({ ...item }));
+            if(res.count===0||res.data.length===0){
+                 this.data=[];
+            }else{
+              res.data.forEach(item=>{
+                item.cmptBaseInfo.bomList=item.bomList;
+                item.cmptBaseInfo.sizeList=item.sizeList;
+                this.data.push(item.cmptBaseInfo);
+              });
+              this.cacheData=this.data.map(item => ({ ...item }));
+            }
+
+
           }
-        })
+        });
+       if(this.data.length===0&&this.current>1){
+         this.current=this.current-1;
+         this.getBom(this.current,20);
+       }
+
       },
       changePage(page,size){
         this.current=page;
@@ -272,8 +283,8 @@
         //删除构件
         this.$confirm({
           icon:'close-circle',
-          title: '删除构件',
-          content: '确认删除构件',
+          title: '确认此删除构件？',
+          content: '',
           okText: '确认',
           cancelText: '取消',
           onOk:()=>{
@@ -283,8 +294,12 @@
               if(res.code==='001'){
                 this.$message.success('删除成功',2);
                 this.data.filter(item=>item.cmptId!==key);
-                let newData= this.data.filter(item=>item.cmptId!==key);
-                this.data=newData;
+               if(this.current===1){
+                 let newData= this.data.filter(item=>item.cmptId!==key);
+                 this.data=newData;
+               }else{
+                     this.getBom(this.current,20);
+               }
               }
               else{
                 this.$message.error(res.msg);

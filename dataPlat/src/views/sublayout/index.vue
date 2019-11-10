@@ -54,6 +54,9 @@
       }
     },
     mounted(){
+      //设置高度
+      let height=document.body.offsetHeight-64+'px';
+      document.getElementsByClassName('sub-container')[0].style.minHeight=height;
       let that=this;
       window.addEventListener("popstate", function(e) {
        that.$router.push({path:'/home'})

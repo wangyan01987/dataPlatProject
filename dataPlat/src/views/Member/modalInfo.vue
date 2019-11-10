@@ -4,7 +4,7 @@
   <div class="modal-item" v-show="dataflag==='000'">
      <div class="item-body">
         <div class="item-title">
-          <p>通过微信扫码，邀请成员</p>
+          <p>通过发送微信二维码，邀请成员</p>
           <div id="qrCode" ref="qrCodeDiv"></div>
         </div>
        <div>

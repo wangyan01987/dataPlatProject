@@ -1,7 +1,8 @@
 <template>
   <div class="box-container">
     <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addMember" icon="plus">邀请新成员</a-button></p>
-    <a-table  :columns="hasDelete?columns:columns1" :dataSource="dataSource" :loading="loading"  :rowKey='getKey' :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
+    <a-table  :columns="hasDelete?columns:columns1" :dataSource="dataSource" :loading="loading"  :rowKey='getKey'
+              :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="text,record" slot="personImage">
         <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1).toUpperCase()}}</span>
        <span v-else> ---</span>
@@ -60,7 +61,7 @@
       ];
       return{
         visible:false,
-        dataSource:[{}],
+        dataSource:[],
         columns,
         columns1,
         pagination:{},
@@ -69,6 +70,7 @@
         title:'邀请新成员',
         projectId:'',
         hasDelete:'',
+        current:'',
         arr:['userName','gender','phoneNumber','email','companyName','position']
       }
     },
@@ -99,6 +101,7 @@
               if(res.code==='001'){
                 let dataSource=[...this.dataSource];
                 this.dataSource=dataSource.filter(item=>item.userId!==userId);
+                this.fetch(this.projectId,this.current,20);
                 this.$message.success('删除成功！');
               }
               else{
@@ -113,6 +116,7 @@
         return record.userId;
       },
       changePage(page, size){
+        this.current=page;
         this.fetch( this.projectId,page,20)
       },
       //加载信息
@@ -129,7 +133,7 @@
            }
          }
        });
-       this.$ajax('bomextract/buildmember/getmember','POST',{projectId:projectId,pageNum:num,pageSize:size}).then((res) => {
+     await  this.$ajax('bomextract/buildmember/getmember','POST',{projectId:projectId,pageNum:num,pageSize:size}).then((res) => {
                      res=res.data;
                      let mapset=['女','男'];
                if(res.code==='001'){
@@ -140,13 +144,17 @@
                  pagination.onChange=this.changePage;
                  this.dataSource = res.data;
                  this.dataSource.map(item=>{
-                        item.gender=mapset[item['sex']-1];
+                        item.gender=mapset[item['sex']];
                         return item;
                    });
 
                  this.pagination = pagination;
                }
         });
+     if(this.dataSource.length===0&&this.current>1){
+       this.current=this.current-1;
+       this.fetch(this.projectId,this.current,20);
+     }
       },
 
     },

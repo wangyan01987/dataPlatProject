@@ -3,8 +3,10 @@
     <div class="info-item">
       <p class="title"><span>修改密码</span></p>
       <div class="info-box">
-        <a-form :form="form" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
-          <a-form-item>
+        <a-form :form="form" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol"
+
+        >
+          <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
             <a-input
               maxlength="17"
               placeholder="请输入旧密码"
@@ -21,6 +23,7 @@
               <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype1='text'"  /></a>
               <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype1='password'"  /></a>
             </a-input>
+            <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
           </a-form-item>
           <a-form-item>
             <a-input   maxlength="16"  placeholder="请输入新密码" v-decorator="[ 'newPassWord',{
@@ -84,6 +87,7 @@
         wrapperCol: { span: 8, offset: 4 },
       };
       return{
+        errorMsg:'',
         psdtype1:'password',
         psdtype2:'password',
         psdtype3:'password',
@@ -110,6 +114,7 @@
         }
       },
       validPass(rule, value, callback){
+        this.errorMsg='';
         if(!value){
           callback('请输入密码')
         }
@@ -152,13 +157,20 @@
                 res=res.data;
                 if(res.code==='001'){
                   // 更新数据
+                  this.errorMsg='';
                   this.$message.success('修改成功，请重新登录',5);
                   this.$store.state.isLogin=false;
                   this.$router.push('/login');
                   // 重新登录
                 }
                 else{
-                  this.$message.error(res.msg);
+                   if(res.code==='014'){
+                     this.errorMsg='请输入正确的旧密码';
+                   }
+                   else{
+                     this.$message.error(res.msg);
+                   }
+
                 }
           })
           })

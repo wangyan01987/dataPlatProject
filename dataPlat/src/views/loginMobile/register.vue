@@ -17,7 +17,7 @@
          </a-input>
          <p class="has-error" v-show="phoneErr">{{phoneErr}}</p>
        </a-form-item>
-       <a-form-item>
+       <a-form-item :class="{'ant-form-item-with-help':codeError}">
          <a-row :gutter="8">
            <a-col :span="15">
              <a-input placeholder="请输入验证码" id="success"  size="large"   v-decorator="[
@@ -26,6 +26,7 @@
         ]">
                <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
              </a-input>
+             <p class="has-error" v-show="codeError">{{codeError}}</p>
            </a-col>
            <a-col :span="9">
              <a-button  :type="btnType" @click="sendCode" :disabled="btnabled" style="height:40px;font-size:16px;width:100%">{{codeText}}</a-button>
@@ -155,7 +156,8 @@
         visible:false,
         errorMsg:'',
         phoneErr:'',
-        timer:''
+        timer:'',
+        codeError:''
       }
 
     },
@@ -257,15 +259,20 @@
                  res=res.data;
                  if(res.code==='001'){
                    this.errorMsg='';
-                  // this.$message.success('注册成功，请登录');
                    this.dataflag='000';
                    this.$emit('registerSuccess',true);
 
                    this.formData.resetFields();
                  }
                  else{
-                 this.errorMsg=res.msg;
-                   this.dataflag='111';
+                   if(res.code==='009'){
+                     this.dataflag='000';
+                     this.codeError=res.msg;
+                   }else{
+                     this.errorMsg=res.msg;
+
+                     this.dataflag='111';
+                   }
                  };
                })
              }
@@ -311,6 +318,7 @@
         }
       },
       async assignCode(rule, value, callback){
+        this.codeError='';
         let mobile= this.formData.getFieldValue('phoneNumber');
      if(!value){
           callback('请输入验证码');
@@ -320,15 +328,14 @@
        callback('请获取正确的验证码');
                }
      else {
-           callback();
-        // await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
-        //   res=res.data;
-        //   if(res.code==='001'){
-        //     callback();
-        //   }else{
-        //     callback(res.msg);
-        //   }
-        // })
+        await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
+          res=res.data;
+          if(res.code==='001'){
+            callback();
+          }else{
+            callback(res.msg);
+          }
+        })
         }
       },
       validPass(rule, value, callback){
@@ -407,6 +414,9 @@
   }
 .top-title span{
   flex:1;
+}
+p.small-size{
+  margin-top:3px !important;
 }
   .container{
     margin-top:20px;

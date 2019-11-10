@@ -226,9 +226,9 @@ top:50px !important;
 .register  .ant-input-affix-wrapper {
   height: 40px;
 }
-/*.ant-layout-content{*/
+.ant-layout-content{
   /*display: flex;*/
-/*}*/
+}
 .ant-tabs-nav .ant-tabs-tab{
   padding:12px 25px;
 }
