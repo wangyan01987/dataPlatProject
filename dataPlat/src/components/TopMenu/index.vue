@@ -19,7 +19,7 @@
     </a-menu-item>
     <a-menu-item>
       <a href="#/home" style="text-align:right;color: #1890ff;
-    text-decoration: underline;" @dblclick="()=>{console.log('1111')}">返回项目列表</a>
+    text-decoration: underline;" @dblclick="()=>{}">返回项目列表</a>
     </a-menu-item>
   </a-menu>
   </a-dropdown>
@@ -30,7 +30,26 @@
         name: "index",
       props:['menuList'],
       data(){
+        let buryObj={
+          action:'actionGetProjectInfo',
+          user: this.$store.state.userId,
+          eventType:'buttonClick',
+          eventName:'getProjectInfo',
+          pageName:'项目详情',
+          pageArea:'All',
+          terminal:'PC'
+        };
+        let buryObj2={
+          action:'actionEditProjectInfoAtPageDetailTab',
+          user: this.$store.state.userId,
+          eventType:'buttonClick',
+          eventName:'editProjectInfoAtPageDetailTab',
+          pageName:'项目详情编辑',
+          pageArea:'All',
+          terminal:'PC'
+        };
           return{
+            buryObj
           }
       },
       computed:{
@@ -44,6 +63,17 @@
       methods:{
           changeProject(name){
              this.$store.commit('setProjectName',name);
+          }
+      },
+      mounted(){
+          if(!this.$store.state.projectName){
+            let projectId=this.$route.params.projectId;
+            this.$ajax('bomextract/project/getprojectbyprojid','GET',{projectId:projectId}).then(res=>{
+                res=res.data;
+              if(res.code==='001'){
+                this.$store.commit('setProjectName',res.data.projectName);
+              }
+            })
           }
       }
     }

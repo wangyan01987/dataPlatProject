@@ -255,7 +255,7 @@
                obj.password=this.$md5(obj.password);
                delete obj.repassword;
                delete obj.agreement;
-               this.$ajax('register','POST',obj).then(res=>{
+               this.$ajax('bomextract/CloseBate/registAndTrial','POST',obj).then(res=>{
                  res=res.data;
                  if(res.code==='001'){
                    this.errorMsg='';

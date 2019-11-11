@@ -110,7 +110,7 @@
     width:100%;
     flex:auto;
     padding-top:0.2rem;
-    padding-bottom: 0.33rem;
+    padding-bottom: 0.2rem;
     padding-left:0.2rem;
   }
   .container-item{

@@ -30,6 +30,7 @@
   export default {
     components:{projectform},
     data () {
+
       return {
         propMsg:{}
       }
@@ -56,7 +57,7 @@
     mounted(){
       //设置高度
       let height=document.body.offsetHeight-64+'px';
-      document.getElementsByClassName('sub-container')[0].style.minHeight=height;
+      document.getElementsByClassName('sub-container')[0].style.cssText=`min-height:${height};height:auto !important;`;
       let that=this;
       window.addEventListener("popstate", function(e) {
        that.$router.push({path:'/home'})
@@ -73,7 +74,8 @@
     min-height:100%;
     display:flex;
     flex-direction: column;
-   // flex:auto;
+    /*height:auto !important;*/
+   /*// flex:auto;*/
   }
   .blue{
       font-size: 14px;

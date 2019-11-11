@@ -3,7 +3,7 @@
     <div class="box-top">
       <!--<p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>-->
       <p class="action"> <a  style="margin-right: 10px;text-decoration: none;color:#fff"
-                             href="http://pstbj.com:6041/bomextract/bom/download?code=khd1" download="客户端软件">客户端下载</a></p>
+                             :href="`${url}bomextract/bom/download?code=khd1`" download="客户端软件">客户端下载</a></p>
 
     </div>
    <!--<p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>-->
@@ -50,14 +50,18 @@
     export default {
         name: "index",
       components:{login ,register,loginmobile,forgetpsd},
+
+
       data(){
+        let url= process.env.Base_URL;
             return{
               //001  账号登陆，默认
               //002  快速登陆
               //000 注册
               loginType:'001',
               key:'1',
-              visible:false
+              visible:false,
+              url
             }
       },
       mounted(){

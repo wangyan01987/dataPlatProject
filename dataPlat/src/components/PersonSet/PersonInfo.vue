@@ -69,6 +69,8 @@
            <a-row :gutter="4">
              <a-col :span="17">
                <a-auto-complete
+                 id="select111"
+                 style="max-height:98px"
                  v-if="isEditEmail"
                  v-decorator="[
           'email',
@@ -80,7 +82,7 @@
 
                  @change="handleEmailChange"
                >
-                 <template slot="dataSource">
+                 <template slot="dataSource" >
                    <a-select-option
                      v-for="email in autoCompleteResult"
                      :key="email">
@@ -145,6 +147,7 @@
       },
       mounted(){
         // 获取个人信息
+       // document.getElementsByClassName('ant-select-dropdown-menu')[0].style.maxHeight='98px';
         this.$ajax('bomextract/user/getpersoninfo','POST').then(res=>{
                 res=res.data;
                 if(res.code==='001'){
@@ -322,4 +325,7 @@ padding-top:24px;
     cursor:pointer;
     color: #1890ff;
   }
+ .ant-select-dropdown-menu{
+   max-height:98px !important;
+ }
 </style>

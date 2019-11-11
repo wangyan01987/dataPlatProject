@@ -18,7 +18,7 @@
                 <div class="editor-box">
                   <p class="editor" @click="$event.stopPropagation()" >
                     <a> <i class="iconfont iconbianji" @click="editItem(item.projectId,$event)"  v-bury="buryObj"/></a>
-                    <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)" v-show="item.isDelete" /></a>
+                    <a><i class="iconfont iconshanchu"  @click="deleteItem(item.projectId,$event)"  v-show="item.isDelete" /></a>
                   </p>
                 </div>
               </div>
@@ -176,6 +176,9 @@
       mounted() {
         //项目名称清零
         this.$store.commit('setProjectName',null);
+        //设置container height
+        let height=document.body.offsetHeight-64+'px';
+        document.getElementsByClassName('container')[0].style.minHeight=height;
         //获取项目列表
        this.getItem(1).then(res=>{
          this.itemList=res;

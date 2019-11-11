@@ -232,6 +232,6 @@ top:50px !important;
 .ant-tabs-nav .ant-tabs-tab{
   padding:12px 25px;
 }
-.main-container .ant-layout-content{
-
+.small-size{
+  font-size: 12px;
 }

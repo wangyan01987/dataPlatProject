@@ -19,7 +19,7 @@
             </a-input>
           </a-col>
           <a-col :span="8">
-           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px">{{codeText}}</a-button>
+           <a-button  :type="btnType" @click="sendCode" :disabled="btnunabled" style="height:40px;width:100%;">{{codeText}}</a-button>
           </a-col>
         </a-row>
       </a-form-item>

@@ -123,6 +123,15 @@
         labelCol: {span: 4},
         wrapperCol: {span: 8, offset: 4},
       };
+      let buryObj={
+        action:'actionEditProjectAtListPage',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'commitProjectAtListPage',
+        pageName:'项目列表页编辑提交',
+        pageArea:'All',
+        terminal:'PC'
+      };
       return {
         provincearr:[],
         obj:{},
@@ -136,6 +145,7 @@
         errorMsg:'',
         cityarr:[],
         districtarr:[],
+        buryObj,
         imgList:[{
           src:require('../../assets/projectImg/001.jpg')
         },{
@@ -355,7 +365,7 @@
            if(obj.provinceId){
              //获取市
             await this.provincehandleChange(obj.provinceId);
-            await  this.handleChange(obj.cityId,1);
+            await  this.handleChange(obj.cityId);
            };
            setTimeout(()=>{
              this.setMsg(obj)

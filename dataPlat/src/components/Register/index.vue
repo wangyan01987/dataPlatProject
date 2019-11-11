@@ -39,6 +39,7 @@
             rules: [{
               validator: validPass,
             }],
+            validateTrigger:['blur']
           }
         ]"
           :type="psdtype"
@@ -94,7 +95,7 @@
             </a-input>
         </a-auto-complete>
       </a-form-item>
-      <a-form-item >
+      <a-form-item  >
         <a-checkbox v-decorator="['agreement', {valuePropName: 'checked',rules: [{
               validator: checkAgreeMent,
             }]}]" style="font-size: 12px">
@@ -104,7 +105,7 @@
           </a>
         </a-checkbox>
       </a-form-item>
-      <a-form-item >
+      <a-form-item style="margin-bottom: 0">
         <a-button  type="primary" style="width:100%" size="large" @click="handleSubmit" >注册</a-button>
       </a-form-item>
     </a-form>
@@ -158,7 +159,7 @@
             if(!mobile){
               return;
             }
-           this.$ajax('sendsms','POST',{type:'register',phoneNumber:mobile}).then(res=>{
+           this.$ajax('sendsms ','POST',{type:'register',phoneNumber:mobile}).then(res=>{
              res=res.data;
                 if(res.code==='001'){
                   this.$message.success('发送成功');
@@ -230,7 +231,7 @@
           obj.password=this.$md5(obj.password);
           delete obj.repassword;
           delete obj.agreement;
-          this.$ajax('register','POST',obj).then(res=>{
+          this.$ajax('bomextract/CloseBate/registAndTrial','POST',obj).then(res=>{
                   res=res.data;
                   if(res.code==='001'){
                     this.$message.success('注册成功，请登录');
@@ -279,7 +280,6 @@
           //验证码验证
         }
         else {
-
           await  this.$ajax('/chechcode','GET',{phoneNumber:mobile,code:value,type:'register'}).then(res=>{
             res=res.data;
             if(res.code==='001'){
@@ -359,6 +359,9 @@
   }
   .register p:not(.has-error){
     margin: 0;
+  }
+  .ant-select-dropdown-menu{
+    max-height:98px !important;
   }
   /*.special.ant-form-item{*/
     /*margin-bottom: 10px;*/

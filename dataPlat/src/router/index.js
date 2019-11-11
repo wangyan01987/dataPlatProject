@@ -103,9 +103,7 @@ import  store from '../store';
   let client=document.body.clientWidth;
   let token=localStorage.getItem('token');
   //未登录
-    console.log(to.name)
       if(to.name==='invite' || to.name === 'joinSuccess'){
-
         next();
       }else{
         if(!token){

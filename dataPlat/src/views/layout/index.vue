@@ -4,15 +4,18 @@
     <a-layout-header>
       <div class="top-header">
         <div style="margin-left:28px;" class="top-header-left">
-           <a href="#/home"  >
-             <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
-               <a-tooltip v-else>
-                 <template slot="title">
-                 返回首页
-                 </template>
-                 <img :src="headerImg"   style="width:24px" @mouseover="showhome=true" @mouseout="showhome=false"/>
-               </a-tooltip>
-          </a>
+          <router-link to="/home">
+            <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
+            <a-tooltip v-else>
+              <template slot="title">
+                返回首页
+              </template>
+              <img :src="headerImg"   style="width:24px" @mouseover="showhome=true" @mouseout="showhome=false"/>
+            </a-tooltip>
+          </router-link>
+           <!--<a href="#/home"  >-->
+            <!---->
+          <!--</a>-->
           <i class="iconfont iconarr-right1" v-show="$route.name!=='home'" style="color: #999"></i>
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
           <span v-else  class="top-name">{{topTitle}}</span>

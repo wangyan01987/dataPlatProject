@@ -372,7 +372,6 @@ let a=0;
       handleSelectChangeLevel(val){
      if(!val){
        this.form.setFieldsValue({'quakeGrade':0});
-       console.log(this.form.getFieldValue('quakeGrade'))
 
      }
         // //console.log(val)
