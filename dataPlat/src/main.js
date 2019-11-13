@@ -24,7 +24,6 @@ Vue.use(ant);
      el.addEventListener('click',()=>{
        const val=binding.value;
        $ajax('buriedpoint/web/visit','POST',val).then(res=>{
-         console.log('------')
        })
      });
 

@@ -159,7 +159,7 @@
 let a=0;
   export default {
 
-    props:['dataflag','floorId'],
+    props:['dataflag','floorId','editFlag'],
     data () {
       let count=0;
       const formItemLayout = {
@@ -180,6 +180,24 @@ let a=0;
       const dataSource = [
       ];
       let projectId=this.$route.params.projectId;
+      let buryObjedit={
+        action:'actionBuildingListRowEditSubmitBtn',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'BuildingListRowEditSubmitBtn',
+        pageName:'项目详情单体Tab',
+        pageArea:'All',
+        terminal:'PC'
+      };
+      let buryObjedit001={
+        action:'actionBuildingRowPopupEditSubmitBtn ',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'BuildingRowPopupEditSubmitBtn',
+        pageName:'项目详情单体弹窗',
+        pageArea:'All',
+        terminal:'PC'
+      };
       return {
         buildingInfo:{},
         typeList:[],
@@ -193,6 +211,8 @@ let a=0;
         projectId,
         count,
         columns1,
+        buryObjedit,
+        buryObjedit001,
         errorMsg:'',
         number:{
 
@@ -268,28 +288,7 @@ let a=0;
                 else{
                   callback();
             }
-            // else{
-            //   //新建单体校验楼栋名称
-            //     if(this.dataflag==='002'){
-            //       // this.$ajax('bomextract/build/buildnumexist','GET',{projectId:this.projectId,floorName:value}).then(res=>{
-            //       //   res=res.data;
-            //       //   if(res.code==='001'){
-            //       //     if(res.data){
-            //       //       callback('楼栋名称已存在，请重新输入');
-            //       //     }
-            //       //     else{
-            //       //       callback()
-            //       //     }
-            //       //   }
-            //       //   else{
-            //       //     callback()
-            //       //   }
-            //       //
-            //       // })
-            //     }else{
-            //       callback();
-            //     }
-            // }
+
       },
       addBuilding(){
         //let a=this.dataSource.length+1;
@@ -352,7 +351,14 @@ let a=0;
                 this.errorMsg='';
                 this.$message.success(msg,5);
                 this.$emit('success',true);
-                // params.relationfloor=params.relationfloor.join('、');
+                if(this.dataflag==='001'){
+                  if(this.editFlag==='001'){
+                    this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit001)
+                  }
+                  else{
+                    this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit)
+                  }
+                }
                 this.$store.commit("setRecord",params);
               }else{
                 if(res.code==='002'){

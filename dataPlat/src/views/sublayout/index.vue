@@ -4,23 +4,15 @@
       <a-menu-item key="building">
         <router-link :to="{name:'building'}">单体</router-link>
       </a-menu-item>
+
       <a-menu-item key="BOM" >
         <router-link to="BOM">BOM</router-link>
       </a-menu-item>
-      <!--<a-menu-item key="file">-->
-     <!--<router-link  :to="{name:'file'}">文件</router-link>-->
-      <!--</a-menu-item>-->
-      <!--<a-menu-item key="issue">-->
-        <!--<router-link :to="{name:'issue'}">任务</router-link>-->
-      <!--</a-menu-item>-->
-      <!--<a-menu-item key="statics">-->
-        <!--<router-link :to="{name:'statics'}">统计</router-link>-->
-      <!--</a-menu-item>-->
       <a-menu-item key="member">
-        <router-link :to="{name:'member'}">成员</router-link>
+        <router-link to="member">成员</router-link>
       </a-menu-item>
     </a-menu>
-    <span class="blue" @click="showProjectInfo" style="margin-right:50px">查看项目信息</span>
+    <span class="blue" @click="showProjectInfo" style="margin-right:50px" v-bury="buryObj">查看项目信息</span>
     <projectform  :propMsg='propMsg' ref="projectform" ></projectform>
     <router-view></router-view>
   </div>
@@ -30,9 +22,20 @@
   export default {
     components:{projectform},
     data () {
+      let buryObj={
+        action:'actionProjectDetailGetProjectDetailBtn',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'ProjectDetailGetProjectDetailBtn',
+        pageName:'项目详情',
+        pageArea:'All',
+        terminal:'PC'
+      };
+
 
       return {
-        propMsg:{}
+        propMsg:{},
+        buryObj,
       }
     },
     computed:{

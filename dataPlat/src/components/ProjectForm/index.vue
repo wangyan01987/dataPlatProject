@@ -2,8 +2,8 @@
   <div class="form-container">
     <!--查看-->
     <a-modal :destroyOnClose=true :title='title' v-model="visible" @cancel="cancel" :footer="null" :width="550">
-      <span class="blue" @click="currentDataflag=1" v-if="currentDataflag===0">编辑信息</span>
-     <projectinfo ref="projectInfo" :dataflag="currentDataflag" :projectId="propMsg.projectId" @cancel="cancel" @save="save"></projectinfo>
+      <span class="blue" @click="currentDataflag=1;editFlag='001'" v-if="currentDataflag===0" v-bury="buryObjedit">编辑信息</span>
+     <projectinfo ref="projectInfo" :dataflag="currentDataflag"  :editFlag="editFlag" :projectId="propMsg.projectId" @cancel="cancel" @save="save"></projectinfo>
     </a-modal>
   </div>
 </template>
@@ -13,10 +13,21 @@
     props:['propMsg'],
     components:{projectinfo},
     data() {
+      let buryObjedit={
+        action:'actionProjectDetailGetProjectDetailPopupsEditBtn',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'ProjectDetailGetProjectDetailPopupsEditBtn',
+        pageName:'项目详情编辑',
+        pageArea:'All',
+        terminal:'PC'
+      };
       return {
         visible: false,
         footer:null,
-        currentDataflag:0
+        currentDataflag:0,
+        editFlag:'000',
+        buryObjedit
       }
     },
     methods: {
@@ -62,7 +73,7 @@
     color:dodgerblue;
     position:absolute;
     top:0;
-    left:1.3rem;
+    left:130px;
     line-height:54px;
   }
 </style>

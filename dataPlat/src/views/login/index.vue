@@ -50,10 +50,17 @@
     export default {
         name: "index",
       components:{login ,register,loginmobile,forgetpsd},
-
-
       data(){
         let url= process.env.Base_URL;
+        let buryObj={
+          action:'actionLoginRegister',
+          user: this.$store.state.userId,
+          eventType:'pageView',
+          eventName:'pageView',
+          pageName:'登录注册页',
+          pageArea:'All',
+          terminal:'PC'
+        };
             return{
               //001  账号登陆，默认
               //002  快速登陆
@@ -61,8 +68,22 @@
               loginType:'001',
               key:'1',
               visible:false,
-              url
+              url,
+              buryObj
             }
+      },
+      watch:{
+        $route: {
+          handler: function(val, oldVal){
+           if(val){
+             this.$ajax('buriedpoint/web/visit','POST',this.buryObj);
+           }
+          },
+          // 深度观察监听
+          deep: true,
+          immediate:true
+        },
+
       },
       mounted(){
 

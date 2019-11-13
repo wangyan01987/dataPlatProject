@@ -1,8 +1,8 @@
 <template>
   <div class="bom-item-container">
     <div class="bom-item-top">
-      <span>产品编码：{{productNum}}</span>
-     <span>产品编号：{{productId}}</span>
+      <span >产品编码：{{productNum}}</span>
+     <span style="margin-right:10px;">产品编号：{{productId}}</span>
     </div>
     <div class="bom-item-body">
       <!--基础信息-->
@@ -16,12 +16,12 @@
              >
                <div :key="col">
                  <a-input-number :min="0" :max="Math.pow(10,6)-1"   :precision="0"
-
                                  v-if="record.editable" style="margin: -5px 0" :value="text" @change="value => handleChange(value, record.sizeId, col,'001')"
                  />
                  <template v-else>{{text?text:'---'}}</template>
                </div>
              </template>
+
              <template slot="operation" slot-scope="text, record, index">
                <div class="editable-row-operations">
         <span v-if="record.editable">
@@ -60,10 +60,23 @@
             </div>
 
           </template>
+          <template slot="matlName"   slot-scope="text, record, index">
+            <div>
+              <span v-if="record.matl1stName==='钢材类'">{{record.matl2nd}}</span>
+              <span v-else>{{text}}</span>
+            </div>
+          </template>
           <template slot="specification" slot-scope="text,record,index">
-            <div >
-              <a-select   @focus="handleChangeSize(record)"  v-if="record.editable" placeholder="请选择" :value="text"  @change="value => handleChange(value, record.matlId,'specification','002')">
+            <div style="width:100%" >
+              <a-select style="width:100%" @focus="handleChangeSize(record)" v-show="record.matl1stName!=='钢材类'"
+                        v-if="record.editable" placeholder="请选择" :value="text"
+                        @change="value => handleChange(value, record.matlId,'specification','002')">
                 <a-select-option v-for="item in specificationArr" :key="item.specification" :value="item.specification">{{item.specification}}</a-select-option>
+              </a-select>
+              <a-select style="width:100%"  v-show="record.matl1stName==='钢材类'"
+                        v-if="record.editable" placeholder="请选择" :value="text"
+                        @change="value => handleChange(value, record.matlId,'specification','002')">
+                <a-select-option v-for="item in diameterArr" :key="item" :value="item.slice(1)">{{item}}</a-select-option>
               </a-select>
               <template v-else>{{text?text:'---'}}</template>
             </div>
@@ -213,6 +226,7 @@
       title: '名称',
       dataIndex: 'matlName',
       width: '10%',
+      scopedSlots: { customRender: 'matlName' },
     },
     {
       title: '规格',
@@ -285,7 +299,8 @@
         barGradeArr:[],
         specificationArr:[],
         cacheData1:'',
-        cacheData2:''
+        cacheData2:'',
+        diameterArr:['φ6','φ8','φ10','φ12','φ14','φ16','φ18','φ20','φ22','φ25','φ28','φ32']
       };
     },
     props:['propmsg'],
@@ -307,29 +322,69 @@
       },
       handleChange(value, key, column,flag) {
         if(flag==='001'){
+          //基础信息
           const newData = [...this.data];
           const target = newData.filter(item => key === item.sizeId)[0];
+          let propflag;
           if (target) {
+            //定义一个变更字段数组
+            switch (column) {
+              case 'length':
+                propflag = '长度';
+                break;
+              case 'width':
+                propflag = '宽度';
+                break;
+              case 'height':
+                propflag = '厚度';
+                break;
+            }
+            if ( target[column] !== value) {
+              target.changePropArr.add(propflag);
+            }
             target[column] = value;
             this.data = newData;
           }
         }
           else if(flag==='002'){
+
           const newData = [...this.dataSource];
           const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
+            let propflag;
+              //定义一个变更字段数组
+              switch (column) {
+                case 'specification':
+                  propflag = '规格';
+                  break;
+                case 'barGrade':
+                  propflag = '强度等级';
+                  break;
+                case 'amount':
+                  propflag = '数量';
+                  break;
+              }
+              if ( target[column] !== value) {
+                target.changePropArr.add(propflag);
+              }
+              if(target.matl1stName==='钢材类'){
+                target.barDiameter=value;
+              }
             target[column] = value;
+
             this.dataSource = newData;
           }
         }
 
       },
       edit(key,flag) {
+
        if(flag==='001'){
          const newData = [...this.data];
          const target = newData.filter(item => key === item.sizeId)[0];
          if (target) {
            target.editable = true;
+          target.changePropArr=new Set();
            this.data = newData;
          }
        }else if(flag=='002'){
@@ -337,6 +392,7 @@
          const newData = [...this.dataSource];
          const target = newData.filter(item => key === item.matlId)[0];
          if (target) {
+           target.changePropArr=new Set();
            target.editable = true;
            this.dataSource = newData;
          }
@@ -362,6 +418,14 @@
                 this.$message.success('修改成功',2);
                 //修改统计信息
                 this.dataStatics=[res.data];
+                //埋点
+                let newObj={
+                  user:this.$store.state.userId,
+                  details:{
+                    '几何信息':[...target.changePropArr]
+                  }
+                };
+                this.$ajax('bom/monitor/web/cols/change','POST',newObj)
               }
               else{
                 this.$message.error('修改失败',2);
@@ -374,14 +438,14 @@
           const newData = [...this.dataSource];
           const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
-
             //保存物料信息
             let obj={
               materialId:target.matlId,
               amount:target.amount,
               specification:target.specification,
               barGrade:target.barGrade,
-              length:target.length
+              length:target.length,
+              barDiameter:target.barDiameter
             };
             this.$ajax('bomextract/bom/modifymaterial','POST',obj).then(res=>{
               res=res.data;
@@ -390,6 +454,13 @@
                 if(res.data){
                     target.allweight=res.data;
                 }
+                let newObj={
+                  user:this.$store.state.userId,
+                  details:{
+                    '详细信息':[...target.changePropArr]
+                  }
+                };
+                this.$ajax('bom/monitor/web/cols/change','POST',newObj)
                 delete target.editable;
                   this.dataSource = newData;
                 this.cacheData2 = newData.map(item => ({ ...item }));

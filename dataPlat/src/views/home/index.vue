@@ -50,10 +50,10 @@
       data: function () {
         let count=2;
         let buryObj={
-             action:'actionEditProjectAtListPage',
+             action:'actionProjectListEditProjectBtn',
              user: this.$store.state.userId,
             eventType:'buttonClick',
-           eventName:'editProjectAtListPage',
+           eventName:'ProjectListEditProjectBtn',
           pageName:'项目列表页编辑',
           terminal:'PC'
         };

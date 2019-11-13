@@ -219,6 +219,7 @@ b.连续12个月未曾登陆、使用本平台及服务。
   }
   pre{
     white-space: pre-wrap;
+    text-align:justify;
   }
   .main-title{
     margin-bottom: 25px;

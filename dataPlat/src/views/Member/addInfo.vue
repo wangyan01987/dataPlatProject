@@ -18,7 +18,7 @@
                 :placeholder="`请输入${flagName}(*必填)`"
                 style="margin-right:8px;width:60%;"
                 />
-                <a-auto-complete  @search="handleSearch" placeholder="请输入邮箱" :max="30"
+                <a-auto-complete  @search="handleSearch"
                                  v-decorator="[`names[${k}]`,
               {
                 validateTrigger:['blur'],
@@ -134,7 +134,7 @@
         add(){
           const {form}=this;   //form=this.form
            const keys=form.getFieldValue('keys');
-           if(keys.length>this.limitNum&&this.dataflag==='001'){
+           if(keys.length>=this.limitNum&&this.dataflag==='001'){
              this.$message.error(`当前页面有效${this.flagName}超出剩余额度`);
              return;
            }

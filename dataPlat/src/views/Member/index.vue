@@ -173,7 +173,7 @@
     },
     mounted(){
     this.projectId=this.$route.params.projectId;
-      this.fetch( this.projectId,1,20);
+     this.fetch( this.projectId,1,20);
 
 
     }

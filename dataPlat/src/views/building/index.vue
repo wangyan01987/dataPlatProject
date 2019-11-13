@@ -1,11 +1,13 @@
 <template>
    <div class="box-container">
-     {{pagination.current}}
      <p style="text-align:right;" class="action-btn"><a-button  type="primary" @click="addBuilding" icon="plus">新建单体</a-button></p>
-     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click" :locale="{emptyText: '暂无数据'}"
+     <a-table :columns="columns" :dataSource="dataSource" :rowKey='getKey' :pagination="pagination" :customRow="click"
+
+              :locale="{emptyText: '暂无数据'}"
      :loading="loading"  style="cursor: pointer">
 
-       <template v-for="item in ['floorCode','floorName','relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
+       <template
+         v-for="item in ['floorCode','floorName','relationfloor','floorNum','preFloorNum','quakeGradeName','monolayerArea','cmpTypeNameJoin']" :slot="item" slot-scope="text,record">
 
           <a-tooltip>
             <template slot="title">
@@ -17,8 +19,7 @@
 
        </template>
        <span slot="action" slot-scope="record,index" class="action" @click="$event.stopPropagation()" style="cursor:default">
-         <a style="margin-right:30px"> <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)" /></a>
-
+         <a style="margin-right:30px" > <i class="iconfont iconbianji" @click="editBuilding(record,$event,index)"  v-bury="buryObjedit" /></a>
          <a><i class="iconfont iconshanchu"  @click="deleteBuilding($event,record.floorId,index)"
                v-show="record.createUserId===$store.state.userId||$store.state.userId===$store.state.projectUserId" /></a>
        </span>
@@ -46,6 +47,24 @@
           { title: '操作', dataIndex: '', key: 'x', scopedSlots: { customRender: 'action' } },
         ];
         const dataSource = [];
+        let buryObjedit={
+          action:'actionBuildingListRowEditBtn',
+          user: this.$store.state.userId,
+          eventType:'buttonClick',
+          eventName:'BuildingListRowEditBtn',
+          pageName:'项目详情单体Tab',
+          pageArea:'All',
+          terminal:'PC'
+        };
+        let buryObj={
+          action:'actionBuildingListRowPopup',
+          user: this.$store.state.userId,
+          eventType:'buttonClick',
+          eventName:'BuildingListRowPopup',
+          pageName:'项目详情单体Tab',
+          pageArea:'All',
+          terminal:'PC'
+        };
           return{
             dataSource,
             columns,
@@ -53,23 +72,16 @@
             dataflag:'000',
             loading:false,
             floorId:'',
-            current:1
+            current:1,
+            buryObjedit,
+            buryObj
           }
       },
       methods:{
+
           handlesubmitSucc(){
           let currentIndex=this.current;
             this.fetch(currentIndex,20);
-
-          // if(this.dataflag==='002'){
-          //   //this.pagination.current=1;
-          //   let currentIndex=this.current;
-          //  this.fetch(currentIndex,5);
-          // }
-          // else{
-          //   let currentIndex=this.current;
-          //   this.fetch(currentIndex,20);
-          // }
         },
         deleteBuilding(e,floorId,index){
             e.stopPropagation();
@@ -131,11 +143,14 @@
                   self.$refs.infoform.visible=true;
                   self.dataflag='000';
                   self.$store.commit("setRecord",record);
-                }
+                  self.$ajax('buriedpoint/web/visit','POST',self.buryObj)
+
+  }
               }
             }
         },
         changePage(page,size){
+            this.pagination.current=page;
           this.current=page;
           this.fetch(page,20)
         },

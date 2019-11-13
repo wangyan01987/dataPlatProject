@@ -18,8 +18,8 @@
         <span >{{item.projectName}}</span></router-link>
     </a-menu-item>
     <a-menu-item>
-      <a href="#/home" style="text-align:right;color: #1890ff;
-    text-decoration: underline;" @dblclick="()=>{}">返回项目列表</a>
+      <router-link  to="/home" style="text-align:right;color: #1890ff;
+    text-decoration: underline;" @dblclick="()=>{}">返回项目列表</router-link>
     </a-menu-item>
   </a-menu>
   </a-dropdown>

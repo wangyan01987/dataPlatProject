@@ -8,13 +8,13 @@
       :confirmLoading="confirmLoading"
       @cancel="handleCancel"
       :destroyOnClose=true>
-      <a class="blue"><span  @click="editInfo" v-if="dataflag==='000'">编辑</span></a>
+      <a class="blue"><span  @click="editInfo" v-if="dataflag==='000'" v-bury="buryObj">编辑</span></a>
       <template slot="footer" >
         <a-button type="default"  v-show="dataflag!=='000'" @click="handleCancel">取消</a-button>
         <a-button type="primary" v-show="dataflag!=='000'" @click="handleOk">确定</a-button>
       </template>
 
-      <building-info :dataflag="dataflag" :floorId='floorId' ref="building" @success='handleSuccess'></building-info>
+      <building-info :dataflag="dataflag" :floorId='floorId'  :editFlag="editFlag"   ref="building" @success='handleSuccess'></building-info>
     </a-modal>
 </template>
 <script>
@@ -23,9 +23,20 @@
     props:['dataflag','floorId'],
     components:{BuildingInfo},
     data() {
+      let buryObj={
+        action:'actionBuildingRowPopupEditBtn',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'BuildingRowPopupEditBtn',
+        pageName:'项目详情单体弹窗',
+        pageArea:'All',
+        terminal:'PC'
+      };
       return {
         visible: false,
         confirmLoading: false,
+        buryObj,
+        editFlag:'000'
       }
     },
     computed:{
@@ -51,6 +62,7 @@
         this.visible = false
       },
       editInfo(){
+        this.editFlag='001';
         this.$emit('edit');
       },
     }
@@ -65,7 +77,7 @@
     color:dodgerblue;
     position:absolute;
     top:0;
-    left:1.3rem;
+    left:130px;
     line-height:54px;
   }
 </style>

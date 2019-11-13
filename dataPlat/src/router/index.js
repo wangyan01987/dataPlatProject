@@ -73,6 +73,11 @@ const router= new Router({
               component:()=>import('@/views/BOM'),
             },
             {
+              path:'member',
+              name:'member',
+              component:()=>import('@/views/Member/index.vue')
+            },
+            {
               path:'file',
               name:'file',
               component:()=>import('@/views/file')
@@ -81,11 +86,7 @@ const router= new Router({
               name:'issue',
               component:()=>import('@/views/issue')
             },
-            {
-              path:'member',
-              name:'member',
-              component:()=>import('@/views/member')
-            },
+
           ]
         },
       ]

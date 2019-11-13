@@ -14,9 +14,12 @@
           <a-input placeholder="请输入项目简称，支持中英文字符，字数小于50"  maxlength="51"  v-decorator="['projectAbbr', {validateTrigger:['blur'],rules: [{validator:checkName}]} ]" v-show="dataflag===1||dataflag===2"></a-input>
           <span v-show="dataflag===0">{{obj.projectAbbr?obj.projectAbbr:'---'}}</span>
         </a-form-item>
-        <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号">
+        <a-form-item :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" label="项目编号"
+                     :class="{'ant-form-item-with-help':errorMsgNum}"
+        >
           <a-input maxlength="51" v-decorator="[ 'projectCode', {validateTrigger:['blur'],rules:[{validator:checkNumber},{ required: true, message: '项目编号不可为空' }]}]"   placeholder="请输入项目编号，支持英文、数字、符号，字数小于50" v-show="dataflag===1||dataflag===2"/>
           <span v-show="dataflag===0">{{obj.projectCode}}</span>
+          <p class="has-error" v-show="errorMsgNum">{{errorMsgNum}}</p>
         </a-form-item>
         <a-form-item label="项目类型" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag===1||dataflag===2" >
           <a-select placeholder="请选择项目类型" v-decorator="['protype']">
@@ -101,7 +104,7 @@
       </a-form>
       <div class="btn-box" v-if="dataflag!==0">
         <a-button  @click="cancel">取消</a-button>
-        <a-button type="primary" style="margin-left:0.1rem" @click="submit">确定</a-button>
+        <a-button type="primary" style="margin-left:0.1rem" @click="submit" >确定</a-button>
       </div>
     </div>
   </a-spin>
@@ -113,7 +116,7 @@
   import moment from 'moment'
   export default {
     name: 'HelloWorld',
-    props: ['dataflag','projectId'],
+    props: ['dataflag','projectId','editFlag'],
     data() {
       const formItemLayout = {
         labelCol: {span: 4},
@@ -124,11 +127,20 @@
         wrapperCol: {span: 8, offset: 4},
       };
       let buryObj={
-        action:'actionEditProjectAtListPage',
+        action:'actionProjectListEditProjectSubmitBtn',
         user: this.$store.state.userId,
         eventType:'buttonClick',
-        eventName:'commitProjectAtListPage',
+        eventName:'ProjectListEditProjectSubmitBtn',
         pageName:'项目列表页编辑提交',
+        pageArea:'All',
+        terminal:'PC'
+      };
+      let buryObjedit={
+        action:'actionProjectDetailGetProjectDetailPopupsSubmitBtn',
+        user: this.$store.state.userId,
+        eventType:'buttonClick',
+        eventName:'ProjectDetailGetProjectDetailPopupsSubmitBtn',
+        pageName:'项目详情单体Tab',
         pageArea:'All',
         terminal:'PC'
       };
@@ -146,6 +158,8 @@
         cityarr:[],
         districtarr:[],
         buryObj,
+        buryObjedit,
+        errorMsgNum:'',
         imgList:[{
           src:require('../../assets/projectImg/001.jpg')
         },{
@@ -169,6 +183,7 @@
     components: {},
     methods: {
       checkNumber(rule, value, callback){
+        this.errorMsgNum='';
             if(value){
               if(value.length>50){
                 callback("超出字符限制50");
@@ -270,7 +285,17 @@
           this.$ajax(url,'POST',obj).then(res=>{
             res=res.data;
             if(res.code==='001'){
+                if(this.dataflag===1){
+                    if(this.editFlag==='001'){
+                      //详情页编辑
+                      this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit)
+                    }
+                    else{
+                      this.$ajax('buriedpoint/web/visit','POST',this.buryObj);
+                    }
+                }
               this.errorMsg='';
+              this.errorMsgNum='';
               if(obj.projectName){
                 let arr=this.$store.state.menuList;
                 this.$store.state.menuList= arr.map(item=>{
@@ -286,9 +311,12 @@
               this.$store.commit("setProjectName", obj.projectName);
               this.$emit('save');
             }else{
-              if(res.code==='004'){
+              if(res.code==='007'){
                 this.errorMsg=res.msg;
-              }else{
+              }else if(res.code==='004'){
+                this.errorMsgNum=res.msg;
+              }
+              else{
                 this.$message.error(res.msg);
               }
 

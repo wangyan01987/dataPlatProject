@@ -213,7 +213,7 @@
               this.btnabled = true;
               this.btnType = 'default';
             } else {
-              clearTimeout(this.timer)
+              clearTimeout(this.timer);
               this.initData();
             }
           }, 1000)
@@ -270,7 +270,6 @@
                      this.codeError=res.msg;
                    }else{
                      this.errorMsg=res.msg;
-
                      this.dataflag='111';
                    }
                  };

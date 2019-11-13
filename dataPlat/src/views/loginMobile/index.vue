@@ -44,6 +44,15 @@
     name: "index",
     components:{login ,register,loginmobile,forgetpsd},
     data(){
+      let buryObj={
+        action:'actionLoginRegister',
+        user: this.$store.state.userId,
+        eventType:'pageView',
+        eventName:'pageView',
+        pageName:'登录注册页',
+        pageArea:'All',
+        terminal:'H5'
+      };
       return{
         //001  账号登陆，默认
         //002  快速登陆
@@ -53,12 +62,14 @@
         login:true,
         registered:false,
         key:'1',
-        repassworded:false
+        repassworded:false,
+        buryObj
       }
     },
     mounted(){
       // this.$store.commit('setLogin',true);
       //  console.log(this.$store.state.isLogin)
+      this.$ajax('buriedpoint/web/visit','POST',this.buryObj);
     },
     methods:{
       callback(val){

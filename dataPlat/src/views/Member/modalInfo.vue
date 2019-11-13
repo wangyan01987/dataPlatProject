@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="item-info" >
-      <add-info  ref="mobileInfo" :dataflag="dataflag" :key="dataflag" @stateCount="changeCount" :emailLimitNum="emailLimitNum" :mobilelimitNumber="mobilelimitNumber"></add-info>
+      <add-info  ref="mobileInfo" :dataflag="dataflag"  @stateCount="changeCount" :emailLimitNum="emailLimitNum" :mobilelimitNumber="mobilelimitNumber"></add-info>
     </div>
 
     <div class="item-info">
@@ -63,7 +63,6 @@
           if(this.dataflag==='001'){
             //邮箱
             this.emailLimitNum=this.emailLimitNum-val;
-            console.log(this.emailLimitNum)
 
           }
           else if(this.dataflag==='002'){
@@ -73,10 +72,11 @@
           copyUrl(data){
             let url = data;
             let oInput = document.createElement('input');
+
             oInput.value = url;
             document.body.appendChild(oInput);
             oInput.select(); // 选择对象;
-            oInput.style.lineHeight=0;
+            oInput.style.cssText='position:absolute;opacity:0;height:0;bottom:0';
             document.execCommand("Copy"); // 执行浏览器复制命令
             this.$message.success('复制成功,点击粘贴');
           },

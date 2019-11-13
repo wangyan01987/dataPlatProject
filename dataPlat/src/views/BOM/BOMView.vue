@@ -25,10 +25,10 @@
                  :value="text"
                  :maxlength="getMax(col)"
                  @change="e => handleChange(e.target.value, record.cmptId, col,e.target,record)"
+
                /><p class="has-error"></p>
              </div>
-               <template v-else
-               >
+               <template v-else>
                  <a-tooltip>
                    <template slot="title">
                      <span v-show="text">{{text}}</span>
@@ -38,6 +38,14 @@
 
                </template>
              </div>
+           </template>
+           <template  slot="prodCode" slot-scope="text, record, index">
+             <a-tooltip>
+               <template slot="title">
+                 <span v-show="text">{{text}}</span>
+               </template>
+               <span >{{text?text:'---'}}</span>
+             </a-tooltip>
            </template>
            <template slot="operation" slot-scope="text, record, index">
              <div class="editable-row-operations">
@@ -94,7 +102,7 @@
           title: '产品编码',
           dataIndex: 'prodCode',
           width: '15%',
-         // scopedSlots: { customRender: 'prodCode' },
+          scopedSlots: { customRender: 'prodCode' },
         },
         {
           title: '版本',
@@ -138,16 +146,20 @@
         prodId:'',
         cacheData:'',
         current:1,
-        maxlength:30
+        maxlength:30,
+
       };
     },
     props:['objType','buildingid'],
     watch:{
       //构件类型
        'objType':{
-         handler(val){
+         handler(val,oldval){
          //获取bom数据
         if(val){
+          if(this.loading){
+            return;
+          };
           this.getBom(1,20);
         }
            },
@@ -155,6 +167,9 @@
        },
       'buildingid'(val,oldval){
          //楼栋号更新的话，并且构造类型有值
+        if(this.loading){
+          return;
+        };
         if(oldval&&this.objType){
           this.getBom(1,20);
         }else{
@@ -201,24 +216,30 @@
         this.prodId='';
         this.version='';
         this.floor='';
-        this.getBom(1,20);
+        this.pagination.current=1;
+        this.current=1;
+        if(this.buildingid){
+          this.getBom(1,20);
+        }
       },
       getKey(record){
            return  record.cmptId;
       },
       getVersion(){
         //获取版本号
-        if(this.versionArr.length===0){}
-        this.$ajax('bomextract/bom/getversiondict','POST',this.bomprops).then(res=>{
-          res=res.data;
-          if(res.code==='001'){
-            this.versionArr=res.data;
-          }
-        })
+        if(this.versionArr.length===0&&this.buildingid){
+          this.$ajax('bomextract/bom/getversiondict','POST',this.bomprops).then(res=>{
+            res=res.data;
+            if(res.code==='001'){
+              this.versionArr=res.data;
+            }
+          })
+        }
+
       },
       getOption(){
          //获取楼层列表
-        if(this.floorArr.length===0){
+        if(this.floorArr.length===0&&this.buildingid){
           this.$ajax('bomextract/bom/getfloordict','POST',this.bomprops).then(res=>{
             res=res.data;
             if(res.code==='001'){
@@ -228,12 +249,18 @@
         }
       },
       floorChange(val){
-           this.floor=val;
-           this.getBom(1,20);
+
+          if(val){
+            this.floor=val;
+            this.getBom(1,20);
+          }
       },
       versionChange(val){
-        this.version=val;
-        this.getBom(1,20);
+
+       if(val){
+         this.version=val;
+         this.getBom(1,20);
+       }
       },
     async  getBom(num,size){
         this.loading=true;
@@ -248,16 +275,18 @@
         obj.prodId=this.prodId;
        await this.$ajax('bomextract/bom/getbominfobypage','GET',obj).then(res=>{
           res=res.data;
-          if(res.code==='001'||res.state=='success'){
+          if(res.code==='001'||res.state==='success'){
             this.loading=false;
             const pagination = { ...this.pagination };
             pagination.total = res.count;
             pagination.pageSize=size;
+            pagination.current=num;
             this.pagination=pagination;
             pagination.onChange=this.changePage;
             if(res.count===0||res.data.length===0){
                  this.data=[];
             }else{
+              this.data=[];
               res.data.forEach(item=>{
                 item.cmptBaseInfo.bomList=item.bomList;
                 item.cmptBaseInfo.sizeList=item.sizeList;
@@ -265,8 +294,6 @@
               });
               this.cacheData=this.data.map(item => ({ ...item }));
             }
-
-
           }
         });
        if(this.data.length===0&&this.current>1){
@@ -277,6 +304,7 @@
       },
       changePage(page,size){
         this.current=page;
+        this.pagination.current=page;
          this.getBom(page,20);
       },
       deleteItem(record,key){
@@ -310,8 +338,10 @@
 
       },
       onSearch(val){
+      if(val){
         this.prodId=val;
-         this.getBom(1,20);
+        this.getBom(1,20);
+      }
       },
       onClose(){
         //关闭
@@ -327,6 +357,7 @@
         $(target1).parent().siblings('.has-error').text(msg);
         // $(target1).parents('td').css('padding-bottom',0);
       },
+
      async handleChange(value, key, column,target1,record) {
         record.save=true;
         //为空判断
@@ -368,13 +399,26 @@
 
          const newData = [...this.data];
          const target = newData.filter(item => key === item.cmptId)[0];
+         let propflag;
          if (target) {
+
+           //定义一个变更字段数组
+             switch (column){
+               case 'version':propflag='版本号';break;
+               case 'remark':propflag='备注';break;
+               case 'floor':propflag='楼层';break;
+               case 'prodId':propflag='产品编号';break;
+             }
+           if(target.save&&target[column]!==value){
+             target.changePropArr.add(propflag);
+           }
            target[column] = value;
            this.data = newData;
          }
       },
       edit(key,record) {
         record.save=true;
+        record.changePropArr=new Set();
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
 
@@ -387,6 +431,7 @@
        if(!record.save){
          return;
        }
+       console.log(record)
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
         const newtarget={...target};
@@ -422,7 +467,16 @@
                 this.data = newData;
                 delete target.editable;
                 this.cacheData = newData.map(item => ({ ...item }));
+
                 this.$message.success('修改成功！',2);
+                //埋点
+                let newObj={
+                  user:this.$store.state.userId,
+                  details:{
+                    '构件信息':[...target.changePropArr]
+                  }
+                };
+                this.$ajax('bom/monitor/web/cols/change','POST',newObj)
               }
               else{
                 this.$message.error(res.msg);

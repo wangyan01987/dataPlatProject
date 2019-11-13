@@ -39,7 +39,7 @@
               <a v-show="psdtype2==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype2='text'"  /></a>
               <a  v-show="psdtype2==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype2='password'"  /></a>
             </a-input>
-            <p style="margin:3px 0 0 0;line-height:0;font-size:12px;">
+            <p style="margin:3px 0 0 0;line-height:1;font-size:12px;">
               <a-icon type="info-circle" style="color:#1890ff;margin-right:3px;" theme="filled" />6-16位字母、数字或符号组成，区分大小写</p>
           </a-form-item>
           <a-form-item>
@@ -207,7 +207,7 @@
     padding:0 0.2rem;
   }
   .info-box{
-    padding:24px 180px;
+    padding:24px 1.8rem;
 
   }
   .action-box{
