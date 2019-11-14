@@ -3,7 +3,7 @@
     <div class="box-top">
       <!--<p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>-->
       <p class="action"> <a  style="margin-right: 10px;text-decoration: none;color:#fff"
-                             :href="`${url}bomextract/bom/download?code=khd1`" download="客户端软件">客户端下载</a></p>
+                             href="http://lifesurge.lifegranary.com/PST/easyBOM.exe" download="客户端软件">客户端下载</a></p>
 
     </div>
    <!--<p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>-->
@@ -18,7 +18,7 @@
           </a-tabs>
           <div class="action-box" v-if="loginType==='001'||loginType==='002'">
             <span @click="forgetPsd"  v-show="loginType==='001'"  >忘记密码？</span>
-            <span @click="loginMobile"  v-show="loginType==='001'">验证码快速登录</span>
+            <span @click="loginMobile"  v-show="loginType==='001'" style="float:right;">验证码快速登录</span>
             <span  v-show="loginType==='002'"></span>
             <span @click="loginType='001'"  v-show="loginType==='002'" >账号密码登录</span>
           </div>
@@ -52,6 +52,7 @@
       components:{login ,register,loginmobile,forgetpsd},
       data(){
         let url= process.env.Base_URL;
+        let href=`${url}bomextract/bom/download?code=khd1`
         let buryObj={
           action:'actionLoginRegister',
           user: this.$store.state.userId,

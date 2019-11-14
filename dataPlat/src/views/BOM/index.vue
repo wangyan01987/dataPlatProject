@@ -112,6 +112,7 @@
     padding-top:0.2rem;
     padding-bottom: 0.2rem;
     padding-left:0.2rem;
+    background-color:#F2F3F5;
   }
   .container-item{
     /*height:100%;*/

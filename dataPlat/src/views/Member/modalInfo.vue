@@ -33,7 +33,9 @@
       </div>
     </div>
     <div class="item-info" >
-      <add-info  ref="mobileInfo" :dataflag="dataflag"  @stateCount="changeCount" :emailLimitNum="emailLimitNum" :mobilelimitNumber="mobilelimitNumber"></add-info>
+      <!--根据不同的key值渲染-->
+      <add-info  v-if="dataflag==='001'" key="001"    ref="mobileInfo" :dataflag="dataflag"  @stateCount="changeCount" :emailLimitNum="emailLimitNum" ></add-info>
+      <add-info  v-if="dataflag==='002'"  key="002"   ref="mobileInfo"   :dataflag="dataflag"  @stateCount="changeCount"></add-info>
     </div>
 
     <div class="item-info">
@@ -65,14 +67,10 @@
             this.emailLimitNum=this.emailLimitNum-val;
 
           }
-          else if(this.dataflag==='002'){
-            this.mobilelimitNumber=this.mobilelimitNumber-val;
-          }
         },
           copyUrl(data){
             let url = data;
             let oInput = document.createElement('input');
-
             oInput.value = url;
             document.body.appendChild(oInput);
             oInput.select(); // 选择对象;

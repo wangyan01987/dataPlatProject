@@ -60,7 +60,7 @@
     mounted(){
       //设置高度
       let height=document.body.offsetHeight-64+'px';
-      document.getElementsByClassName('sub-container')[0].style.cssText=`min-height:${height};height:auto !important;`;
+      document.getElementsByClassName('sub-container')[0].style.cssText=`min-height:${height};height:${height};`;
       let that=this;
       window.addEventListener("popstate", function(e) {
        that.$router.push({path:'/home'})

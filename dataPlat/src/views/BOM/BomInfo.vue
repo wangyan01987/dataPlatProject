@@ -67,18 +67,21 @@
             </div>
           </template>
           <template slot="specification" slot-scope="text,record,index">
-            <div style="width:100%" >
-              <a-select style="width:100%" @focus="handleChangeSize(record)" v-show="record.matl1stName!=='钢材类'"
+            <div style="width:100%" v-show="record.matl1stName!=='钢材类'" >
+              <a-select style="width:100%" @focus="handleChangeSize(record)"
                         v-if="record.editable" placeholder="请选择" :value="text"
                         @change="value => handleChange(value, record.matlId,'specification','002')">
                 <a-select-option v-for="item in specificationArr" :key="item.specification" :value="item.specification">{{item.specification}}</a-select-option>
               </a-select>
-              <a-select style="width:100%"  v-show="record.matl1stName==='钢材类'"
-                        v-if="record.editable" placeholder="请选择" :value="text"
+              <template v-else>{{text?text:'---'}}</template>
+            </div>
+            <div v-show="record.matl1stName==='钢材类'">
+              <a-select style="width:100%"
+                        v-if="record.editable" placeholder="请选择" :value="`φ${record.barDiameter}`"
                         @change="value => handleChange(value, record.matlId,'specification','002')">
                 <a-select-option v-for="item in diameterArr" :key="item" :value="item.slice(1)">{{item}}</a-select-option>
               </a-select>
-              <template v-else>{{text?text:'---'}}</template>
+              <template v-else>{{record.barDiameter?'φ'+record.barDiameter:'---'}}</template>
             </div>
           </template>
           <template slot="length" slot-scope="text, record, index">
@@ -120,6 +123,7 @@
 </template>
 
 <script>
+
   const columnsStatics=[
 
     {
@@ -232,7 +236,7 @@
       title: '规格',
       dataIndex: 'specification',
       width: '17%',
-      scopedSlots: { customRender: 'specification' },
+      scopedSlots: { customRender:'specification'},
     },
     {
       title: '强度等级',
@@ -300,6 +304,7 @@
         specificationArr:[],
         cacheData1:'',
         cacheData2:'',
+
         diameterArr:['φ6','φ8','φ10','φ12','φ14','φ16','φ18','φ20','φ22','φ25','φ28','φ32']
       };
     },
@@ -311,6 +316,7 @@
       productId(){
         return this.propmsg.prodId;
       },
+
       },
     methods: {
       onClose(){
@@ -321,6 +327,7 @@
         return record.index;
       },
       handleChange(value, key, column,flag) {
+
         if(flag==='001'){
           //基础信息
           const newData = [...this.data];
@@ -352,6 +359,7 @@
           const target = newData.filter(item => key === item.matlId)[0];
           if (target) {
             let propflag;
+            let copyValue=target[column];
               //定义一个变更字段数组
               switch (column) {
                 case 'specification':
@@ -364,11 +372,12 @@
                   propflag = '数量';
                   break;
               }
+               if(column==='specification'&&target.matl1stName==='钢材类'){
+                 propflag='直径';
+                 target.barDiameter=value;
+               }
               if ( target[column] !== value) {
                 target.changePropArr.add(propflag);
-              }
-              if(target.matl1stName==='钢材类'){
-                target.barDiameter=value;
               }
             target[column] = value;
 
@@ -437,16 +446,20 @@
         else if(flag==='002'){
           const newData = [...this.dataSource];
           const target = newData.filter(item => key === item.matlId)[0];
-          if (target) {
+        const  targetcopy={...target};
+          if (targetcopy) {
             //保存物料信息
             let obj={
-              materialId:target.matlId,
-              amount:target.amount,
-              specification:target.specification,
-              barGrade:target.barGrade,
-              length:target.length,
-              barDiameter:target.barDiameter
+              materialId:targetcopy.matlId,
+              amount:targetcopy.amount,
+              specification:targetcopy.specification,
+              barGrade:targetcopy.barGrade,
+              length:targetcopy.length,
+              barDiameter:targetcopy.barDiameter
             };
+            if(targetcopy.matl1stName==='钢材类'){
+              delete obj.specification;
+            }
             this.$ajax('bomextract/bom/modifymaterial','POST',obj).then(res=>{
               res=res.data;
               if(res.code==='001'){
@@ -477,7 +490,6 @@
       handleChangeSize(record){
            //获取规格列表
               let obj={};
-
                 obj.firsttype=record.matl1st;
                 obj.matlname=record.matlName;
                 this.$ajax('bomextract/bom/getspecifications','GET',obj).then(res=> {
@@ -520,12 +532,24 @@
     },
     mounted() {
       //尺寸信息
-      this.data = this.propmsg.sizeList;
-      this.cacheData1 = this.data.map(item => ({...item}));
+      this.data = this.propmsg.sizeList.map(item=>{
+        if(item.editable){
+          delete item.editable;
+        }
+        return item;
+      });
+      this.cacheData1 = this.data.map(item => (
+        {...item}
+      ));
       //统计信息数组
       this.dataStatics = [this.propmsg];
       //物料信息
-      this.dataSource = this.propmsg.bomList;
+      this.dataSource = this.propmsg.bomList.map(item=>{
+        if(item.editable){
+          delete item.editable;
+        }
+        return item;
+      });
       this.cacheData2 = this.dataSource.map(item => ({...item}));
     }
   };

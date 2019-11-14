@@ -22,7 +22,7 @@
         </div>
         <div class="top-item">
           <a  style="margin-right: 10px;text-decoration: none"
-              href="javascript:void(0)" download="客户端软件" @click="downFile($event,1,$event.target)" @dblclick="downFile($event,2,$event.target)">客户端下载</a>
+              href="http://lifesurge.lifegranary.com/PST/easyBOM.exe" download="客户端软件" >客户端下载</a>
           <!--<img src="../../assets/images/zengjia.png" >-->
           <!--<img src="../../assets/images/xiaoxi@2x.png">-->
           <!--<img src="../../assets/images/youxiang@2x.png">-->
@@ -131,21 +131,23 @@
           },
         downFile(e,flag,alink){
 
-         //   e.preventDefault();
-          //客户端下载
-          if(flag===1){
-            clearTimeout(timer);
-           timer=setTimeout(()=>{
-
-              alink.download = '客户端下载';
-              alink.href =`${this.env}/bomextract/bom/download?code=khd1`;
-            },500)
-          }else{
-            clearTimeout(timer);
-
-            alink.download = '客户端下载';
-            alink.href =`${this.env}/bomextract/bom/download?code=khd1`;
-          }
+         // //   e.preventDefault();
+         //  //客户端下载
+         //  if(flag===1){
+         //    clearTimeout(timer);
+         //   timer=setTimeout(()=>{
+         //
+         //      alink.download = '客户端下载';
+         //      alink.href='http://lifesurge.lifegranary.com/PST/easyBOM.exe'
+         //     // alink.href =`${this.env}/bomextract/bom/download?code=khd1`;
+         //    },500)
+         //  }else{
+         //    clearTimeout(timer);
+         //
+         //    alink.download = '客户端下载';
+         //    alink.href='http://lifesurge.lifegranary.com/PST/easyBOM.exe'
+         //    //alink.href =`${this.env}/bomextract/bom/download?code=khd1`;
+         //  }
 
         },
         logout(){

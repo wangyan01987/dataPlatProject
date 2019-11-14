@@ -6,7 +6,7 @@
            'phoneNumber',
             {rules: [{validator:checkName}],validateTrigger:['blur']}
         ]">
-          <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/iphone.png" style="width:14px"/>
         </a-input>
         <p class="error-msg" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
@@ -15,7 +15,7 @@
           <a-col :span="16">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="['code',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}]">
-              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
+              <img slot="prefix" src="../../assets/images/yanzh.png" style="width:14px"/>
             </a-input>
           </a-col>
           <a-col :span="8">

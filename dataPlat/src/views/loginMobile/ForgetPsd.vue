@@ -6,7 +6,7 @@
            'phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur']}
         ]">
-          <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/iphone.png" style="width:14px"/>
         </a-input>
         <p class="has-error" v-show="errorphone">{{errorphone}}</p>
       </a-form-item>
@@ -16,7 +16,7 @@
             <a-input placeholder="请输入验证码"  size="large" v-decorator="[ 'code',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
-              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
+              <img slot="prefix" src="../../assets/images/yanzh.png" style="width:14px"/>
             </a-input>
             <p class="error-msg">{{codeErr}}</p>
           </a-col>
@@ -40,7 +40,7 @@
         ]"
           :type="psdtype"
         >
-          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/mima.png" style="width:14px"/>
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype='password'" /></a>
         </a-input>
@@ -61,7 +61,7 @@
         ]"
           :type="psdtype1"
         >
-          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/mima.png" style="width:14px"/>
           <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="psdtype1='text'"  /></a>
           <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="psdtype1='password'" /></a>
         </a-input>

@@ -18,8 +18,9 @@
                 :placeholder="`请输入${flagName}(*必填)`"
                 style="margin-right:8px;width:60%;"
                 />
-                <a-auto-complete  @search="handleSearch"
+                <a-auto-complete  v-else  @search="handleSearch"
                                  v-decorator="[`names[${k}]`,
+
               {
                 validateTrigger:['blur'],
                 rules:[{
@@ -30,7 +31,7 @@
                 {validator:checkMethods}
                 ]
                 }
-                ]" :placeholder="`请输入${flagName}(*必填)`" style="margin-right:8px;width:60%;" v-else>
+                ]" :placeholder="`请输入${flagName}(*必填)`" style="margin-right:8px;width:60%;" >
                   <template slot="dataSource">
                     <a-select-option v-for="email in result" :key="email">{{email}}</a-select-option>
                   </template>
@@ -54,7 +55,7 @@
 
     export default {
         name: "addInfo",
-      props:['dataflag','emailLimitNum','mobileLimitNum'],
+      props:['dataflag','emailLimitNum'],
       data(){
         let id=1;
           return{
@@ -71,6 +72,9 @@
               return this.emailLimitNum;
 
           }
+      },
+      watch:{
+
       },
       methods:{
         handleSearch(value) {
@@ -168,9 +172,9 @@
                   let projectId=this.$route.params.projectId;
                   this.$ajax(url,'POST',{link:link,projectName:projectName,phones:data,projectId:projectId}).then(res=>{
                     if(res.data.code==='001'){
-                      let count=data.length;
+                    //  let count=data.length;
                       this.$message.success('邀请成功',5);
-                      this.$emit('stateCount',count);
+                    //  this.$emit('stateCount',count);
                     }
                     else{
                       this.$message.error(res.data.msg);

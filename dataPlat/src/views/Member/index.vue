@@ -5,7 +5,7 @@
               :pagination="pagination"  :locale="{emptyText: '暂无数据'}">
       <template slot-scope="text,record" slot="personImage">
         <a-avatar :style="{color:'#fff',backgroundColor: text}"><span v-if="record.userName">{{record.userName.substring(0,1).toUpperCase()}}</span>
-       <span v-else> ---</span>
+       <span v-else>---</span>
         </a-avatar>
       </template>
           <template  v-for="item in arr"   slot-scope="text,record" :slot="item"  @click="handle(text)" style="cursor: pointer">

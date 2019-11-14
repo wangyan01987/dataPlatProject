@@ -90,6 +90,9 @@ display:none
 .sub-container .box-container{
   flex:auto;
 }
+.sub-container .container{
+  background-color:#F2F3F5;
+}
 a .iconfont:not(.icondaqwwwqziyuan){
   color: #999;
 }
@@ -234,4 +237,11 @@ top:50px !important;
 }
 .small-size{
   font-size: 12px;
+}
+.ant-input-affix-wrapper .ant-input{
+  text-align:left;
+}
+.action-btn,.ant-table-wrapper{
+  background-color:#fff;
+  margin:0;
 }

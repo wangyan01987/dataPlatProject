@@ -6,7 +6,7 @@
            'username',
             {rules: [{validator:checkName}],validateTrigger:['blur']}
         ]"  class="test">
-          <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/iphone.png" width="14"/>
         </a-input>
       </a-form-item>
 
@@ -17,7 +17,7 @@
           'assignCode',
             {rules: [{validator:assignCode}],validateTrigger:['blur']}
         ]">
-              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
+              <img slot="prefix" src="../../assets/images/yanzh.png" style="width:14px"/>
             </a-input>
 
           </a-col>
@@ -43,7 +43,7 @@
             validateTrigger:['blur']
           }
         ]" >
-          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/mima.png" style="width:14px"/>
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"    @click="show()"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"    @click="show('psd')" /></a>
         </a-input>

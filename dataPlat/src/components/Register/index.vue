@@ -6,14 +6,14 @@
            'username',
             {rules: [{validator:checkName},{max:20,message:'姓名最大长度为20个字符'},{required:true,message:'请输入姓名'}],validateTrigger:['blur']},]
 ">
-          <img slot="prefix" src="../../assets/images/name@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/name.png" style="width:14px"/>
         </a-input>
       </a-form-item>
       <a-form-item :class="{'ant-form-item-with-help':errorMsg}">
         <a-input placeholder="请输入手机号"   v-decorator="['phoneNumber',
             {rules: [{validator:checkAccount}],validateTrigger:['blur'],validateFirst:true}
       ]">
-          <img slot="prefix" src="../../assets/images/iphone@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/iphone.png" style="width:14px"/>
         </a-input>
         <p class="has-error" v-show="errorMsg">{{errorMsg}}</p>
       </a-form-item>
@@ -22,7 +22,7 @@
           <a-col :span="17">
             <a-input placeholder="请输入验证码" id="success"  v-decorator="[
           'code', {rules: [{validator:assignCode}],validateTrigger:['blur']}]">
-              <img slot="prefix" src="../../assets/images/yanzh@2x.png" style="width:14px"/>
+              <img slot="prefix" src="../../assets/images/yanzh.png" style="width:14px"/>
             </a-input>
           </a-col>
           <a-col :span="7">
@@ -44,7 +44,7 @@
         ]"
           :type="psdtype"
         >
-          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/mima.png" style="width:14px"/>
           <a v-show="psdtype==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype='text'"  /></a>
           <a  v-show="psdtype==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype='password'"  /></a>
         </a-input>
@@ -64,7 +64,7 @@
         ]"
           :type="psdtype1"
         >
-          <img slot="prefix" src="../../assets/images/mima@2x.png" style="width:14px"/>
+          <img slot="prefix" src="../../assets/images/mima.png" style="width:14px"/>
           <a v-show="psdtype1==='password'" slot="suffix"  ><i class="iconfont iconxianshi"  @click="psdtype1='text'"  /></a>
           <a  v-show="psdtype1==='text'"  slot="suffix"  ><i class="iconfont iconxiaoshi"   @click="psdtype1='password'"  /></a>
         </a-input>
@@ -91,7 +91,7 @@
           </template>
 
             <a-input placeholder="请输入邮箱地址">
-              <img slot="prefix" src="../../assets/images/youxiang@2x.png" style="width:14px"/>
+              <img slot="prefix" src="../../assets/images/youxiang.png" style="width:14px"/>
             </a-input>
         </a-auto-complete>
       </a-form-item>

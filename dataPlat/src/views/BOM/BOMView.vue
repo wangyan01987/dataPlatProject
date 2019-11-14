@@ -71,10 +71,10 @@
         :width="1300"
         @close="onClose"
         :visible="visible"
-        :destroyOnClose="true"
+        :destroyOnClose='destroyClose'
         :wrapStyle="{height: 'calc(100% - 108px)',overflow: 'auto',paddingBottom: '108px'}"
       >
-       <bom-info :propmsg="propmsg"></bom-info>
+       <bom-info  :propmsg="propmsg" v-if="visible"></bom-info>
       </a-drawer>
     </div>
 </template>
@@ -147,6 +147,7 @@
         cacheData:'',
         current:1,
         maxlength:30,
+        destroyClose:true
 
       };
     },
@@ -213,11 +214,15 @@
         }
       },
       updateBom(){
+       if(this.loading){
+         return;
+       }
         this.prodId='';
         this.version='';
         this.floor='';
         this.pagination.current=1;
         this.current=1;
+
         if(this.buildingid){
           this.getBom(1,20);
         }
@@ -322,12 +327,15 @@
               if(res.code==='001'){
                 this.$message.success('删除成功',2);
                 this.data.filter(item=>item.cmptId!==key);
-               if(this.current===1){
-                 let newData= this.data.filter(item=>item.cmptId!==key);
-                 this.data=newData;
-               }else{
-                     this.getBom(this.current,20);
-               }
+                  let newData= this.data.filter(item=>item.cmptId!==key);
+                  this.data=newData;
+               // this.getBom(this.current,20);
+               // if(this.current===1){
+               //   let newData= this.data.filter(item=>item.cmptId!==key);k
+               //   this.data=newData;
+               // }else{
+               //       this.getBom(this.current,20);
+               // }
               }
               else{
                 this.$message.error(res.msg);
@@ -431,7 +439,6 @@
        if(!record.save){
          return;
        }
-       console.log(record)
         const newData = [...this.data];
         const target = newData.filter(item => key === item.cmptId)[0];
         const newtarget={...target};
