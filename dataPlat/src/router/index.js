@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 Vue.use(Router);
 const routerPush = Router.prototype.push;
 Router.prototype.push = function push(location) {
@@ -131,9 +130,8 @@ import  store from '../store';
         }else if(token){
           //已登录
           if(client<750){
-            if(to.name==='joinSuccessMobile'){
-              next();
-            }else if(to.name==='joinSuccesstext'){
+            const gopath=to.name;
+            if(gopath==='joinSuccesstext'||gopath==='joinSuccessMobile'){
               next();
             }else{
               next('/joinSuccessMobile');

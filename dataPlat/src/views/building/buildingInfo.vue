@@ -416,9 +416,10 @@ let a=0;
           }
         })
        },
-      buildingDetails(record){
+      buildingDetails(record1){
         // 单体详情
         let quake;
+        let record=JSON.parse(JSON.stringify(record1));
         this.buildingInfo={...record};
         for(let item in this.buildingInfo){
              if(!this.buildingInfo[item]){

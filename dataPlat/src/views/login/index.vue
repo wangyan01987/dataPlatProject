@@ -3,7 +3,7 @@
     <div class="box-top">
       <!--<p class="logo"><i class="iconfont icondaqwwwqziyuan" style="font-size:24px;margin-right:10px;"></i>平行数据平台</p>-->
       <p class="action"> <a  style="margin-right: 10px;text-decoration: none;color:#fff"
-                             href="http://lifesurge.lifegranary.com/PST/easyBOM.exe" download="客户端软件">客户端下载</a></p>
+                             href="http://lifesurge.lifegranary.com/PST/PST-Setup.exe" download="客户端软件">客户端下载</a></p>
 
     </div>
    <!--<p class="markTitle">为建筑产业提供不断优化的数据和算法服务</p>-->

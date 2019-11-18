@@ -29,6 +29,8 @@
       @cancel="cancel"
       :footer="null"
       width="460px"
+             style="top:120px;"
+
     >
        <modal-info></modal-info>
     </a-modal>

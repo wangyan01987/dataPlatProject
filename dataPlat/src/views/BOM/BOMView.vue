@@ -8,7 +8,7 @@
           <span class="title"> 版本号：</span><a-select placeholder="请选择版本号" style="width:20%;margin-right:0.24rem;" @focus="getVersion" @change="versionChange" v-model="version">
                 <a-select-option v-for="item in versionArr" :value="item" :key="item">{{item}}</a-select-option>
               </a-select>
-              <a-input-search placeholder="请输入"  @search="onSearch"  style="width:25%" />
+              <a-input-search placeholder="请输入"  @search="onSearch"  v-model="prodId" style="width:25%" />
               <a-button type="primary" style="margin-left:57px" @click="updateBom">刷新BOM</a-button>
         </div>
        <div class="bom-item-body">
@@ -68,7 +68,7 @@
       <a-drawer
         title="BOM详情"
         placement="right"
-        :width="1300"
+        :width="1350"
         @close="onClose"
         :visible="visible"
         :destroyOnClose='destroyClose'
@@ -326,10 +326,10 @@
               res=res.data;
               if(res.code==='001'){
                 this.$message.success('删除成功',2);
-                this.data.filter(item=>item.cmptId!==key);
-                  let newData= this.data.filter(item=>item.cmptId!==key);
-                  this.data=newData;
-               // this.getBom(this.current,20);
+                // this.data.filter(item=>item.cmptId!==key);
+                //   let newData= this.data.filter(item=>item.cmptId!==key);
+                //   this.data=newData;
+                this.getBom(this.current,20);
                // if(this.current===1){
                //   let newData= this.data.filter(item=>item.cmptId!==key);k
                //   this.data=newData;

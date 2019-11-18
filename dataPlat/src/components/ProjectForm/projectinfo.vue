@@ -2,7 +2,7 @@
 <div>
   <a-spin :spinning="spinning">
     <div class="spin-content">
-      <a-form :form="formData">
+      <a-form :form="formData" :hideRequiredMark="dataflag===0" >
         <a-form-item label="项目名称" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol"
                      :class="{'ant-form-item-with-help':errorMsg}">
           <a-input maxlength="50"  placeholder="请输入项目名称，支持英文、数字、符号，字数小于50" v-decorator="[ 'projectName', {validateTrigger:['blur'],rules: [{ required: true, message: '项目名称不可为空' },{validator:checkName}]}
@@ -84,8 +84,9 @@
                      label="立项时间"><a-date-picker v-decorator="['proTime']" placeholder="请选择日期" v-show="dataflag===1||dataflag===2"/>
           <span v-show="dataflag===0">{{obj.proTime?obj.proTime:'---'}}</span>
         </a-form-item>
-        <a-form-item label="栋数" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-if="dataflag===1">
-          <a-input v-decorator="[ 'buildNum' ]" disabled></a-input>
+        <a-form-item label="栋数" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol" v-show="dataflag!==2">
+          <a-input v-decorator="[ 'buildNum' ]" disabled v-show="dataflag===1" ></a-input>
+          <span v-show="dataflag===0">{{obj.buildNum?obj.buildNum:'---'}}</span>
         </a-form-item>
         <a-form-item label="项目简介" :label-col="formItemLayout.labelCol" :wrapper-col="formItemLayout.wrapperCol">
           <a-textarea v-show="dataflag===1||dataflag===2" placeholder=" 请输入项目简介，支持中英文字符" :autosize="{ minRows: 3, maxRows: 6 }"
@@ -394,7 +395,12 @@
              //获取市
             await this.provincehandleChange(obj.provinceId);
             await  this.handleChange(obj.cityId);
-           };
+           }else{
+             obj.provinceId=undefined;
+             obj.cityId=undefined;
+             obj.districtId=undefined;
+
+           }
            setTimeout(()=>{
              this.setMsg(obj)
            },100);

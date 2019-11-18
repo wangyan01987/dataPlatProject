@@ -46,15 +46,15 @@
         <p class="title">物料信息</p>
         <a-table :columns="columsSource" :pagination="false" :dataSource="dataSource" :rowKey="record=>{record.matlId}">
           <template slot="barGrade" slot-scope="text,record,index">
-            <div >
-              <a-select  v-show="record.matl1stName==='钢材类'"  width="80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.matlId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
+            <div style="width:184px" >
+              <a-select  v-show="record.matl1stName==='钢材类'"  style="width:80%"  @focus="handleChangeLevel(record)"   @change="value => handleChange(value, record.matlId, 'barGrade','002')"  v-if="record.editable" placeholder="请选择" :value="text">
                   <a-select-option  v-for="item in barGradeArr " :key="item" :value="item">{{item}}</a-select-option>
               </a-select>
               <template v-else>{{text?text:'---'}}</template>
             </div>
           </template>
           <template slot="detailDrawing" slot-scope="text,record,index">
-            <div >
+            <div  style="height:50px;line-height:50px;">
               <img :src="`data:image/png;base64,${text}`" alt="图片" v-show="text" style="width:100px;">
               <span v-show="!text">---</span>
             </div>
@@ -75,8 +75,8 @@
               </a-select>
               <template v-else>{{text?text:'---'}}</template>
             </div>
-            <div v-show="record.matl1stName==='钢材类'">
-              <a-select style="width:100%"
+            <div v-show="record.matl1stName==='钢材类'" style="width:90%">
+              <a-select style="width:80%"
                         v-if="record.editable" placeholder="请选择" :value="`φ${record.barDiameter}`"
                         @change="value => handleChange(value, record.matlId,'specification','002')">
                 <a-select-option v-for="item in diameterArr" :key="item" :value="item.slice(1)">{{item}}</a-select-option>
@@ -88,15 +88,20 @@
             {{text?text:'---'}}
           </template>
           <template slot="allweight" slot-scope="text, record, index">
-            {{text?text:'---'}}{{record.allUnit}}
+            <div v-show="record.matlName!=='混凝土'">
+              {{text?text:'---'}}{{record.allUnit}}
+            </div>
+            <div  v-show="record.matlName==='混凝土'">
+               {{propmsg.cVolume?propmsg.cVolume:'---'}}{{record.allUnit}}
+            </div>
           </template>
           <template slot="amount" slot-scope="text, record, index">
-            <div>
+            <div style="width:100%">
               <a-input-number :min="0"     v-show="record.matl1stName!=='混凝土类'"
                               :max="Math.pow(10,6)-0.01"
                               :precision="2"
                               v-if="record.editable"
-                              style="margin: -5px 0"
+                              style="margin: -5px 0;width:80%;"
                               :value="text"
                               @change="value => handleChange(value, record.matlId,'amount','002')"
               />
@@ -123,9 +128,7 @@
 </template>
 
 <script>
-
   const columnsStatics=[
-
     {
       title: '序号',
       dataIndex: 'index',
@@ -218,7 +221,7 @@
     {
       title: '序号',
       dataIndex: 'index',
-      width: '8%',
+      width: '6%',
       customRender:(text, record, index)=>`${index+1}`
     },
     {
@@ -227,27 +230,28 @@
       width: '10%',
     },
     {
+
       title: '名称',
       dataIndex: 'matlName',
-      width: '10%',
+      width:'8%',
       scopedSlots: { customRender: 'matlName' },
     },
     {
-      title: '规格',
+      title:'规格',
       dataIndex: 'specification',
-      width: '17%',
+      width:'18%',
       scopedSlots: { customRender:'specification'},
     },
     {
       title: '强度等级',
       dataIndex: 'barGrade',
-      width: '12%',
+      width: '14%',
       scopedSlots: { customRender: 'barGrade' },
     },
     {
       title: '长度/面积(mm/m²)',
       dataIndex: 'length',
-      width: '13%',
+      width: '11%',
       scopedSlots: { customRender: 'length' },
     },
     {
@@ -273,7 +277,7 @@
       title: '操作',
       dataIndex: 'operation',
       scopedSlots: { customRender: 'operation' },
-      width: '5%',
+      width: '7%',
     },
   ];
   const data = [];

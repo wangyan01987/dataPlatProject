@@ -4,25 +4,22 @@
     <a-layout-header>
       <div class="top-header">
         <div style="margin-left:28px;" class="top-header-left">
-          <router-link to="/home">
-            <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  v-if="$route.name==='home'"></i>
-            <a-tooltip v-else>
+          <a v-if="$route.name==='home'"> <i class="iconfont icondaqwwwqziyuan" style='font-size:24px;'  ></i></a>
+          <router-link to="/home" v-else>
+            <a-tooltip >
               <template slot="title">
                 返回首页
               </template>
               <img :src="headerImg"   style="width:24px" @mouseover="showhome=true" @mouseout="showhome=false"/>
             </a-tooltip>
           </router-link>
-           <!--<a href="#/home"  >-->
-            <!---->
-          <!--</a>-->
           <i class="iconfont iconarr-right1" v-show="$route.name!=='home'" style="color: #999"></i>
           <top-menu :menuList="menuList" v-if="$route.params.projectId"></top-menu>
           <span v-else  class="top-name">{{topTitle}}</span>
         </div>
         <div class="top-item">
           <a  style="margin-right: 10px;text-decoration: none"
-              href="http://lifesurge.lifegranary.com/PST/easyBOM.exe" download="客户端软件" >客户端下载</a>
+              href="http://lifesurge.lifegranary.com/PST/PST-Setup.exe" download="客户端软件" >客户端下载</a>
           <!--<img src="../../assets/images/zengjia.png" >-->
           <!--<img src="../../assets/images/xiaoxi@2x.png">-->
           <!--<img src="../../assets/images/youxiang@2x.png">-->
