@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <style>
+    .pay-popup  .nav-tabs li:nth-child(3)  i   {
+      background-image:url(./src/assets/images/bg-dl.png);
+      color:green;
+    }
+    .pay-popup  .nav-tabs li:nth-child(1) i {
+      width:100px;
+     height:100px;
+      background-image:url(./src/assets/images/bg-dl.png);
+      color:red;
+    }
+    .pay-popup  .nav-tabs li:nth-child(2) i {
+      background-image:url(./src/assets/images/bg-dl.png);
+      color:red;
+    }
+
+    /*.pay-popup  .nav-tabs li:nth-child(2) i {*/
+      /*background-image:url(./src/assets/images/bg-dl.png)*/
+    /*}*/
+    /*.pay-popup .nav-tabs li:nth-child(1) i{*/
+      /*color:red;*/
+      /*background-image:url(./src/assets/images/bg-dl.png);*/
+    /*}*/
+
+    /*.pay-popup .nav-tabs li:nth-child(1) i{*/
+      /*background-image:url(./src/assets/images/bg-dl.png)*/
+    /*}*/
+
+    /*.pay-popup .nav-tabs li:nth-child(3) i {*/
+      /*    background-image:url(./src/assets/images/bg-dl.png) */
+    /*}*/
+
+    /*.pay-popup .nav-tabs li:nth-child(4) i {*/
+      /*    background-image:url(./src/assets/images/bg-dl.png)*/
+    /*}*/
+
+    /*.pay-popup .nav-tabs li.active:nth-child(1) i {*/
+      /*    background-image:url(./src/assets/images/bg-dl.png)*/
+    /*}*/
+
+
+  </style>
+</head>
+<body>
+    <button onclick="appendHtml()">点击</button>
+<span style="background-image:url(./src/assets/images/bg-dl.png)">  </span>
+</body>
+</html>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js">
+</script>
+<script>
+  html =
+    '<div class="boxer pay-popup undb" id="gdChoosePayWay">' +
+    '<div class="pay-popup-hed tc"><span class="f18">支付金额</span><div class="f36 mt5 totalMoney">&yen;'  + '</div></div>' +
+    '<div class="tc mt30 mb30">' +
+    '<p class="mb25">请选择出票方式</p >' +
+    '<ul class="nav-tabs">' +
+    '<li class="active" rel=\'1\'><span><i>lalalla</i></span><p>现金支付</p ></li>' +
+    '<li rel=\'2\'><span><i> </i></span><p>移动支付</p ></li>' +
+    '<li rel=\'4\'><span><i></i></span><p>支票支付</p ></li>' +
+    '<li rel=\'3\' class=\'deposit\'><span><i></i></span><p>账户余额</p ></li>' +
+    '</ul>' +
+
+    '</div>' +
+    '</div>' +
+    '<div class="boxer-btns">' +
+    '< a href=" " class="btn-gray cancel-btn minClose mr20">取消</ a>' +
+    '< a href="javascript:;" class="btn confirm-btn minClose ml20">确定</ a>' +
+    '</div>' +
+    '</div>';
+ function appendHtml(){
+   console.log('----')
+   $('body').append(html);
+  };
+ var frag=document.createDocumentFragment();
+
+</script>

@@ -353,14 +353,15 @@ let a=0;
                 this.$emit('success',true);
                 if(this.dataflag==='001'){
                   if(this.editFlag==='001'){
-                    this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit001)
+                    //this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit001)
                   }
                   else{
-                    this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit)
+                   // this.$ajax('buriedpoint/web/visit','POST',this.buryObjedit)
                   }
                 }
                 this.$store.commit("setRecord",params);
               }else{
+                this.$message.error(res.msg);
                 if(res.code==='002'){
                   this.errorMsg=res.msg;
                 }
@@ -380,12 +381,7 @@ let a=0;
        this.form.setFieldsValue({'quakeGrade':0});
 
      }
-        // //console.log(val)
-        // if(!val){
-        //   console.log(val)
-        //   val='';
-        //
-        // };
+
 
       },
       handleSelectChange(value,key,column){
